@@ -9,6 +9,7 @@ import { Trash } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import {
@@ -17,6 +18,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormDescription,
   FormMessage,
 } from '@/components/ui/form';
 import {
@@ -47,6 +49,7 @@ const formSchema = z.object({
   name: z.string().min(2),
   productId: z.string().min(1),
   discount: z.coerce.number().min(1),
+  isArchived: z.boolean().default(false).optional(),
 });
 
 type PromoFormValues = z.infer<typeof formSchema>;
@@ -233,6 +236,27 @@ export const PromoForm: React.FC<PromoFormProps> = ({
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isArchived"
+              render={({ field }) => (
+                <FormItem className="space-y- flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      // @ts-ignore
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Archived</FormLabel>
+                    <FormDescription>
+                      This promo will be archived
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />

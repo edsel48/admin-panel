@@ -22,6 +22,7 @@ const PromoPage = async ({ params }: { params: { storeId: string } }) => {
     discount: `${item.discount}%`,
     createdAt: format(item.createdAt, 'dd MMMM yyyy'),
     productLabel: item.product.name,
+    isArchived: item.isArchived,
   }));
 
   return (

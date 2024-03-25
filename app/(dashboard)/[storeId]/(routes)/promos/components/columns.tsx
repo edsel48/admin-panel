@@ -4,13 +4,15 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { CellAction } from './cell-action';
 
+import { Check } from 'lucide-react';
+
 export type PromoColumn = {
   id: string;
   name: string;
   productLabel: string;
   discount: string;
-  expiredAt: string;
   createdAt: string;
+  isArchived: boolean;
 };
 
 export const columns: ColumnDef<PromoColumn>[] = [
@@ -30,6 +32,11 @@ export const columns: ColumnDef<PromoColumn>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Created At',
+  },
+  {
+    accessorKey: 'isArchived',
+    header: 'Archived',
+    cell: ({ row }) => row.original.isArchived && <Check />,
   },
   {
     id: 'actions',
