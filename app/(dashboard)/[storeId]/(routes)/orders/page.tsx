@@ -21,6 +21,8 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
+  console.log(orders);
+
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">Something</div>
