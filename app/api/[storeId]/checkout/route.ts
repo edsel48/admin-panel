@@ -1,8 +1,18 @@
-import Stripe from 'stripe';
 import { NextResponse } from 'next/server';
 
-import { stripe } from '@/lib/stripe';
+import { currentUser } from '@clerk/nextjs';
+
 import prismadb from '@/lib/prismadb';
+import axios from 'axios';
+
+//@ts-ignore
+import Midtrans from 'midtrans-client';
+
+let snap = new Midtrans.Snap({
+  isProduction: false,
+  serverKey: process.env.SECRET,
+  clientKey: process.env.NEXT_PUBLIC_CLIENT,
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,7 +28,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } },
 ) {
-  const { productIds } = await req.json();
+  const { productIds, total } = await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse('Product ids are required', { status: 400 });
@@ -32,21 +42,7 @@ export async function POST(
     },
   });
 
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-
-  products.forEach((product) => {
-    line_items.push({
-      quantity: 1,
-      price_data: {
-        currency: 'USD',
-        product_data: {
-          name: product.name,
-        },
-        unit_amount: product.price.toNumber() * 100,
-      },
-    });
-  });
-
+  // create order from here
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
@@ -63,24 +59,50 @@ export async function POST(
     },
   });
 
-  const session = await stripe.checkout.sessions.create({
-    line_items,
-    mode: 'payment',
-    billing_address_collection: 'required',
-    phone_number_collection: {
-      enabled: true,
-    },
-    success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
-    cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
-    metadata: {
-      orderId: order.id,
-    },
-  });
+  const user = await currentUser();
 
-  return NextResponse.json(
-    { url: session.url },
-    {
-      headers: corsHeaders,
-    },
-  );
+  try {
+    const options = {
+      method: 'POST',
+      url: 'https://app.sandbox.midtrans.com/snap/v1/transactions',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization:
+          'Basic U0ItTWlkLXNlcnZlci1kYW9BcUVfcHRHbllwVnZIVE9UbEF6OW46',
+      },
+      data: {
+        transaction_details: {
+          order_id: order.id,
+          gross_amount: total,
+        },
+        credit_card: {
+          secure: true,
+        },
+        customer_details: {
+          first_name: user?.firstName,
+          last_name: user?.lastName,
+          email: user?.emailAddresses,
+          phone: user?.phoneNumbers,
+        },
+      },
+    };
+
+    let request = await axios.request(options);
+
+    let token = request.data.token;
+
+    console.log(request.data);
+
+    return NextResponse.json(
+      { token },
+      {
+        headers: corsHeaders,
+      },
+    );
+  } catch (error) {
+    console.error(`[CHECKOUT_POST] `, error);
+
+    return new NextResponse('Internal error', { status: 500 });
+  }
 }
