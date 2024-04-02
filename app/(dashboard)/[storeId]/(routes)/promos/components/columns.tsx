@@ -4,13 +4,17 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { CellAction } from './cell-action';
 
-import { Check } from 'lucide-react';
+import { Ban, Check, Minus } from 'lucide-react';
 
 export type PromoColumn = {
   id: string;
   name: string;
   productLabel: string;
   discount: string;
+  maximumDiscountAmount: string;
+  minimumAmountBought: string;
+  useCount: string;
+  validUntil: string;
   createdAt: string;
   isArchived: boolean;
 };
@@ -28,6 +32,22 @@ export const columns: ColumnDef<PromoColumn>[] = [
   {
     accessorKey: 'discount',
     header: 'Discount',
+  },
+  {
+    accessorKey: 'maximumDiscountAmount',
+    header: 'Maximum Discount Amount',
+  },
+  {
+    accessorKey: 'minimumAmountBought',
+    header: 'Minimum Amount Bought',
+  },
+  {
+    accessorKey: 'useCount',
+    header: 'Use Count',
+  },
+  {
+    accessorKey: 'validUntil',
+    header: 'Valid Until',
   },
   {
     accessorKey: 'createdAt',

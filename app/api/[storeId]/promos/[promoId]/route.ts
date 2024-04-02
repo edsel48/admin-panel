@@ -76,6 +76,7 @@ export async function PATCH(
         id: params.promoId,
       },
       data: {
+        name,
         discount,
         productId,
         isArchived,
@@ -83,7 +84,7 @@ export async function PATCH(
         minimumAmountBought,
         validUntil,
         maximalUseCount,
-        useCount: 0,
+        useCount
       },
     });
 
