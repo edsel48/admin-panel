@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import {
   Form,
   FormControl,
@@ -49,6 +49,10 @@ const formSchema = z.object({
   name: z.string().min(2),
   productId: z.string().min(1),
   discount: z.coerce.number().min(1),
+  maximumDiscountAmount: z.coerce.number().min(1),
+  minimumAmountBought: z.coerce.number().min(1),
+  maximalUseCount: z.coerce.number().min(1),
+  validUntil: z.date(),
   isArchived: z.boolean().default(false).optional(),
 });
 
@@ -87,17 +91,35 @@ export const PromoForm: React.FC<PromoFormProps> = ({
       ? {
           ...initialData,
           discount: parseFloat(String(initialData?.discount)),
+          maximalUseCount: parseFloat(String(initialData?.maximalUseCount)),
+          maximumDiscountAmount: parseFloat(
+            String(initialData?.maximumDiscountAmount),
+          ),
+          minimumAmountBought: parseFloat(
+            String(initialData?.minimumAmountBought),
+          ),
+          validUntil: parse(
+            format(initialData?.validUntil, 'dd MMM yyyy'),
+            'dd MMM yyyy',
+            initialData?.validUntil,
+          ),
         }
       : {
           name: '',
           productId: '',
           discount: 0,
+          maximalUseCount: 0,
+          maximumDiscountAmount: 0,
+          minimumAmountBought: 0,
+          validUntil: parse(
+            format(Date(), 'dd MMM yyyy'),
+            'dd MMM yyyy',
+            Date(),
+          ),
         },
   });
 
   const onSubmit = async (data: PromoFormValues) => {
-    console.log('test');
-
     try {
       setLoading(true);
 
@@ -209,6 +231,63 @@ export const PromoForm: React.FC<PromoFormProps> = ({
 
             <FormField
               control={form.control}
+              name="maximumDiscountAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Maximum Discount Amount</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      type="number"
+                      placeholder="20"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="minimumAmountBought"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Minimum Amount Bought</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      type="number"
+                      placeholder="20"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="maximalUseCount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Maximum Use Count</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      type="number"
+                      placeholder="20"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="productId"
               render={({ field }) => (
                 <FormItem>
@@ -239,6 +318,47 @@ export const PromoForm: React.FC<PromoFormProps> = ({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="validUntil"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Valid Until</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'w-[240px] pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, 'dd MMM yyyy')
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="isArchived"
