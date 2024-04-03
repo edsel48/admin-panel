@@ -56,6 +56,7 @@ interface ProductFormProps {
     | null;
   categories: Category[];
   sizes: Size[];
+  suppliers: Supplier[];
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
