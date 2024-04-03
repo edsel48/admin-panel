@@ -4,7 +4,7 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Product, Category, Image, Size } from '@prisma/client';
+import { Product, Category, Image, Size, Supplier } from '@prisma/client';
 import { Trash } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
