@@ -19,6 +19,7 @@ model Store {
   orders     Order[]     @relation("StoreToOrder")
   products   Product[]   @relation("StoreToProduct")
   promos     Promo[]     @relation("StoreToPromo")
+  suppliers  Supplier[]    @relation("StoreToSupplier")
   sizes      Size[]      @relation("StoreToSize")
 }
 
@@ -63,6 +64,17 @@ model Size {
   @@index([storeId])
 }
 
+model Supplier {
+  id String @id @default(uuid())
+  name String
+  storeId String
+  store Store       @relation("StoreToSupplier", fields: [storeId], references: [id])
+  product Product[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
 model Product {
   id         String      @id @default(uuid())
   storeId    String
@@ -80,8 +92,11 @@ model Product {
   size       Size        @relation(fields: [sizeId], references: [id])
   store      Store       @relation("StoreToProduct", fields: [storeId], references: [id])
   promo      Promo?
+  supplierId String?
+  supplier  Supplier? @relation(fields: [supplierId], references: [id])
 
   @@index([storeId])
+  @@index([supplierId])
   @@index([categoryId])
   @@index([sizeId])
 }

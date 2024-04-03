@@ -12,8 +12,16 @@ export async function POST(
 
     const body = await req.json();
 
-    const { name, price, categoryId, sizeId, images, isFeatured, isArchived } =
-      body;
+    const {
+      name,
+      price,
+      categoryId,
+      sizeId,
+      supplierId,
+      images,
+      isFeatured,
+      isArchived,
+    } = body;
 
     if (!userId) {
       return new NextResponse('Unauthenticated', { status: 403 });
@@ -39,6 +47,10 @@ export async function POST(
       return new NextResponse('Size id is required', { status: 400 });
     }
 
+    if (!supplierId) {
+      return new NextResponse('Supplier id is required', { status: 400 });
+    }
+
     if (!params.storeId) {
       return new NextResponse('Store id is required', { status: 400 });
     }
@@ -61,6 +73,7 @@ export async function POST(
         isFeatured,
         isArchived,
         categoryId,
+        supplierId,
         sizeId,
         storeId: params.storeId,
         images: {
@@ -104,6 +117,7 @@ export async function GET(
         images: true,
         category: true,
         size: true,
+        supplier: true,
       },
       orderBy: {
         createdAt: 'desc',

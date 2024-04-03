@@ -40,6 +40,7 @@ const formSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   sizeId: z.string().min(1),
+  supplierId: z.string().min(1),
   categoryId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
@@ -61,6 +62,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   categories,
   sizes,
+  suppliers,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -88,6 +90,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           price: 0,
           sizeId: '',
           categoryId: '',
+          supplierId: '',
           isFeatured: false,
           isArchived: false,
         },
@@ -285,6 +288,39 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       {sizes.map((size) => (
                         <SelectItem key={size.id} value={size.id}>
                           {size.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="supplierId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Supplier</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a supplier"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {suppliers.map((supplier) => (
+                        <SelectItem key={supplier.id} value={supplier.id}>
+                          {supplier.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
