@@ -74,6 +74,17 @@ model Supplier {
   store     Store     @relation("StoreToSupplier", fields: [storeId], references: [id])
 }
 
+
+model Member {
+  id String @id @default(uuid())
+  name String
+  limit Decimal
+  status Boolean
+  tier String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Product {
   id         String      @id @default(uuid())
   storeId    String

@@ -11,7 +11,12 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     },
     include: {
       category: true,
-      size: true,
+      sizes: {
+        include: {
+          product: true,
+          size: true,
+        },
+      },
       supplier: true,
     },
     orderBy: {
@@ -27,7 +32,7 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     price: formatter.format(item.price.toNumber()),
     category: item.category.name,
     supplier: item.supplier == null ? '-' : item.supplier.name,
-    size: item.size.name,
+    size: item.sizes.map((data) => data.size.name).join('\n'),
     createdAt: format(item.createdAt, 'dd MMMM yyyy'),
   }));
 
