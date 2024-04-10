@@ -79,8 +79,10 @@ model Member {
   id String @id @default(uuid())
   name String
   limit Decimal
-  status Boolean
-  tier String
+  username String
+  password String
+  status Boolean @default(true)
+  tier String @default("BRONZE")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
