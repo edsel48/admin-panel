@@ -19,8 +19,8 @@ model Store {
   orders     Order[]     @relation("StoreToOrder")
   products   Product[]   @relation("StoreToProduct")
   promos     Promo[]     @relation("StoreToPromo")
-  suppliers  Supplier[]    @relation("StoreToSupplier")
   sizes      Size[]      @relation("StoreToSize")
+  suppliers  Supplier[]  @relation("StoreToSupplier")
 }
 
 model Billboard {
@@ -58,21 +58,20 @@ model Size {
   value     String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  products  Product[]
+  products  SizesOnProduct[]
   store     Store     @relation("StoreToSize", fields: [storeId], references: [id])
 
   @@index([storeId])
 }
 
 model Supplier {
-  id String @id @default(uuid())
-  name String
-  storeId String
-  store Store       @relation("StoreToSupplier", fields: [storeId], references: [id])
-  product Product[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id        String    @id @default(uuid())
+  name      String
+  storeId   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  product   Product[]
+  store     Store     @relation("StoreToSupplier", fields: [storeId], references: [id])
 }
 
 model Product {
@@ -86,19 +85,31 @@ model Product {
   sizeId     String
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  supplierId String?
   images     Image[]
   orderItems OrderItem[]
   category   Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
-  size       Size        @relation(fields: [sizeId], references: [id])
+  sizes SizesOnProduct[]
   store      Store       @relation("StoreToProduct", fields: [storeId], references: [id])
+  supplier   Supplier?   @relation(fields: [supplierId], references: [id])
   promo      Promo?
-  supplierId String?
-  supplier  Supplier? @relation(fields: [supplierId], references: [id])
 
   @@index([storeId])
   @@index([supplierId])
   @@index([categoryId])
   @@index([sizeId])
+}
+
+model SizesOnProduct{
+  product Product @relation(fields: [productId], references: [id])
+  productId String
+  size Size @relation(fields: [sizeId], references: [id])
+  sizeId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([productId, sizeId])
+
 }
 
 model Promo {
@@ -140,8 +151,8 @@ model Order {
   address    String      @default("")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  total      BigInt      @default(0)
   store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
-  total      BigInt @default(0)
   orderItems OrderItem[]
 
   @@index([storeId])
