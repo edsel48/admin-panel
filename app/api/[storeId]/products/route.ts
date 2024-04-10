@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
+import { Size } from '@prisma/client';
+import { Option } from '@/components/ui/multi-select-helper';
 
 export async function POST(
   req: Request,
@@ -12,11 +14,13 @@ export async function POST(
 
     const body = await req.json();
 
+    console.log(body);
+
     const {
       name,
       price,
       categoryId,
-      sizeId,
+      sizes,
       supplierId,
       images,
       isFeatured,
@@ -43,8 +47,8 @@ export async function POST(
       return new NextResponse('Category id is required', { status: 400 });
     }
 
-    if (!sizeId) {
-      return new NextResponse('Size id is required', { status: 400 });
+    if (!sizes) {
+      return new NextResponse('Sizes is required', { status: 400 });
     }
 
     if (!supplierId) {
@@ -74,7 +78,17 @@ export async function POST(
         isArchived,
         categoryId,
         supplierId,
-        sizeId,
+        sizes: {
+          create: sizes.map((item: Option) => {
+            return {
+              size: {
+                connect: {
+                  id: item.value,
+                },
+              },
+            };
+          }),
+        },
         storeId: params.storeId,
         images: {
           createMany: {
@@ -109,14 +123,13 @@ export async function GET(
       where: {
         storeId: params.storeId,
         categoryId,
-        sizeId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
       },
       include: {
         images: true,
         category: true,
-        size: true,
+        sizes: true,
         supplier: true,
       },
       orderBy: {

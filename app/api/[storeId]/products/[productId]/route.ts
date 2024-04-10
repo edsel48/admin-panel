@@ -19,7 +19,11 @@ export async function GET(
       include: {
         images: true,
         category: true,
-        size: true,
+        sizes: {
+          include: {
+            size: true,
+          },
+        },
       },
     });
 
@@ -83,11 +87,13 @@ export async function PATCH(
       price,
       categoryId,
       images,
-      sizeId,
+      sizes,
       isFeatured,
       supplierId,
       isArchived,
     } = body;
+
+    console.log(sizes);
 
     if (!userId) {
       return new NextResponse('Unauthenticated', { status: 403 });
@@ -113,8 +119,8 @@ export async function PATCH(
       return new NextResponse('Category id is required', { status: 400 });
     }
 
-    if (!sizeId) {
-      return new NextResponse('Size id is required', { status: 400 });
+    if (!sizes) {
+      return new NextResponse('Sizes is required', { status: 400 });
     }
 
     if (!supplierId) {
@@ -132,6 +138,31 @@ export async function PATCH(
       return new NextResponse('Unauthorized', { status: 405 });
     }
 
+    const nowProduct = await prismadb.product.findUnique({
+      where: {
+        id: params.productId,
+      },
+      include: {
+        sizes: {
+          include: {
+            size: true,
+          },
+        },
+      },
+    });
+
+    if (nowProduct != null) {
+      // process the data from sizes
+      console.log(nowProduct.sizes);
+      console.log(sizes);
+
+      let disconnect = nowProduct.sizes
+        .map((size) => size.sizeId)
+        .filter((x) => !sizes.map((s) => s.value).includes(x));
+
+      console.log({ disconnect });
+    }
+
     await prismadb.product.update({
       where: {
         id: params.productId,
@@ -140,7 +171,6 @@ export async function PATCH(
         name,
         price,
         categoryId,
-        sizeId,
         supplierId,
         images: {
           deleteMany: {},

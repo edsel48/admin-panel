@@ -52,14 +52,14 @@ model Category {
 }
 
 model Size {
-  id        String    @id @default(uuid())
+  id        String           @id @default(uuid())
   storeId   String
   name      String
   value     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  store     Store            @relation("StoreToSize", fields: [storeId], references: [id])
   products  SizesOnProduct[]
-  store     Store     @relation("StoreToSize", fields: [storeId], references: [id])
 
   @@index([storeId])
 }
@@ -74,55 +74,55 @@ model Supplier {
   store     Store     @relation("StoreToSupplier", fields: [storeId], references: [id])
 }
 
-
 model Member {
-  id String @id @default(uuid())
-  name String
-  limit Decimal
-  username String
-  password String
-  status Boolean @default(true)
-  tier String @default("BRONZE")
+  id        String   @id @default(uuid())
+  name      String
+  limit     Decimal
+  status    Boolean  @default(true)
+  tier      String   @default("BRONZE")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  password  String
+  username  String
+  orders    Order[]
 }
 
 model Product {
-  id         String      @id @default(uuid())
-  storeId    String
-  categoryId String
-  name       String
-  price      Decimal
-  isFeatured Boolean     @default(false)
-  isArchived Boolean     @default(false)
-  sizeId     String
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  supplierId String?
-  images     Image[]
-  orderItems OrderItem[]
-  category   Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
-  sizes SizesOnProduct[]
-  store      Store       @relation("StoreToProduct", fields: [storeId], references: [id])
-  supplier   Supplier?   @relation(fields: [supplierId], references: [id])
-  promo      Promo?
+  id            String           @id @default(uuid())
+  storeId       String
+  categoryId    String
+  name          String
+  price         Decimal
+  isFeatured    Boolean          @default(false)
+  isArchived    Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  supplierId    String
+  priceBronze   Decimal          @default(0)
+  priceGold     Decimal          @default(0)
+  pricePlatinum Decimal          @default(0)
+  priceSilver   Decimal          @default(0)
+  images        Image[]
+  orderItems    OrderItem[]
+  category      Category         @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  store         Store            @relation("StoreToProduct", fields: [storeId], references: [id])
+  supplier      Supplier       @relation(fields: [supplierId], references: [id])
+  promo         Promo?
+  sizes         SizesOnProduct[]
 
   @@index([storeId])
   @@index([supplierId])
   @@index([categoryId])
-  @@index([sizeId])
 }
 
-model SizesOnProduct{
-  product Product @relation(fields: [productId], references: [id])
+model SizesOnProduct {
+  id String @id @default(uuid())
   productId String
-  size Size @relation(fields: [sizeId], references: [id])
-  sizeId String
+  sizeId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@id([productId, sizeId])
-
+  product   Product  @relation(fields: [productId], references: [id])
+  size      Size     @relation(fields: [sizeId], references: [id])
 }
 
 model Promo {
@@ -165,6 +165,8 @@ model Order {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   total      BigInt      @default(0)
+  memberId   String?
+  member     Member?     @relation(fields: [memberId], references: [id])
   store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItems OrderItem[]
 
