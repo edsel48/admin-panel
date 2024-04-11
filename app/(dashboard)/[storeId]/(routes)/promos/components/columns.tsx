@@ -14,7 +14,8 @@ export type PromoColumn = {
   maximumDiscountAmount: string;
   minimumAmountBought: string;
   useCount: string;
-  validUntil: string;
+  startDate: string;
+  endDate: string;
   createdAt: string;
   isArchived: boolean;
 };
@@ -46,8 +47,12 @@ export const columns: ColumnDef<PromoColumn>[] = [
     header: 'Use Count',
   },
   {
-    accessorKey: 'validUntil',
-    header: 'Valid Until',
+    accessorKey: 'startDate',
+    header: 'Starts From',
+  },
+  {
+    accessorKey: 'endDate',
+    header: 'Ends In',
   },
   {
     accessorKey: 'createdAt',

@@ -37,14 +37,15 @@ export async function PATCH(
 
     const {
       name,
-      productId,
       discount,
-      maximalUseCount,
-      useCount,
+      productId,
+      isArchived,
       maximumDiscountAmount,
       minimumAmountBought,
-      validUntil,
-      isArchived,
+      startDate,
+      endDate,
+      maximalUseCount,
+      useCount,
     } = body;
 
     if (!userId) return new NextResponse('Unauthenticated', { status: 401 });
@@ -82,9 +83,10 @@ export async function PATCH(
         isArchived,
         maximumDiscountAmount,
         minimumAmountBought,
-        validUntil,
+        startDate,
+        endDate,
         maximalUseCount,
-        useCount
+        useCount,
       },
     });
 

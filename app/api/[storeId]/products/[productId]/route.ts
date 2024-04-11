@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
+import { Option } from '@/components/ui/multi-select-helper';
 
 export async function GET(
   req: Request,
@@ -93,8 +94,6 @@ export async function PATCH(
       isArchived,
     } = body;
 
-    console.log(sizes);
-
     if (!userId) {
       return new NextResponse('Unauthenticated', { status: 403 });
     }
@@ -138,7 +137,7 @@ export async function PATCH(
       return new NextResponse('Unauthorized', { status: 405 });
     }
 
-    const nowProduct = await prismadb.product.findUnique({
+    const nowProduct = (await prismadb.product.findUnique({
       where: {
         id: params.productId,
       },
@@ -149,19 +148,13 @@ export async function PATCH(
           },
         },
       },
+    })) ?? {
+      sizes: [],
+    };
+
+    let disconnect = nowProduct.sizes.filter((item) => {
+      return sizes.map((size: Option) => size.value).includes(item.sizeId);
     });
-
-    if (nowProduct != null) {
-      // process the data from sizes
-      console.log(nowProduct.sizes);
-      console.log(sizes);
-
-      let disconnect = nowProduct.sizes
-        .map((size) => size.sizeId)
-        .filter((x) => !sizes.map((s) => s.value).includes(x));
-
-      console.log({ disconnect });
-    }
 
     await prismadb.product.update({
       where: {
@@ -172,6 +165,9 @@ export async function PATCH(
         price,
         categoryId,
         supplierId,
+        sizes: {
+          deleteMany: {},
+        },
         images: {
           deleteMany: {},
         },
@@ -189,6 +185,17 @@ export async function PATCH(
           createMany: {
             data: [...images.map((image: { url: string }) => image)],
           },
+        },
+        sizes: {
+          create: sizes.map((item: Option) => {
+            return {
+              size: {
+                connect: {
+                  id: item.value,
+                },
+              },
+            };
+          }),
         },
       },
     });

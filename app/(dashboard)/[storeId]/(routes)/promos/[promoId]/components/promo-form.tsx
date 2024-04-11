@@ -52,7 +52,8 @@ const formSchema = z.object({
   maximumDiscountAmount: z.coerce.number().min(1),
   minimumAmountBought: z.coerce.number().min(1),
   maximalUseCount: z.coerce.number().min(1),
-  validUntil: z.date(),
+  startDate: z.date(),
+  endDate: z.date(),
   isArchived: z.boolean().default(false).optional(),
 });
 
@@ -98,10 +99,15 @@ export const PromoForm: React.FC<PromoFormProps> = ({
           minimumAmountBought: parseFloat(
             String(initialData?.minimumAmountBought),
           ),
-          validUntil: parse(
-            format(initialData?.validUntil, 'dd MMM yyyy'),
+          startDate: parse(
+            format(initialData?.startDate, 'dd MMM yyyy'),
             'dd MMM yyyy',
-            initialData?.validUntil,
+            initialData?.startDate,
+          ),
+          endDate: parse(
+            format(initialData?.endDate, 'dd MMM yyyy'),
+            'dd MMM yyyy',
+            initialData?.endDate,
           ),
         }
       : {
@@ -111,11 +117,12 @@ export const PromoForm: React.FC<PromoFormProps> = ({
           maximalUseCount: 0,
           maximumDiscountAmount: 0,
           minimumAmountBought: 0,
-          validUntil: parse(
+          startDate: parse(
             format(Date(), 'dd MMM yyyy'),
             'dd MMM yyyy',
             Date(),
           ),
+          endDate: parse(format(Date(), 'dd MMM yyyy'), 'dd MMM yyyy', Date()),
         },
   });
 
@@ -321,7 +328,47 @@ export const PromoForm: React.FC<PromoFormProps> = ({
 
             <FormField
               control={form.control}
-              name="validUntil"
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Starts From</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'w-[240px] pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, 'dd MMM yyyy')
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="endDate"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Valid Until</FormLabel>

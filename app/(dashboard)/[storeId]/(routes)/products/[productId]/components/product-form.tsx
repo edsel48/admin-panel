@@ -53,7 +53,7 @@ const formSchema = z.object({
   name: z.string().min(1),
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
-  sizes: z.array(optionSchema).min(1),
+  sizes: z.array(optionSchema),
   supplierId: z.string().min(1),
   categoryId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
@@ -92,11 +92,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const toastMessage = initialData ? 'Product updated!' : 'Product created!';
   const action = initialData ? 'Save changes' : 'Create';
 
-  const filteredOption = initialData
-    ? option.filter(
-        (o) => !initialData.sizes.map((d) => d.sizeId).includes(o.value),
-      )
-    : option;
+  // const filteredOption = initialData
+  //   ? option.filter(
+  //       (o) => !initialData.sizes.map((d) => d.sizeId).includes(o.value),
+  //     )
+  //   : option;
+
+  const filteredOption = option;
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);

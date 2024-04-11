@@ -136,7 +136,8 @@ model Promo {
   isArchived            Boolean  @default(false)
   maximumDiscountAmount Decimal?
   minimumAmountBought   Decimal?
-  validUntil            DateTime @default(now())
+  startDate            DateTime @default(now())
+  endDate               DateTime @default(now())
   maximalUseCount       Decimal?
   useCount              Decimal?
   product               Product  @relation(fields: [productId], references: [id])
