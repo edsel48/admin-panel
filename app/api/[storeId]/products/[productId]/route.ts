@@ -25,6 +25,11 @@ export async function GET(
             size: true,
           },
         },
+        suppliers: {
+          include: {
+            supplier: true,
+          },
+        },
       },
     });
 
@@ -90,7 +95,7 @@ export async function PATCH(
       images,
       sizes,
       isFeatured,
-      supplierId,
+      suppliers,
       isArchived,
     } = body;
 
@@ -122,8 +127,8 @@ export async function PATCH(
       return new NextResponse('Sizes is required', { status: 400 });
     }
 
-    if (!supplierId) {
-      return new NextResponse('Supplier id is required', { status: 400 });
+    if (!suppliers) {
+      return new NextResponse('Suppliers is required', { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -147,14 +152,15 @@ export async function PATCH(
             size: true,
           },
         },
+        suppliers: {
+          include: {
+            supplier: true,
+          },
+        },
       },
     })) ?? {
       sizes: [],
     };
-
-    let disconnect = nowProduct.sizes.filter((item) => {
-      return sizes.map((size: Option) => size.value).includes(item.sizeId);
-    });
 
     await prismadb.product.update({
       where: {
@@ -164,7 +170,9 @@ export async function PATCH(
         name,
         price,
         categoryId,
-        supplierId,
+        suppliers: {
+          deleteMany: {},
+        },
         sizes: {
           deleteMany: {},
         },
@@ -190,6 +198,17 @@ export async function PATCH(
           create: sizes.map((item: Option) => {
             return {
               size: {
+                connect: {
+                  id: item.value,
+                },
+              },
+            };
+          }),
+        },
+        suppliers: {
+          create: suppliers.map((item: Option) => {
+            return {
+              supplier: {
                 connect: {
                   id: item.value,
                 },

@@ -21,7 +21,7 @@ export async function POST(
       price,
       categoryId,
       sizes,
-      supplierId,
+      suppliers,
       images,
       isFeatured,
       isArchived,
@@ -51,7 +51,7 @@ export async function POST(
       return new NextResponse('Sizes is required', { status: 400 });
     }
 
-    if (!supplierId) {
+    if (!suppliers) {
       return new NextResponse('Supplier id is required', { status: 400 });
     }
 
@@ -77,7 +77,17 @@ export async function POST(
         isFeatured,
         isArchived,
         categoryId,
-        supplierId,
+        suppliers: {
+          create: suppliers.map((item: Option) => {
+            return {
+              supplier: {
+                connect: {
+                  id: item.value,
+                },
+              },
+            };
+          }),
+        },
         sizes: {
           create: sizes.map((item: Option) => {
             return {
@@ -130,7 +140,7 @@ export async function GET(
         images: true,
         category: true,
         sizes: true,
-        supplier: true,
+        suppliers: true,
       },
       orderBy: {
         createdAt: 'desc',

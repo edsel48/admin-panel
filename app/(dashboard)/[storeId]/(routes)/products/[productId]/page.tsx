@@ -18,6 +18,11 @@ const ProductPage = async ({
           size: true,
         },
       },
+      suppliers: {
+        include: {
+          supplier: true,
+        },
+      },
     },
   });
 
@@ -33,7 +38,7 @@ const ProductPage = async ({
     },
   });
 
-  const option: Option[] = sizes.map((size) => {
+  const sizesOption: Option[] = sizes.map((size) => {
     return {
       value: size.id,
       label: size.name,
@@ -46,15 +51,23 @@ const ProductPage = async ({
     },
   });
 
+  const suppliersOption: Option[] = suppliers.map((sp) => {
+    return {
+      value: sp.id,
+      label: sp.name,
+    };
+  });
+
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <ProductForm
           categories={categories}
-          suppliers={suppliers}
           sizesData={sizes}
+          suppliersData={suppliers}
+          suppliersOption={suppliersOption}
           initialData={product}
-          option={option}
+          sizesOption={sizesOption}
         />
       </div>
     </div>

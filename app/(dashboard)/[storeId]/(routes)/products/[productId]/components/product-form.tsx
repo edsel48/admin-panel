@@ -11,6 +11,7 @@ import {
   Size,
   Supplier,
   SizesOnProduct,
+  SupplierOnProduct,
 } from '@prisma/client';
 import { Trash } from 'lucide-react';
 import React, { useState } from 'react';
@@ -54,7 +55,7 @@ const formSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   sizes: z.array(optionSchema),
-  supplierId: z.string().min(1),
+  suppliers: z.array(optionSchema),
   categoryId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
@@ -67,20 +68,23 @@ interface ProductFormProps {
     | (Product & {
         images: Image[];
         sizes: SizesOnProduct[];
+        suppliers: SupplierOnProduct[];
       })
     | null;
   categories: Category[];
   sizesData: Size[];
-  suppliers: Supplier[];
-  option: Option[];
+  suppliersData: Supplier[];
+  suppliersOption: Option[];
+  sizesOption: Option[];
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   categories,
   sizesData,
-  suppliers,
-  option,
+  suppliersData,
+  suppliersOption,
+  sizesOption,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -91,14 +95,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const description = initialData ? 'Edit a product' : 'Add a new product';
   const toastMessage = initialData ? 'Product updated!' : 'Product created!';
   const action = initialData ? 'Save changes' : 'Create';
-
-  // const filteredOption = initialData
-  //   ? option.filter(
-  //       (o) => !initialData.sizes.map((d) => d.sizeId).includes(o.value),
-  //     )
-  //   : option;
-
-  const filteredOption = option;
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -120,6 +116,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               label: sizesData[idx].name ?? '',
             };
           }),
+
+          suppliers: initialData.suppliers.map((sp) => {
+            let lookup = suppliersData.map((data) => data.id);
+            let now = sp.supplierId;
+
+            let idx = lookup.indexOf(now);
+
+            return {
+              value: sp.supplierId,
+              label: suppliersData[idx].name ?? '',
+            };
+          }),
         }
       : {
           name: '',
@@ -127,7 +135,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           price: 0,
           sizes: [],
           categoryId: '',
-          supplierId: '',
+          suppliers: [],
           isFeatured: false,
           isArchived: false,
         },
@@ -259,8 +267,32 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <MultipleSelector
                       value={field.value}
                       onChange={field.onChange}
-                      defaultOptions={filteredOption}
-                      placeholder="Select sizes for this"
+                      defaultOptions={sizesOption}
+                      placeholder="Select sizes for this product"
+                      emptyIndicator={
+                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                          no results found.
+                        </p>
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="suppliers"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Suppliers</FormLabel>
+                  <FormControl>
+                    <MultipleSelector
+                      value={field.value}
+                      onChange={field.onChange}
+                      defaultOptions={suppliersOption}
+                      placeholder="Select suppliers for this product"
                       emptyIndicator={
                         <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                           no results found.
@@ -316,39 +348,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       {categories.map((size) => (
                         <SelectItem key={size.id} value={size.id}>
                           {size.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="supplierId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Supplier</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a supplier"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {suppliers.map((supplier) => (
-                        <SelectItem key={supplier.id} value={supplier.id}>
-                          {supplier.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

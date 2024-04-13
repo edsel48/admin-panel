@@ -17,7 +17,12 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
           size: true,
         },
       },
-      supplier: true,
+      suppliers: {
+        include: {
+          supplier: true,
+          product: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
@@ -31,8 +36,8 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     isArchived: item.isArchived,
     price: formatter.format(item.price.toNumber()),
     category: item.category.name,
-    supplier: item.supplier == null ? '-' : item.supplier.name,
-    size: item.sizes.map((data) => data.size.name).join('\n'),
+    supplier: item.suppliers.map((data) => data.supplier.name).join(', '),
+    size: item.sizes.map((data) => data.size.name).join(', '),
     createdAt: format(item.createdAt, 'dd MMMM yyyy'),
   }));
 

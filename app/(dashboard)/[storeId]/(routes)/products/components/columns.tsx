@@ -38,11 +38,11 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     accessorKey: 'supplier',
-    header: 'Supplier',
+    header: 'Suppliers',
   },
   {
     accessorKey: 'size',
-    header: 'Size',
+    header: 'Sizes',
   },
   {
     accessorKey: 'createdAt',
