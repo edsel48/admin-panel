@@ -3,21 +3,31 @@ import { SupplierClient } from './components/client';
 import { SupplierColumn } from './components/columns';
 import { format } from 'date-fns';
 
-const SizesPage = async ({ params }: { params: { storeId: string } }) => {
+const SupplierPage = async ({ params }: { params: { storeId: string } }) => {
   const suppliers = await prismadb.supplier.findMany({
     where: {
       storeId: params.storeId,
+    },
+    include: {
+      product: {
+        include: {
+          product: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
     },
   });
 
-  const formattedColumn: SupplierColumn[] = suppliers.map((item) => ({
-    id: item.id,
-    name: item.name,
-    createdAt: format(item.createdAt, 'dd MMMM yyyy'),
-  }));
+  const formattedColumn: SupplierColumn[] = suppliers.map((item) => {
+    return {
+      id: item.id,
+      name: item.name,
+      createdAt: format(item.createdAt, 'dd MMMM yyyy'),
+      products: item.product.map((p) => p.product),
+    };
+  });
 
   return (
     <div className="flex-col">
@@ -28,4 +38,4 @@ const SizesPage = async ({ params }: { params: { storeId: string } }) => {
   );
 };
 
-export default SizesPage;
+export default SupplierPage;

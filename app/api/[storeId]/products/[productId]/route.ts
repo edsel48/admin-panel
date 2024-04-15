@@ -91,6 +91,9 @@ export async function PATCH(
     const {
       name,
       price,
+      priceSilver,
+      priceGold,
+      pricePlatinum,
       categoryId,
       images,
       sizes,
@@ -98,6 +101,10 @@ export async function PATCH(
       suppliers,
       isArchived,
     } = body;
+
+    console.log({
+      priceSilver, priceGold, pricePlatinum
+    })
 
     if (!userId) {
       return new NextResponse('Unauthenticated', { status: 403 });
@@ -169,6 +176,9 @@ export async function PATCH(
       data: {
         name,
         price,
+        priceSilver,
+        priceGold,
+        pricePlatinum,
         categoryId,
         suppliers: {
           deleteMany: {},

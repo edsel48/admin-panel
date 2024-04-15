@@ -79,7 +79,7 @@ model Member {
   name      String
   limit     Decimal
   status    Boolean  @default(true)
-  tier      String   @default("BRONZE")
+  tier      String   @default("SILVER")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   password  String
@@ -98,7 +98,6 @@ model Product {
   isArchived    Boolean             @default(false)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
-  priceBronze   Decimal             @default(0)
   priceGold     Decimal             @default(0)
   pricePlatinum Decimal             @default(0)
   priceSilver   Decimal             @default(0)

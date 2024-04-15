@@ -19,6 +19,9 @@ export async function POST(
     const {
       name,
       price,
+      priceSilver,
+      priceGold,
+      pricePlatinum,
       categoryId,
       sizes,
       suppliers,
@@ -74,6 +77,9 @@ export async function POST(
       data: {
         name,
         price,
+        priceSilver,
+        priceGold,
+        pricePlatinum,
         isFeatured,
         isArchived,
         categoryId,
@@ -139,15 +145,34 @@ export async function GET(
       include: {
         images: true,
         category: true,
-        sizes: true,
-        suppliers: true,
+        sizes: {
+          include: {
+            size: true,
+          },
+        },
+        suppliers: {
+          include: {
+            supplier: true,
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    return NextResponse.json(products);
+    let filtered = products;
+
+    if (sizeId) {
+      filtered = products.filter((p) => {
+        let data = p.sizes;
+
+        let arr = data.map((d) => d.sizeId);
+        return arr.includes(sizeId);
+      });
+    }
+
+    return NextResponse.json(filtered);
   } catch (error) {
     console.log('[PRODUCTS_GET]', error);
     return new NextResponse('Internal error', { status: 500 });

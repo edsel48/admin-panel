@@ -4,9 +4,12 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { CellAction } from './cell-action';
 
+import { Product } from '@prisma/client';
+
 export type SupplierColumn = {
   id: string;
   name: string;
+  products: Product[];
   createdAt: string;
 };
 

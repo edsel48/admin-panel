@@ -17,9 +17,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { DataTable } from '@/components/ui/data-table';
 
 import { SupplierColumn } from './columns';
 import { Button } from '@/components/ui/button';
+import { ColumnDef } from '@tanstack/react-table';
 import { Copy, Edit, MoreHorizontal, Trash, Box } from 'lucide-react';
 
 import { toast } from 'react-hot-toast';
@@ -27,9 +29,19 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { AlertModal } from '@/components/modals/alert-modal';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Product } from '@prisma/client';
+import { formatter } from '@/lib/utils';
+import { format } from 'date-fns';
 
 interface CellActionProps {
   data: SupplierColumn;
+}
+
+interface ProductOnSupplierColumn {
+  id: string;
+  name: string;
+  price: string;
+  createdAt: string;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -41,6 +53,28 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
     toast.success('Supplier ID copied to the clipboard.');
   };
+
+  const productOnSupplierColumn: ColumnDef<ProductOnSupplierColumn>[] = [
+    {
+      accessorKey: 'name',
+      header: 'Name',
+    },
+    {
+      accessorKey: 'price',
+      header: 'Price',
+    },
+    {
+      accessorKey: 'createdAt',
+      header: 'Date',
+    },
+  ];
+
+  const formattedProductOnSupplier = data.products.map((item) => ({
+    id: item.id,
+    name: item.name,
+    price: formatter.format(Number(item.price)),
+    createdAt: format(item.createdAt, 'dd MMMM yyyy'),
+  }));
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -111,48 +145,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Products From {data.name}</DialogTitle>
-              <DialogDescription>
-                <ScrollArea className="h-[200px] w-full">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Voluptate quibusdam fugiat delectus accusantium, dolor
-                  perspiciatis aspernatur voluptas expedita cupiditate eos
-                  aperiam excepturi perferendis, tempore numquam repellendus
-                  similique minima tenetur fugit. Inventore voluptas minima
-                  cupiditate voluptatibus, eligendi exercitationem dignissimos,
-                  sequi aspernatur voluptate architecto, culpa dicta. Nihil
-                  alias aliquid sed magni harum distinctio asperiores, sint,
-                  sapiente earum impedit, consequatur dolorum. Numquam, nulla?
-                  Blanditiis non expedita quidem alias ut provident voluptate!
-                  Amet exercitationem fuga dolor expedita est, iure modi
-                  recusandae consequatur tempora quaerat corporis nihil aliquam
-                  sit nostrum reprehenderit animi quae voluptatem enim?
-                  Accusamus expedita autem molestiae rem, mollitia fuga debitis
-                  accusantium! Odit qui ratione repellendus quos distinctio
-                  voluptas consequatur, numquam neque voluptatem ipsa, in
-                  molestias voluptatum eum officia molestiae! Optio, nam
-                  repudiandae! Non eaque libero earum tenetur alias adipisci
-                  ipsam! Impedit similique dolores nam quod numquam! Excepturi
-                  sequi ad soluta recusandae, et labore, eius esse aperiam omnis
-                  perferendis culpa! Aliquam, dolor iusto. Fuga iusto cumque
-                  expedita obcaecati facere, cupiditate officia praesentium ipsa
-                  minus illo sapiente. Voluptatem eius illo pariatur maiores
-                  animi suscipit nam optio exercitationem culpa perferendis.
-                  Animi nemo vel reprehenderit quibusdam? Eum laudantium sit,
-                  vitae modi quaerat voluptatem animi, eligendi iusto dolores,
-                  eius similique aliquid minus! Nostrum, quod? Laborum
-                  repudiandae officiis molestiae itaque ipsa, porro voluptatum
-                  id, dignissimos, quidem inventore quis. Vero sapiente nam, non
-                  neque omnis animi aliquid ratione eaque ipsam quisquam ad
-                  natus doloremque commodi nemo recusandae dolores nulla tenetur
-                  molestiae provident ex? Facere quisquam temporibus sunt
-                  pariatur impedit! Maiores nulla veritatis vel molestiae
-                  eveniet, assumenda corrupti ab esse illum quod hic repudiandae
-                  modi cum iure totam accusantium quae dolore debitis illo
-                  harum. Minus neque excepturi laboriosam ullam rerum! Veniam,
-                  natus vel possimus eveniet fugiat provident dolore placeat ex
-                  modi sit officia ullam sunt eius enim maxime cumque ducimus
-                  sequi magni asperiores, error consequuntur similique magnam
-                  itaque. Error, vero?
+              <DialogDescription className="text-black">
+                <ScrollArea className="h-[500px] w-full p-2">
+                  <DataTable
+                    columns={productOnSupplierColumn}
+                    data={formattedProductOnSupplier}
+                    searchKey="name"
+                  />
                 </ScrollArea>
               </DialogDescription>
             </DialogHeader>

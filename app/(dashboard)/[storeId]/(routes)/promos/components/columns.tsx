@@ -44,7 +44,7 @@ export const columns: ColumnDef<PromoColumn>[] = [
   },
   {
     accessorKey: 'useCount',
-    header: 'Use Count',
+    header: 'Limit',
   },
   {
     accessorKey: 'startDate',
