@@ -90,10 +90,6 @@ export async function PATCH(
 
     const {
       name,
-      price,
-      priceSilver,
-      priceGold,
-      pricePlatinum,
       categoryId,
       images,
       sizes,
@@ -101,10 +97,6 @@ export async function PATCH(
       suppliers,
       isArchived,
     } = body;
-
-    console.log({
-      priceSilver, priceGold, pricePlatinum
-    })
 
     if (!userId) {
       return new NextResponse('Unauthenticated', { status: 403 });
@@ -120,10 +112,6 @@ export async function PATCH(
 
     if (!images || !images.length) {
       return new NextResponse('Images are required', { status: 400 });
-    }
-
-    if (!price) {
-      return new NextResponse('Price is required', { status: 400 });
     }
 
     if (!categoryId) {
@@ -169,21 +157,40 @@ export async function PATCH(
       sizes: [],
     };
 
+    // disconnect
+    let input: string[] = sizes.map((s) => s.value); // ids of input
+    let now: string[] = nowProduct.sizes.map((s) => s.sizeId); // ids of product now
+
+    // disconnect condition
+    // when ids of product now is not in input
+    const disconnect = now.filter((s) => !input.includes(s));
+
+    const fullDisconnect = nowProduct.sizes.filter((now) => {
+      let input = sizes.map((s) => s.value);
+
+      return !input.includes(now.sizeId);
+    });
+
+    await prismadb.sizesOnProduct.deleteMany({
+      where: {
+        id: {
+          in: fullDisconnect.map((e) => e.id),
+        },
+      },
+    });
+
+    // connect condition
+    // when ids of input is not in product now data
+    const connect = input.filter((s) => !now.includes(s));
+
     await prismadb.product.update({
       where: {
         id: params.productId,
       },
       data: {
         name,
-        price,
-        priceSilver,
-        priceGold,
-        pricePlatinum,
         categoryId,
         suppliers: {
-          deleteMany: {},
-        },
-        sizes: {
           deleteMany: {},
         },
         images: {
@@ -205,11 +212,11 @@ export async function PATCH(
           },
         },
         sizes: {
-          create: sizes.map((item: Option) => {
+          create: connect.map((item) => {
             return {
               size: {
                 connect: {
-                  id: item.value,
+                  id: item,
                 },
               },
             };

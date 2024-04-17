@@ -53,10 +53,6 @@ const optionSchema = z.object({
 const formSchema = z.object({
   name: z.string().min(1),
   images: z.object({ url: z.string() }).array(),
-  price: z.coerce.number().min(1),
-  priceSilver: z.coerce.number().min(1),
-  priceGold: z.coerce.number().min(1),
-  pricePlatinum: z.coerce.number().min(1),
   sizes: z.array(optionSchema),
   suppliers: z.array(optionSchema),
   categoryId: z.string().min(1),
@@ -108,10 +104,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     defaultValues: initialData
       ? {
           ...initialData,
-          price: parseFloat(String(initialData?.price)),
-          priceSilver: parseFloat(String(initialData?.priceSilver)),
-          priceGold: parseFloat(String(initialData?.priceGold)),
-          pricePlatinum: parseFloat(String(initialData?.pricePlatinum)),
           sizes: initialData.sizes.map((size) => {
             let lookup = sizesData.map((data) => data.id);
             let now = size.sizeId;
@@ -139,10 +131,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       : {
           name: '',
           images: [],
-          price: 0,
-          priceSilver: 0,
-          priceGold: 0,
-          pricePlatinum: 0,
           sizes: [],
           categoryId: '',
           suppliers: [],
@@ -165,7 +153,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       }
 
       router.refresh();
-      router.push(`/${params.storeId}/products`);
+      router.push(`/${params.storeId}/products/${params.productId}/prices`);
 
       toast.success(toastMessage);
     } catch (error) {
@@ -308,82 +296,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           no results found.
                         </p>
                       }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      type="number"
-                      placeholder="9.99"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="priceSilver"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price for Silver Member</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      type="number"
-                      placeholder="9.99"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="priceGold"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price for Gold Member</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      type="number"
-                      placeholder="9.99"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="pricePlatinum"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price for Platinum Member</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      type="number"
-                      placeholder="9.99"
-                      {...field}
                     />
                   </FormControl>
                   <FormMessage />

@@ -93,14 +93,10 @@ model Product {
   storeId       String
   categoryId    String
   name          String
-  price         Decimal
   isFeatured    Boolean             @default(false)
-  isArchived    Boolean             @default(false)
+  isArchived    Boolean             @default(true)
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
-  priceGold     Decimal             @default(0)
-  pricePlatinum Decimal             @default(0)
-  priceSilver   Decimal             @default(0)
   images        Image[]
   orderItems    OrderItem[]
   category      Category            @relation("CategoryToProduct", fields: [categoryId], references: [id])
@@ -129,6 +125,10 @@ model SizesOnProduct {
   id        String   @id @default(uuid())
   product   Product  @relation(fields: [productId], references: [id])
   size      Size     @relation(fields: [sizeId], references: [id])
+  price         Decimal             @default(0)
+  priceGold     Decimal             @default(0)
+  pricePlatinum Decimal             @default(0)
+  priceSilver   Decimal             @default(0)
 }
 
 model Promo {
