@@ -158,6 +158,7 @@ export async function PATCH(
     };
 
     // disconnect
+    //@ts-ignore
     let input: string[] = sizes.map((s) => s.value); // ids of input
     let now: string[] = nowProduct.sizes.map((s) => s.sizeId); // ids of product now
 
@@ -166,6 +167,7 @@ export async function PATCH(
     const disconnect = now.filter((s) => !input.includes(s));
 
     const fullDisconnect = nowProduct.sizes.filter((now) => {
+      //@ts-ignore
       let input = sizes.map((s) => s.value);
 
       return !input.includes(now.sizeId);

@@ -38,9 +38,7 @@ interface CellActionProps {
 }
 
 interface ProductOnSupplierColumn {
-  id: string;
   name: string;
-  price: string;
   createdAt: string;
 }
 
@@ -60,10 +58,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       header: 'Name',
     },
     {
-      accessorKey: 'price',
-      header: 'Price',
-    },
-    {
       accessorKey: 'createdAt',
       header: 'Date',
     },
@@ -72,7 +66,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const formattedProductOnSupplier = data.products.map((item) => ({
     id: item.id,
     name: item.name,
-    price: formatter.format(Number(item.price)),
     createdAt: format(item.createdAt, 'dd MMMM yyyy'),
   }));
 

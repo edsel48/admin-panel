@@ -35,6 +35,7 @@ const formSchema = z.object({
   priceSilver: z.coerce.number().min(1),
   priceGold: z.coerce.number().min(1),
   pricePlatinum: z.coerce.number().min(1),
+  stock: z.coerce.number().min(1),
 });
 
 export interface SizesPrices {
@@ -44,6 +45,7 @@ export interface SizesPrices {
   priceSilver: number;
   priceGold: number;
   pricePlatinum: number;
+  stock: number;
 }
 
 type PriceFormValues = z.infer<typeof formSchema>;
@@ -53,7 +55,6 @@ interface PriceFormProps {
 }
 
 export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
-  console.log(`calling ${initialData.id}`);
   const params = useParams();
   const router = useRouter();
 
@@ -68,6 +69,7 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
       priceSilver: 0,
       priceGold: 0,
       pricePlatinum: 0,
+      stock: 0,
     },
   });
 
@@ -97,10 +99,10 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-8"
         >
+          {/* @ts-ignore */}
           <Heading title={initialData.name} description={''} />
-
           <Separator />
-          <div className=" grid grid-cols-5 items-center gap-5">
+          <div className=" grid grid-cols-6 items-center gap-5">
             <FormField
               control={form.control}
               name="price"
@@ -111,7 +113,7 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
                     <Input
                       disabled={loading}
                       type="number"
-                      placeholder="9.99"
+                      placeholder="1000"
                       {...field}
                     />
                   </FormControl>
@@ -130,7 +132,7 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
                     <Input
                       disabled={loading}
                       type="number"
-                      placeholder="9.99"
+                      placeholder="1000"
                       {...field}
                     />
                   </FormControl>
@@ -149,7 +151,7 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
                     <Input
                       disabled={loading}
                       type="number"
-                      placeholder="9.99"
+                      placeholder="1000"
                       {...field}
                     />
                   </FormControl>
@@ -168,7 +170,26 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
                     <Input
                       disabled={loading}
                       type="number"
-                      placeholder="9.99"
+                      placeholder="1000"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="stock"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Stock</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      type="number"
+                      placeholder="1"
                       {...field}
                     />
                   </FormControl>

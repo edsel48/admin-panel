@@ -11,7 +11,11 @@ const SupplierPage = async ({ params }: { params: { storeId: string } }) => {
     include: {
       product: {
         include: {
-          product: true,
+          product: {
+            include: {
+              sizes: true,
+            },
+          },
         },
       },
     },

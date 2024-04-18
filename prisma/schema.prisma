@@ -72,6 +72,7 @@ model Supplier {
   updatedAt DateTime            @updatedAt
   store     Store               @relation("StoreToSupplier", fields: [storeId], references: [id])
   product   SupplierOnProduct[]
+  transactions SupplierTransaction[] @relation("SupplierToTransaction")
 }
 
 model Member {
@@ -99,6 +100,7 @@ model Product {
   updatedAt     DateTime            @updatedAt
   images        Image[]
   orderItems    OrderItem[]
+  supplierTransactionItems SupplierTransactionItem[]
   category      Category            @relation("CategoryToProduct", fields: [categoryId], references: [id])
   store         Store               @relation("StoreToProduct", fields: [storeId], references: [id])
   promo         Promo?
@@ -129,6 +131,9 @@ model SizesOnProduct {
   priceGold     Decimal             @default(0)
   pricePlatinum Decimal             @default(0)
   priceSilver   Decimal             @default(0)
+  stock         Decimal             @default(0)
+
+  supplierTransactionItems SupplierTransactionItem[]
 }
 
 model Promo {
@@ -190,5 +195,40 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
 
   @@index([orderId])
+  @@index([productId])
+}
+
+model SupplierTransaction {
+  id String @id @default(uuid())
+
+  supplierId String
+  supplier Supplier @relation("SupplierToTransaction", fields: [supplierId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status String
+  transactionItems SupplierTransactionItem[]
+
+  grandTotal Decimal
+
+  @@index([supplierId])
+}
+
+model SupplierTransactionItem {
+  id String @id @default(uuid())
+  supplierTransactionId String
+  supplierTransaction SupplierTransaction @relation(fields: [supplierTransactionId], references: [id])
+
+  productId String
+  product Product @relation(fields: [productId], references: [id])
+
+  sizeOnProductId String
+  sizeOnProduct SizesOnProduct @relation(fields: [sizeOnProductId], references: [id])
+
+  quantity Decimal
+
+  subtotal Decimal
+
+
+  @@index([supplierTransactionId])
   @@index([productId])
 }

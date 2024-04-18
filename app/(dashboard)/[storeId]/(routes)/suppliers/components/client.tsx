@@ -25,10 +25,20 @@ export const SupplierClient: React.FC<SupplierClientProps> = ({ data }) => {
           description="Manage supplier for your store"
         />
 
-        <Button onClick={() => router.push(`/${params.storeId}/suppliers/new`)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New
-        </Button>
+        <div className="flex gap-5">
+          <Button
+            onClick={() => router.push(`/${params.storeId}/suppliers/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Create Transaction
+          </Button>
+          <Button
+            onClick={() => router.push(`/${params.storeId}/suppliers/new`)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Supplier
+          </Button>
+        </div>
       </div>
 
       <Separator />
