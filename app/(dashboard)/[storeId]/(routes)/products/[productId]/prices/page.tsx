@@ -30,7 +30,7 @@ const PricePage = async ({
   let mappedProduct: SizesPrices[] = product.sizes
     .sort((a, b) => Number(a.size.value) - Number(b.size.value))
     .map((s) => {
-      const { id, price, priceSilver, priceGold, pricePlatinum } = s;
+      const { id, price, priceSilver, priceGold, pricePlatinum, stock } = s;
 
       return {
         name: s.size.name,
@@ -39,6 +39,7 @@ const PricePage = async ({
         priceSilver: Number(priceSilver),
         priceGold: Number(priceGold),
         pricePlatinum: Number(pricePlatinum),
+        stock: Number(stock),
       };
     });
 

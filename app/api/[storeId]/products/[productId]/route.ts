@@ -30,8 +30,11 @@ export async function GET(
             supplier: true,
           },
         },
+        promo: true,
       },
     });
+
+    console.log(product);
 
     return NextResponse.json(product);
   } catch (error) {

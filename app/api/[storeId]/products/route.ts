@@ -143,6 +143,7 @@ export async function GET(
             supplier: true,
           },
         },
+        promo: true,
       },
       orderBy: {
         createdAt: 'desc',
