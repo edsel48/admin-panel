@@ -4,7 +4,7 @@ import { currentUser } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
 
-import { Product } from '@prisma/client';
+import { Product, SizesOnProduct } from '@prisma/client';
 
 import axios from 'axios';
 
@@ -19,6 +19,7 @@ let snap = new Midtrans.Snap({
 
 interface CartItems {
   product: Product;
+  productSize: SizesOnProduct;
   quantity: number;
 }
 
@@ -64,11 +65,25 @@ export async function POST(
             },
           },
           quantity: item.quantity,
-          subtotal: item.quantity * Number(item.product.price),
+          subtotal: item.quantity * Number(item.productSize.price),
         })),
       },
     },
   });
+
+  // remove data quantity from stocks
+  for (const item of carts as CartItems[]) {
+    await prismadb.sizesOnProduct.update({
+      where: {
+        id: item.productSize.id,
+      },
+      data: {
+        stock: {
+          decrement: item.quantity,
+        },
+      },
+    });
+  }
 
   const user = await currentUser();
 
