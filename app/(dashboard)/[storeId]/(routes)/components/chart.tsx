@@ -24,6 +24,7 @@ export const options = {
 
 export default function LineChart() {
   console.log('calling linechart');
+
   const [data, setData] = useState([
     ['dates', 'predicted', 'actual'],
     ['SEP 01', 154.98, 165],
@@ -41,23 +42,21 @@ export default function LineChart() {
     const arimaData = async () => {
       let start = 20;
       let end = 50;
-      let data = await axios.post(
-        'https://b45e-180-249-184-164.ngrok-free.app/format',
-      );
+
+      let endpoint = 'http://localhost:8080';
+
+      let data = await axios.post(endpoint + '/format');
       setProgress(20);
 
-      let response = await axios.post(
-        'https://b45e-180-249-184-164.ngrok-free.app/predict/verbose/arima',
-        {
-          start,
-          end,
-          sold_data: data.data.data,
-        },
-      );
+      let response = await axios.post(endpoint + '/predict/verbose/arima', {
+        start,
+        end,
+        sold_data: data.data.data,
+      });
       setProgress(40);
 
       let response_linear_regression = await axios.post(
-        'https://b45e-180-249-184-164.ngrok-free.app/predict/verbose/linear-regression',
+        endpoint + '/predict/verbose/linear-regression',
         {
           start,
           end,
@@ -66,14 +65,11 @@ export default function LineChart() {
       );
       setProgress(60);
 
-      let response_svr = await axios.post(
-        'https://b45e-180-249-184-164.ngrok-free.app/predict/verbose/svr',
-        {
-          start,
-          end,
-          sold_data: data.data.data,
-        },
-      );
+      let response_svr = await axios.post(endpoint + '/predict/verbose/svr', {
+        start,
+        end,
+        sold_data: data.data.data,
+      });
 
       const sold_data = data.data.data;
       const predicted_data_arima = response.data.predicted;
