@@ -4,7 +4,15 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Product, Category, Image, Size } from '@prisma/client';
+import {
+  Product,
+  Category,
+  Image,
+  Size,
+  Supplier,
+  SizesOnProduct,
+  SupplierOnProduct,
+} from '@prisma/client';
 import { Trash } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -34,12 +42,19 @@ import { ApiAlert } from '@/components/ui/api-alert';
 import { useOrigin } from '@/hooks/use-origin';
 import ImageUpload from '@/components/ui/image-upload';
 import { Checkbox } from '@/components/ui/checkbox';
+import MultipleSelector, { Option } from '@/components/ui/multi-select-helper';
+
+const optionSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
 
 const formSchema = z.object({
   name: z.string().min(1),
   images: z.object({ url: z.string() }).array(),
-  price: z.coerce.number().min(1),
-  sizeId: z.string().min(1),
+  sizes: z.array(optionSchema),
+  suppliers: z.array(optionSchema),
   categoryId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
@@ -51,16 +66,24 @@ interface ProductFormProps {
   initialData:
     | (Product & {
         images: Image[];
+        sizes: SizesOnProduct[];
+        suppliers: SupplierOnProduct[];
       })
     | null;
   categories: Category[];
-  sizes: Size[];
+  sizesData: Size[];
+  suppliersData: Supplier[];
+  suppliersOption: Option[];
+  sizesOption: Option[];
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   initialData,
   categories,
-  sizes,
+  sizesData,
+  suppliersData,
+  suppliersOption,
+  sizesOption,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -77,17 +100,40 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
+    // @ts-ignore
     defaultValues: initialData
       ? {
           ...initialData,
-          price: parseFloat(String(initialData?.price)),
+          sizes: initialData.sizes.map((size) => {
+            let lookup = sizesData.map((data) => data.id);
+            let now = size.sizeId;
+
+            let idx = lookup.indexOf(now);
+
+            return {
+              value: size.sizeId,
+              label: sizesData[idx].name ?? '',
+            };
+          }),
+
+          suppliers: initialData.suppliers.map((sp) => {
+            let lookup = suppliersData.map((data) => data.id);
+            let now = sp.supplierId;
+
+            let idx = lookup.indexOf(now);
+
+            return {
+              value: sp.supplierId,
+              label: suppliersData[idx].name ?? '',
+            };
+          }),
         }
       : {
           name: '',
           images: [],
-          price: 0,
-          sizeId: '',
+          sizes: [],
           categoryId: '',
+          suppliers: [],
           isFeatured: false,
           isArchived: false,
         },
@@ -107,7 +153,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       }
 
       router.refresh();
-      router.push(`/${params.storeId}/products`);
+      router.push(`/${params.storeId}/products/${params.productId}/prices`);
 
       toast.success(toastMessage);
     } catch (error) {
@@ -211,16 +257,45 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <FormField
               control={form.control}
-              name="price"
+              name="sizes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price</FormLabel>
+                  <FormLabel>Sizes</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={loading}
-                      type="number"
-                      placeholder="9.99"
-                      {...field}
+                    <MultipleSelector
+                      value={field.value}
+                      onChange={field.onChange}
+                      defaultOptions={sizesOption}
+                      placeholder="Select sizes for this product"
+                      emptyIndicator={
+                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                          no results found.
+                        </p>
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="suppliers"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Suppliers</FormLabel>
+                  <FormControl>
+                    <MultipleSelector
+                      value={field.value}
+                      onChange={field.onChange}
+                      defaultOptions={suppliersOption}
+                      placeholder="Select suppliers for this product"
+                      emptyIndicator={
+                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                          no results found.
+                        </p>
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -250,39 +325,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </FormControl>
                     <SelectContent>
                       {categories.map((size) => (
-                        <SelectItem key={size.id} value={size.id}>
-                          {size.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="sizeId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Size</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a size"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sizes.map((size) => (
                         <SelectItem key={size.id} value={size.id}>
                           {size.name}
                         </SelectItem>

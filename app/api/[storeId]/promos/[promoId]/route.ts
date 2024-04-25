@@ -35,7 +35,18 @@ export async function PATCH(
     const { userId } = auth();
     const body = await req.json();
 
-    const { discount, productId, isArchived } = body;
+    const {
+      name,
+      discount,
+      productId,
+      isArchived,
+      maximumDiscountAmount,
+      minimumAmountBought,
+      startDate,
+      endDate,
+      maximalUseCount,
+      useCount,
+    } = body;
 
     if (!userId) return new NextResponse('Unauthenticated', { status: 401 });
 
@@ -66,9 +77,16 @@ export async function PATCH(
         id: params.promoId,
       },
       data: {
+        name,
         discount,
         productId,
         isArchived,
+        maximumDiscountAmount,
+        minimumAmountBought,
+        startDate,
+        endDate,
+        maximalUseCount,
+        useCount,
       },
     });
 

@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
+
+import { Product, SizesOnProduct } from '@prisma/client';
+
 import axios from 'axios';
 
 //@ts-ignore
@@ -13,6 +16,12 @@ let snap = new Midtrans.Snap({
   serverKey: process.env.SECRET,
   clientKey: process.env.NEXT_PUBLIC_CLIENT,
 });
+
+interface CartItems {
+  product: Product;
+  productSize: SizesOnProduct;
+  quantity: number;
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -28,7 +37,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } },
 ) {
-  const { productIds, total } = await req.json();
+  const { productIds, carts, total } = await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse('Product ids are required', { status: 400 });
@@ -47,17 +56,34 @@ export async function POST(
     data: {
       storeId: params.storeId,
       isPaid: false,
+      total,
       orderItems: {
-        create: productIds.map((productId: string) => ({
+        create: carts.map((item: CartItems) => ({
           product: {
             connect: {
-              id: productId,
+              id: item.product.id,
             },
           },
+          quantity: item.quantity,
+          subtotal: item.quantity * Number(item.productSize.price),
         })),
       },
     },
   });
+
+  // remove data quantity from stocks
+  for (const item of carts as CartItems[]) {
+    await prismadb.sizesOnProduct.update({
+      where: {
+        id: item.productSize.id,
+      },
+      data: {
+        stock: {
+          decrement: item.quantity,
+        },
+      },
+    });
+  }
 
   const user = await currentUser();
 

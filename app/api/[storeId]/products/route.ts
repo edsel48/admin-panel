@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 
 import prismadb from '@/lib/prismadb';
+import { Size } from '@prisma/client';
+import { Option } from '@/components/ui/multi-select-helper';
 
 export async function POST(
   req: Request,
@@ -12,8 +14,17 @@ export async function POST(
 
     const body = await req.json();
 
-    const { name, price, categoryId, sizeId, images, isFeatured, isArchived } =
-      body;
+    console.log(body);
+
+    const {
+      name,
+      categoryId,
+      sizes,
+      suppliers,
+      images,
+      isFeatured,
+      isArchived,
+    } = body;
 
     if (!userId) {
       return new NextResponse('Unauthenticated', { status: 403 });
@@ -27,16 +38,16 @@ export async function POST(
       return new NextResponse('Images are required', { status: 400 });
     }
 
-    if (!price) {
-      return new NextResponse('Price is required', { status: 400 });
-    }
-
     if (!categoryId) {
       return new NextResponse('Category id is required', { status: 400 });
     }
 
-    if (!sizeId) {
-      return new NextResponse('Size id is required', { status: 400 });
+    if (!sizes) {
+      return new NextResponse('Sizes is required', { status: 400 });
+    }
+
+    if (!suppliers) {
+      return new NextResponse('Supplier id is required', { status: 400 });
     }
 
     if (!params.storeId) {
@@ -57,11 +68,31 @@ export async function POST(
     const product = await prismadb.product.create({
       data: {
         name,
-        price,
         isFeatured,
         isArchived,
         categoryId,
-        sizeId,
+        suppliers: {
+          create: suppliers.map((item: Option) => {
+            return {
+              supplier: {
+                connect: {
+                  id: item.value,
+                },
+              },
+            };
+          }),
+        },
+        sizes: {
+          create: sizes.map((item: Option) => {
+            return {
+              size: {
+                connect: {
+                  id: item.value,
+                },
+              },
+            };
+          }),
+        },
         storeId: params.storeId,
         images: {
           createMany: {
@@ -96,21 +127,41 @@ export async function GET(
       where: {
         storeId: params.storeId,
         categoryId,
-        sizeId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
       },
       include: {
         images: true,
         category: true,
-        size: true,
+        sizes: {
+          include: {
+            size: true,
+          },
+        },
+        suppliers: {
+          include: {
+            supplier: true,
+          },
+        },
+        promo: true,
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    return NextResponse.json(products);
+    let filtered = products;
+
+    if (sizeId) {
+      filtered = products.filter((p) => {
+        let data = p.sizes;
+
+        let arr = data.map((d) => d.sizeId);
+        return arr.includes(sizeId);
+      });
+    }
+
+    return NextResponse.json(filtered);
   } catch (error) {
     console.log('[PRODUCTS_GET]', error);
     return new NextResponse('Internal error', { status: 500 });

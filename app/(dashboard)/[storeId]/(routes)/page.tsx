@@ -1,4 +1,5 @@
 import prismadb from '@/lib/prismadb';
+import LineChart from './components/chart';
 
 interface DashboardPageProps {
   params: { storeId: string };
@@ -11,7 +12,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
     },
   });
 
-  return <div>Active Store: {store?.name}</div>;
+  return <LineChart />;
 };
 
 export default DashboardPage;
