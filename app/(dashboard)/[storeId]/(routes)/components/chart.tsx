@@ -5,6 +5,8 @@ import { Chart } from 'react-google-charts';
 import axios from 'axios';
 import { addDays, format, subDays } from 'date-fns';
 
+import toast from 'react-hot-toast';
+
 import { useState, useEffect } from 'react';
 
 export const options = {
@@ -40,7 +42,8 @@ export default function LineChart() {
     setLoading(true);
 
     const arimaData = async () => {
-      let start = 20;
+      try{
+        let start = 20;
       let end = 50;
 
       let endpoint = 'http://localhost:8080';
@@ -117,6 +120,9 @@ export default function LineChart() {
 
       setData(dataset);
       setLoading(false);
+      }catch(e){
+        toast.error("Fetching data error, please check your connection to your API")
+      }
     };
 
     arimaData();
