@@ -157,9 +157,13 @@ export default function LineChart() {
                 return (
                   <tr>
                     <td>{e[0]}</td>
+                    {/* @ts-ignore */}
                     <td>{Math.round(e[1] / 1000)} pcs</td>
+                    {/* @ts-ignore */}
                     <td>{Math.round(e[2] / 1000)} pcs </td>
+                    {/* @ts-ignore */}
                     <td>{Math.round(e[3] / 1000)} pcs </td>
+                    {/* @ts-ignore */}
                     <td>{Math.round(e[4] / 1000)} pcs </td>
                   </tr>
                 );
