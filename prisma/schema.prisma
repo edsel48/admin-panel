@@ -93,6 +93,7 @@ model Product {
   id            String              @id @default(uuid())
   storeId       String
   categoryId    String
+  description   String?              @db.Text
   name          String
   isFeatured    Boolean             @default(false)
   isArchived    Boolean             @default(true)
