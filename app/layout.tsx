@@ -10,7 +10,7 @@ import { ToasterProvider } from '@/providers/toast-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Admin Panel',
+  title: 'Mitra Solusi Admin',
   description: 'Admin Panel',
 };
 

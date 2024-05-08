@@ -14,6 +14,7 @@ import {
   SupplierOnProduct,
 } from '@prisma/client';
 import { Trash } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -55,6 +56,7 @@ const formSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   sizes: z.array(optionSchema),
   suppliers: z.array(optionSchema),
+  description: z.string().min(1),
   categoryId: z.string().min(1),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
@@ -133,6 +135,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           images: [],
           sizes: [],
           categoryId: '',
+          description: '',
           suppliers: [],
           isFeatured: false,
           isArchived: false,
@@ -331,6 +334,25 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Product Descriptions"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
