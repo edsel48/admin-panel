@@ -14,8 +14,6 @@ export async function POST(
 
     const body = await req.json();
 
-    console.log(body);
-
     const {
       name,
       categoryId,
@@ -23,6 +21,7 @@ export async function POST(
       suppliers,
       images,
       isFeatured,
+      description,
       isArchived,
     } = body;
 
@@ -70,6 +69,7 @@ export async function POST(
         name,
         isFeatured,
         isArchived,
+        description,
         categoryId,
         suppliers: {
           create: suppliers.map((item: Option) => {

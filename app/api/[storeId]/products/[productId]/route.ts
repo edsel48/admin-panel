@@ -99,6 +99,7 @@ export async function PATCH(
       isFeatured,
       suppliers,
       isArchived,
+      description,
     } = body;
 
     if (!userId) {
@@ -202,6 +203,7 @@ export async function PATCH(
           deleteMany: {},
         },
         isFeatured,
+        description,
         isArchived,
       },
     });
