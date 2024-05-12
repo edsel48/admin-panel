@@ -62,7 +62,6 @@ export const MemberForm: React.FC<MemberFormProps> = ({ initialData }) => {
     defaultValues: initialData || {
       name: '',
       username: '',
-      limit: 0,
       status: false,
       email: '',
       type: '',
