@@ -28,3 +28,14 @@ export async function POST(req: Request) {
     return new NextResponse('Internal error', { status: 500 });
   }
 }
+
+export async function GET(req: Request) {
+  try {
+    let members = await prismadb.member.findMany();
+
+    return NextResponse.json(members);
+  } catch (e) {
+    console.log('[MEMBERS_GET]', e);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+}

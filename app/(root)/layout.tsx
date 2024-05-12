@@ -19,6 +19,16 @@ export default async function SetupLayout({
     },
   });
 
+  const storeHelper = await prismadb.storeHelper.findMany({
+    where: {
+      userId,
+    },
+  });
+
+  if (storeHelper) {
+    redirect(`/${storeHelper.storeId}`);
+  }
+
   if (store) {
     redirect(`/${store.id}`);
   }

@@ -1,17 +1,15 @@
 import prismadb from '@/lib/prismadb';
 import LineChart from './components/chart';
 
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { redirect } from 'next/navigation';
+
 interface DashboardPageProps {
   params: { storeId: string };
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
-  const store = await prismadb.store.findFirst({
-    where: {
-      id: params.storeId,
-    },
-  });
-
   return <LineChart />;
 };
 
