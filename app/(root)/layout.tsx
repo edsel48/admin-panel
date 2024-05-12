@@ -26,7 +26,7 @@ export default async function SetupLayout({
   });
 
   if (storeHelper) {
-    redirect(`/${storeHelper.storeId}`);
+    redirect(`/${storeHelper[0].storeId}`);
   }
 
   if (store) {
