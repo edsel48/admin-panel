@@ -23,6 +23,14 @@ model Store {
   suppliers  Supplier[]  @relation("StoreToSupplier")
 }
 
+model StoreHelper{
+  id String @id @default(uuid())
+  storeId String
+  userId String
+  createdAt DateTime @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
 model Billboard {
   id         String     @id @default(uuid())
   storeId    String
@@ -85,6 +93,7 @@ model Member {
   updatedAt DateTime @updatedAt
   password  String
   username  String
+  type  String @default("MEMBER")
   email String
   orders    Order[]
 }
