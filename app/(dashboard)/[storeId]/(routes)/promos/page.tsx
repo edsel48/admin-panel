@@ -8,6 +8,13 @@ const PromoPage = async ({ params }: { params: { storeId: string } }) => {
   const promos = await prismadb.promo.findMany({
     where: {
       storeId: params.storeId,
+      startDate: {
+        gte: new Date(),
+      },
+      endDate: {
+        lte: new Date(),
+      },
+      useCount: { not: 0 },
     },
     include: {
       product: true,
