@@ -91,7 +91,7 @@ export async function PATCH(
         },
       });
 
-      if (!admin) {
+      if (admin == null) {
         const store = await prismadb.storeHelper.create({
           data: {
             storeId: '815cfb4d-1336-4293-a3bd-86d59abc7a26',

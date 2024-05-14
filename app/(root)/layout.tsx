@@ -53,6 +53,9 @@ export default async function SetupLayout({
           },
         });
 
+        if (admin == null) {
+        }
+
         if (admin != null) {
           redirect(`/${admin.storeId}`);
         }
