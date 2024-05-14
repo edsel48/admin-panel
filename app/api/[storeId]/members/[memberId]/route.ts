@@ -85,19 +85,26 @@ export async function PATCH(
     if (type == 'ADMIN') {
       // will add new person to redirect to the admin pages
 
-      const admin = await prismadb.storeHelper.findFirst({
+      console.log('UPDATED TYPE NOW BECOME ADMIN');
+
+      const admin = await prismadb.storeHelper.count({
         where: {
           userId,
         },
       });
 
-      if (admin == null) {
+      console.log(admin);
+      console.log('CHECKED DATA FOR ADMIN ABOVE');
+
+      if (admin == 0) {
         const store = await prismadb.storeHelper.create({
           data: {
             storeId: '815cfb4d-1336-4293-a3bd-86d59abc7a26',
             userId,
           },
         });
+
+        console.log(store);
       }
     }
 
