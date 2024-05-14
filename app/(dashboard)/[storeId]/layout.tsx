@@ -52,6 +52,7 @@ export default async function DashboardLayout({
           email: user.emailAddresses[0].emailAddress,
           username: user.username || user.emailAddresses[0].emailAddress,
           password: '',
+          userId: userId,
         },
       });
 
