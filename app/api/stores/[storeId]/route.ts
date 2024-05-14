@@ -12,7 +12,13 @@ export async function PATCH(
 
     const { name } = body;
 
-    if (!userId) {
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
       return new NextResponse('Unauthenticated', { status: 401 });
     }
 
@@ -26,8 +32,7 @@ export async function PATCH(
 
     const store = await prismadb.store.updateMany({
       where: {
-        id: params.storeId,
-        userId,
+        id: params.storeId
       },
       data: {
         name,

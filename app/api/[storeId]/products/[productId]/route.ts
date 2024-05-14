@@ -50,8 +50,14 @@ export async function DELETE(
   try {
     const { userId } = auth();
 
-    if (!userId) {
-      return new NextResponse('Unauthenticated', { status: 403 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     if (!params.productId) {
@@ -61,7 +67,6 @@ export async function DELETE(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
       },
     });
 
@@ -102,8 +107,14 @@ export async function PATCH(
       description,
     } = body;
 
-    if (!userId) {
-      return new NextResponse('Unauthenticated', { status: 403 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     if (!params.productId) {
@@ -133,7 +144,6 @@ export async function PATCH(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
       },
     });
 

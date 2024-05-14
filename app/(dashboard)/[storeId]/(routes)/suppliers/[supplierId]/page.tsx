@@ -1,7 +1,7 @@
 import prismadb from '@/lib/prismadb';
 import { SupplierForm } from './components/supplier-form';
 
-const SizesPage = async ({ params }: { params: { supplierId: string } }) => {
+const SupplierPage = async ({ params }: { params: { supplierId: string } }) => {
   const supplier = await prismadb.supplier.findUnique({
     where: {
       id: params.supplierId,
@@ -17,4 +17,4 @@ const SizesPage = async ({ params }: { params: { supplierId: string } }) => {
   );
 };
 
-export default SizesPage;
+export default SupplierPage;

@@ -23,7 +23,15 @@ export async function POST(
       useCount,
     } = body;
 
-    if (!userId) return new NextResponse('Unauthenticated', { status: 401 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
+    }
 
     if (!discount)
       return new NextResponse('Discount is required', { status: 400 });
@@ -37,7 +45,6 @@ export async function POST(
     const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
-        userId,
       },
     });
 
