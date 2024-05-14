@@ -83,28 +83,35 @@ export async function PATCH(
     }
 
     if (type == 'ADMIN') {
-      // will add new person to redirect to the admin pages
-
-      console.log('UPDATED TYPE NOW BECOME ADMIN');
-
-      const admin = await prismadb.storeHelper.count({
+      const member = await prismadb.member.findFirst({
         where: {
-          userId,
+          id: params.memberId,
         },
       });
+      if (member != null) {
+        // will add new person to redirect to the admin pages
 
-      console.log(admin);
-      console.log('CHECKED DATA FOR ADMIN ABOVE');
+        console.log('UPDATED TYPE NOW BECOME ADMIN');
 
-      if (admin == 0) {
-        const store = await prismadb.storeHelper.create({
-          data: {
-            storeId: '815cfb4d-1336-4293-a3bd-86d59abc7a26',
-            userId,
+        const admin = await prismadb.storeHelper.count({
+          where: {
+            userId: member.userId,
           },
         });
 
-        console.log(store);
+        console.log(admin);
+        console.log('CHECKED DATA FOR ADMIN ABOVE');
+
+        if (admin == 0) {
+          const store = await prismadb.storeHelper.create({
+            data: {
+              storeId: '815cfb4d-1336-4293-a3bd-86d59abc7a26',
+              userId: member.userId,
+            },
+          });
+
+          console.log(store);
+        }
       }
     }
 

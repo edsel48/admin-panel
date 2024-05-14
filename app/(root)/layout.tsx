@@ -53,9 +53,6 @@ export default async function SetupLayout({
           },
         });
 
-        if (admin == null) {
-        }
-
         if (admin != null) {
           redirect(`/${admin.storeId}`);
         }
@@ -70,6 +67,7 @@ export default async function SetupLayout({
           email: user.emailAddresses[0].emailAddress,
           username: user.username || user.emailAddresses[0].emailAddress,
           password: '',
+          userId,
         },
       });
 
