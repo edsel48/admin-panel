@@ -64,16 +64,6 @@ export async function DELETE(
       return new NextResponse('Product id is required', { status: 400 });
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse('Unauthorized', { status: 405 });
-    }
-
     const product = await prismadb.product.delete({
       where: {
         id: params.productId,
@@ -139,16 +129,6 @@ export async function PATCH(
 
     if (!suppliers) {
       return new NextResponse('Suppliers is required', { status: 400 });
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse('Unauthorized', { status: 405 });
     }
 
     const nowProduct = (await prismadb.product.findUnique({

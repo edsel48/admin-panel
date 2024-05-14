@@ -57,15 +57,6 @@ export async function PATCH(
       return new NextResponse('Billboard id is required', { status: 400 });
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
-
     const billboard = await prismadb.billboard.updateMany({
       where: {
         id: params.billboardId,
@@ -104,15 +95,6 @@ export async function DELETE(
     if (!params.billboardId) {
       return new NextResponse('Billboard id is required', { status: 400 });
     }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const billboard = await prismadb.billboard.deleteMany({
       where: {

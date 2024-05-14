@@ -27,18 +27,6 @@ export async function POST(
     if (!billboardId)
       return new NextResponse('Billboard id is required', { status: 400 });
 
-    if (!params.storeId)
-      return new NextResponse('Store ID is required', { status: 400 });
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
-
     const category = await prismadb.category.create({
       data: {
         name,

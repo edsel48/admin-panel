@@ -57,15 +57,6 @@ export async function PATCH(
       return new NextResponse('Size id is required', { status: 400 });
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
-
     const size = await prismadb.size.updateMany({
       where: {
         id: params.sizeId,
@@ -104,15 +95,6 @@ export async function DELETE(
     if (!params.sizeId) {
       return new NextResponse('Size id is required', { status: 400 });
     }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const size = await prismadb.size.deleteMany({
       where: {

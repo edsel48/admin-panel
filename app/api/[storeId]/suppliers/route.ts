@@ -24,18 +24,6 @@ export async function POST(
 
     if (!name) return new NextResponse('Name is required', { status: 400 });
 
-    if (!params.storeId)
-      return new NextResponse('Store ID is required', { status: 400 });
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
-
     const supplier = await prismadb.supplier.create({
       data: {
         name,
@@ -56,9 +44,6 @@ export async function GET(
   { params }: { params: { storeId: string } },
 ) {
   try {
-    if (!params.storeId)
-      return new NextResponse('Store id is required', { status: 400 });
-
     const suppliers = await prismadb.supplier.findMany({
       where: {
         storeId: params.storeId,

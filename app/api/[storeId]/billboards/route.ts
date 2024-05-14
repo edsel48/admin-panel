@@ -27,18 +27,6 @@ export async function POST(
     if (!imageUrl)
       return new NextResponse('Image URL is required', { status: 400 });
 
-    if (!params.storeId)
-      return new NextResponse('Store ID is required', { status: 400 });
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
-
     const billboard = await prismadb.billboard.create({
       data: {
         label,

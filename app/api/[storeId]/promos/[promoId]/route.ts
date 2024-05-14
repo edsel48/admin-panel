@@ -70,15 +70,6 @@ export async function PATCH(
     if (!params.promoId)
       return new NextResponse('Promo ID is required', { status: 400 });
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
-
     const promo = await prismadb.promo.updateMany({
       where: {
         id: params.promoId,
@@ -125,15 +116,6 @@ export async function DELETE(
     if (!params.promoId) {
       return new NextResponse('Promo id is required', { status: 400 });
     }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const promo = await prismadb.promo.deleteMany({
       where: {

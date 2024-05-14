@@ -60,15 +60,6 @@ export async function PATCH(
       return new NextResponse('Category id is required', { status: 400 });
     }
 
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
-
     const category = await prismadb.category.updateMany({
       where: {
         id: params.categoryId,
@@ -107,15 +98,6 @@ export async function DELETE(
     if (!params.categoryId) {
       return new NextResponse('Category id is required', { status: 400 });
     }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const category = await prismadb.category.deleteMany({
       where: {
