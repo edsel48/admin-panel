@@ -38,17 +38,40 @@ export default async function SetupLayout({
   // create member here
   // create new member here
   if (user != null) {
-    const newMember = await prismadb.member.create({
-      data: {
-        name: user.firstName || '',
-        limit: 0,
+    // check member
+    const person = await prismadb.member.findFirst({
+      where: {
         email: user.emailAddresses[0].emailAddress,
-        username: user.username || user.emailAddresses[0].emailAddress,
-        password: '',
       },
     });
 
-    redirect('https://store.mitra-solusi.shop/');
+    if (person != null) {
+      if (person.type == 'ADMIN') {
+        const admin = await prismadb.storeHelper.findFirst({
+          where: {
+            userId: userId,
+          },
+        });
+
+        if (admin != null) {
+          redirect(`/${admin.storeId}`);
+        }
+      }
+
+      redirect('https://store.mitra-solusi.shop/');
+    } else {
+      const newMember = await prismadb.member.create({
+        data: {
+          name: user.firstName || '',
+          limit: 0,
+          email: user.emailAddresses[0].emailAddress,
+          username: user.username || user.emailAddresses[0].emailAddress,
+          password: '',
+        },
+      });
+
+      redirect('https://store.mitra-solusi.shop/');
+    }
   }
 
   return <>{children}</>;
