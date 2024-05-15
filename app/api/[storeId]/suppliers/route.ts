@@ -12,22 +12,17 @@ export async function POST(
 
     const { name } = body;
 
-    if (!userId) return new NextResponse('Unauthenticated', { status: 401 });
-
-    if (!name) return new NextResponse('Name is required', { status: 400 });
-
-    if (!params.storeId)
-      return new NextResponse('Store ID is required', { status: 400 });
-
-    const storeByUserId = await prismadb.store.findFirst({
+    const admins = await prismadb.storeHelper.findMany({
       where: {
-        id: params.storeId,
-        userId,
+        userId: userId!!,
       },
     });
 
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
+    }
+
+    if (!name) return new NextResponse('Name is required', { status: 400 });
 
     const supplier = await prismadb.supplier.create({
       data: {
@@ -49,9 +44,6 @@ export async function GET(
   { params }: { params: { storeId: string } },
 ) {
   try {
-    if (!params.storeId)
-      return new NextResponse('Store id is required', { status: 400 });
-
     const suppliers = await prismadb.supplier.findMany({
       where: {
         storeId: params.storeId,

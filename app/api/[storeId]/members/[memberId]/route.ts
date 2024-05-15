@@ -10,8 +10,14 @@ export async function GET(
   try {
     const { userId } = auth();
 
-    if (!userId) {
-      return new NextResponse('Unauthenticated', { status: 403 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     let member = await prismadb.member.findUnique({
@@ -34,8 +40,14 @@ export async function DELETE(
   try {
     const { userId } = auth();
 
-    if (!userId) {
-      return new NextResponse('Unauthenticated', { status: 403 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     if (!params.memberId) {
@@ -71,21 +83,35 @@ export async function PATCH(
     }
 
     if (type == 'ADMIN') {
-      // will add new person to redirect to the admin pages
-
-      const admin = await prismadb.storeHelper.findFirst({
+      const member = await prismadb.member.findFirst({
         where: {
-          userId,
+          id: params.memberId,
         },
       });
+      if (member != null) {
+        // will add new person to redirect to the admin pages
 
-      if (!admin) {
-        const store = await prismadb.storeHelper.create({
-          data: {
-            storeId: params.storeId,
-            userId,
+        console.log('UPDATED TYPE NOW BECOME ADMIN');
+
+        const admin = await prismadb.storeHelper.count({
+          where: {
+            userId: member.userId,
           },
         });
+
+        console.log(admin);
+        console.log('CHECKED DATA FOR ADMIN ABOVE');
+
+        if (admin == 0) {
+          const store = await prismadb.storeHelper.create({
+            data: {
+              storeId: '815cfb4d-1336-4293-a3bd-86d59abc7a26',
+              userId: member.userId,
+            },
+          });
+
+          console.log(store);
+        }
       }
     }
 

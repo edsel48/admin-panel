@@ -6,7 +6,7 @@ import prismadb from '@/lib/prismadb';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, limit, email, username, password } = body;
+    const { name, limit, email, username, password, userId } = body;
 
     if (!name) {
       return new NextResponse('Name is Required', { status: 400 });
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
         email,
         username,
         password,
+        userId,
       },
     });
 

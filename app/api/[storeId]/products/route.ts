@@ -25,8 +25,14 @@ export async function POST(
       isArchived,
     } = body;
 
-    if (!userId) {
-      return new NextResponse('Unauthenticated', { status: 403 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     if (!name) {
@@ -47,21 +53,6 @@ export async function POST(
 
     if (!suppliers) {
       return new NextResponse('Supplier id is required', { status: 400 });
-    }
-
-    if (!params.storeId) {
-      return new NextResponse('Store id is required', { status: 400 });
-    }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-        userId,
-      },
-    });
-
-    if (!storeByUserId) {
-      return new NextResponse('Unauthorized', { status: 405 });
     }
 
     const product = await prismadb.product.create({

@@ -85,6 +85,7 @@ model Supplier {
 
 model Member {
   id        String   @id @default(uuid())
+  userId    String
   name      String
   limit     Decimal
   status    Boolean  @default(true)

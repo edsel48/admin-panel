@@ -23,8 +23,14 @@ export async function PATCH(
 
   const { isPaid } = body;
 
-  if (!userId) {
-    return new NextResponse('Unauthenticated', { status: 403 });
+  const admins = await prismadb.storeHelper.findMany({
+    where: {
+      userId: userId!!,
+    },
+  });
+
+  if (!userId && admins.length == 0) {
+    return new NextResponse('Unauthenticated', { status: 401 });
   }
 
   if (!params.orderId) {

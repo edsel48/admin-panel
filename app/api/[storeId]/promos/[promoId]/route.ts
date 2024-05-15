@@ -48,7 +48,15 @@ export async function PATCH(
       useCount,
     } = body;
 
-    if (!userId) return new NextResponse('Unauthenticated', { status: 401 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
+    }
 
     if (!discount)
       return new NextResponse('Discount is required', { status: 400 });
@@ -61,16 +69,6 @@ export async function PATCH(
 
     if (!params.promoId)
       return new NextResponse('Promo ID is required', { status: 400 });
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-        userId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const promo = await prismadb.promo.updateMany({
       where: {
@@ -105,23 +103,19 @@ export async function DELETE(
   try {
     const { userId } = auth();
 
-    if (!userId) {
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
       return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     if (!params.promoId) {
       return new NextResponse('Promo id is required', { status: 400 });
     }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-        userId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const promo = await prismadb.promo.deleteMany({
       where: {

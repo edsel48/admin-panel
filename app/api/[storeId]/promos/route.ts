@@ -23,26 +23,21 @@ export async function POST(
       useCount,
     } = body;
 
-    if (!userId) return new NextResponse('Unauthenticated', { status: 401 });
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
+      return new NextResponse('Unauthenticated', { status: 401 });
+    }
 
     if (!discount)
       return new NextResponse('Discount is required', { status: 400 });
 
     if (!productId)
       return new NextResponse('Product ID is required', { status: 400 });
-
-    if (!params.storeId)
-      return new NextResponse('Store ID is required', { status: 400 });
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-        userId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const promo = await prismadb.promo.create({
       data: {
@@ -73,9 +68,6 @@ export async function GET(
   { params }: { params: { storeId: string } },
 ) {
   try {
-    if (!params.storeId)
-      return new NextResponse('Store id is required', { status: 400 });
-
     const promos = await prismadb.promo.findMany({
       where: {
         storeId: params.storeId,

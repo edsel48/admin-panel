@@ -35,7 +35,13 @@ export async function PATCH(
 
     const { name } = body;
 
-    if (!userId) {
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
       return new NextResponse('Unauthenticated', { status: 401 });
     }
 
@@ -46,16 +52,6 @@ export async function PATCH(
     if (!params.supplierId) {
       return new NextResponse('Supplier id is required', { status: 400 });
     }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-        userId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const supplier = await prismadb.supplier.updateMany({
       where: {
@@ -81,23 +77,19 @@ export async function DELETE(
   try {
     const { userId } = auth();
 
-    if (!userId) {
+    const admins = await prismadb.storeHelper.findMany({
+      where: {
+        userId: userId!!,
+      },
+    });
+
+    if (!userId && admins.length == 0) {
       return new NextResponse('Unauthenticated', { status: 401 });
     }
 
     if (!params.supplierId) {
       return new NextResponse('Supplier id is required', { status: 400 });
     }
-
-    const storeByUserId = await prismadb.store.findFirst({
-      where: {
-        id: params.storeId,
-        userId,
-      },
-    });
-
-    if (!storeByUserId)
-      return new NextResponse('Unauthorized', { status: 403 });
 
     const size = await prismadb.supplier.deleteMany({
       where: {
