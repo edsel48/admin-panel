@@ -185,6 +185,7 @@ model Order {
   isPaid     Boolean     @default(false)
   phone      String      @default("")
   address    String      @default("")
+  type       String      @default("")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   total      BigInt      @default(0)
