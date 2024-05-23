@@ -37,25 +37,27 @@ const useCart = create(
       ) => {
         let currentCart = get().carts;
 
-        let duplicate = currentCart.find((e) => {
-          e.name == product.name && e.size == size.size.name;
-        });
+        let currentItem = currentCart.findIndex(
+          // @ts-ignore
+          (e) => e.name == product.name && e.size == size.size.name,
+        );
 
-        if (duplicate) {
-          currentCart.map((e, i) => {
-            if (i == currentCart.indexOf(duplicate)) {
-              return {
-                name: e.name,
-                size: e.size,
-                qty: e.qty + 1,
-                price: e.price,
-                subtotal: (e.qty + 1) * e.price,
-              };
-            }
-          });
+        console.log(currentItem);
+
+        if (currentItem != -1) {
+          currentCart[currentItem] = {
+            name: currentCart[currentItem].name,
+            size: currentCart[currentItem].size,
+            qty: Number(currentCart[currentItem].qty) + Number(qty),
+            price: currentCart[currentItem].price,
+            subtotal:
+              (Number(currentCart[currentItem].qty) + Number(qty)) *
+              currentCart[currentItem].price,
+          };
         } else {
           currentCart.push({
             name: product.name,
+            // @ts-ignore
             size: size.size.name,
             qty,
             price,

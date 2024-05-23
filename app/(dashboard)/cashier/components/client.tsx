@@ -33,7 +33,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
   const carts = useCart((state) => state.carts);
   const removeAll = useCart((state) => state.removeAll);
 
-  const calculateTotal = (products) => {
+  const calculateTotal = (products: CashierColumn[]) => {
     let total = 0;
     products.forEach((e) => {
       total += e.subtotal;
@@ -47,6 +47,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
       <div className="flex gap-10">
         <div className="w-1/2">
           <h1> Product List </h1>
+          {/* @ts-ignore */}
           <DataTable columns={columns} data={data} searchKey="name" />
         </div>
         <div className="w-full flex-col gap-10">

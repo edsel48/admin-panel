@@ -28,6 +28,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     id: 'actions',
+    // @ts-ignore
     cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];

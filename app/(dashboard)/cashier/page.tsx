@@ -38,68 +38,6 @@ interface CellActionProps {
   data: Product;
 }
 
-const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open Menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <Dialog>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <DialogTrigger>Add Product</DialogTrigger>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Size & Quantity</DialogTitle>
-              <DialogDescription className="text-black">
-                {/* later will be filled with products and quantity */}
-
-                {/* later will be adding buttons to add into the data */}
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      </DropdownMenu>
-    </>
-  );
-};
-
-const cashierColumns: ColumnDef<Product>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Name',
-  },
-];
-
-const productColumns: ColumnDef<Product>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Name',
-  },
-  {
-    id: 'actions',
-    // @ts-ignore
-    // cell: ({ row }) => <Button />,
-  },
-];
-
-const calculateTotal = (products) => {
-  let total = 0;
-
-  products.forEach((e) => {
-    total += e.subtotal;
-  });
-
-  return total;
-};
-
 const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
   const products = await prismadb.product.findMany({
     where: {

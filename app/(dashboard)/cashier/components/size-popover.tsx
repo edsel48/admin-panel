@@ -58,6 +58,7 @@ export function ComboboxPopover({
                         statuses.find((priority) => priority.value === value) ||
                           null,
                       );
+                      //   @ts-ignore
                       onChange(value);
                       setOpen(false);
                     }}

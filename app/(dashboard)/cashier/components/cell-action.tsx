@@ -65,14 +65,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const onClick = () => {
-    addItems(data, size, qty, size.price, size.price * qty);
+    if (size != null) {
+      addItems(data, size, qty, Number(size.price), Number(size.price) * qty);
 
-    console.log(carts);
+      console.log(carts);
 
-    // @ts-ignore
-    toast.success(
-      `Added product ${data.name} with a size of ${size.size.name} x ${qty}`,
-    );
+      // @ts-ignore
+      toast.success(
+        // @ts-ignore
+        `Added product ${data.name} with a size of ${size.size.name} x ${qty}`,
+      );
+    }
   };
 
   return (
@@ -102,11 +105,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                     statuses={data.sizes.map((e) => {
                       return {
                         value: e.sizeId,
+                        // @ts-ignore
                         label: e.size.name,
                       };
                     })}
+                    // @ts-ignore
                     onChange={onChange}
                   />
+                  {/* @ts-ignore */}
                   {size && formatter.format(size.price)}
                   <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="qty">Quantity</Label>
@@ -115,6 +121,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                       id="qty"
                       placeholder="Quantity"
                       onBlur={(e) => {
+                        // @ts-ignore
                         inputOnChange(e.currentTarget.value);
                       }}
                     />
