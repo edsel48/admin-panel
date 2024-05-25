@@ -100,7 +100,10 @@ const countTotal = (
   return total;
 };
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  { params }: { params: { storeId: string } },
+) {
   try {
     let output: {
       id: string;

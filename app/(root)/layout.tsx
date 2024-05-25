@@ -27,14 +27,6 @@ export default async function SetupLayout({
     },
   });
 
-  if (storeHelper[0]) {
-    redirect(`/${storeHelper[0].storeId}`);
-  }
-
-  if (store) {
-    redirect(`/${store.id}`);
-  }
-
   // create member here
   // create new member here
   if (user != null) {
@@ -59,9 +51,10 @@ export default async function SetupLayout({
       }
 
       if (person.type == 'CASHIER') {
+        console.log(person);
         const admin = await prismadb.storeHelper.findFirst({
           where: {
-            userId: userId,
+            userId: person.userId,
           },
         });
 
@@ -85,6 +78,14 @@ export default async function SetupLayout({
 
       redirect('https://store.mitra-solusi.shop/');
     }
+  }
+
+  if (storeHelper[0]) {
+    redirect(`/${storeHelper[0].storeId}`);
+  }
+
+  if (store) {
+    redirect(`/${store.id}`);
   }
 
   return <>{children}</>;

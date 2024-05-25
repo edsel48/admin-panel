@@ -1,4 +1,4 @@
-'use client';
+'use server';
 
 import Heading from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
@@ -66,12 +66,16 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
       toast.success('Checkout Successful');
     } else if (status == 'CHECKOUT') {
       try {
-        let response = await axios.post('api/cashier/checkout', { carts });
+        let response = await axios.post(
+          `/api/${params.storeId}/cashier/checkout`,
+          { carts },
+        );
 
         setStatus('PAYMENT');
       } catch (e) {
         // @ts-ignore
-        toast.error(`Checkout failed, ${e.response.data.error}`);
+        console.error(e);
+        toast.error(`Checkout failed, ${e}`);
       }
     }
   };
