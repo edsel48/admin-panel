@@ -2,6 +2,7 @@
 
 import { useStoreModal } from '@/hooks/use-store-model';
 import { useEffect } from 'react';
+import { Suspense } from 'react';
 
 const SetupPage = () => {
   const onOpen = useStoreModal((state) => state.onOpen);
