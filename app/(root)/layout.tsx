@@ -58,6 +58,18 @@ export default async function SetupLayout({
         }
       }
 
+      if (person.type == 'CASHIER') {
+        const admin = await prismadb.storeHelper.findFirst({
+          where: {
+            userId: userId,
+          },
+        });
+
+        if (admin != null) {
+          redirect(`/${admin.storeId}/cashier`);
+        }
+      }
+
       redirect('https://store.mitra-solusi.shop/');
     } else {
       const newMember = await prismadb.member.create({

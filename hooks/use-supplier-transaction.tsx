@@ -1,11 +1,21 @@
-import {
-  CashierColumn,
-  ProductColumn,
-} from '@/app/(dashboard)/cashier/components/columns';
 import { Product, Size, SizesOnProduct } from '@prisma/client';
 import toast from 'react-hot-toast';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+
+export type ProductColumn = {
+  id: string;
+  name: string;
+  sizes: SizesOnProduct[];
+};
+
+export type CashierColumn = {
+  name: string;
+  size: string;
+  price: number;
+  qty: number;
+  subtotal: number;
+};
 
 interface CashierCart {
   carts: CashierColumn[];
