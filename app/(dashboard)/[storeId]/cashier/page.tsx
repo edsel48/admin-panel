@@ -1,4 +1,4 @@
-'use client';
+'use server';
 
 import prismadb from '@/lib/prismadb';
 import { ProductClient } from './components/client';
