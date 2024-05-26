@@ -64,6 +64,8 @@ export async function POST(
               id: item.product.id,
             },
           },
+          // @ts-ignore
+          size: item.productSize.size.name,
           quantity: item.quantity,
           subtotal: item.quantity * Number(item.productSize.price),
         })),

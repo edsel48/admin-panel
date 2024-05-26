@@ -32,7 +32,7 @@ export async function PATCH(
 
     const store = await prismadb.store.updateMany({
       where: {
-        id: params.storeId
+        id: params.storeId,
       },
       data: {
         name,

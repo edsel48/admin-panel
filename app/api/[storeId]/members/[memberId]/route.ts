@@ -82,7 +82,7 @@ export async function PATCH(
       return new NextResponse('User Id Not Found', { status: 401 });
     }
 
-    if (type == 'ADMIN') {
+    if (type == 'ADMIN' || type == 'CASHIER') {
       const member = await prismadb.member.findFirst({
         where: {
           id: params.memberId,
@@ -105,7 +105,7 @@ export async function PATCH(
         if (admin == 0) {
           const store = await prismadb.storeHelper.create({
             data: {
-              storeId: '815cfb4d-1336-4293-a3bd-86d59abc7a26',
+              storeId: '80a8dcfd-0ac4-4225-9242-eb0b9ff734dc',
               userId: member.userId,
             },
           });
