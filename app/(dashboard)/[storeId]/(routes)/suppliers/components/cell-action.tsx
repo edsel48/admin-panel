@@ -22,7 +22,16 @@ import { DataTable } from '@/components/ui/data-table';
 import { SupplierColumn } from './columns';
 import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
-import { Copy, Edit, MoreHorizontal, Trash, Box } from 'lucide-react';
+import {
+  Copy,
+  Edit,
+  MoreHorizontal,
+  Trash,
+  Box,
+  DollarSign,
+} from 'lucide-react';
+
+import { NotebookTabs } from 'lucide-react';
 
 import { toast } from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
@@ -40,6 +49,12 @@ interface CellActionProps {
 interface ProductOnSupplierColumn {
   name: string;
   createdAt: string;
+}
+
+interface TransactionOnSupplierColumn {
+  id: string;
+  grandTotal: string;
+  status: string;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -68,6 +83,46 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     name: item.name,
     createdAt: format(item.createdAt, 'dd MMMM yyyy'),
   }));
+
+  const formattedTransactionOnSupplier = data.transactions.map((item) => ({
+    id: item.id,
+    grandTotal: formatter.format(Number(item.grandTotal)),
+    status: item.status,
+  }));
+
+  const transactionOnSupplierColumn: ColumnDef<TransactionOnSupplierColumn>[] =
+    [
+      {
+        accessorKey: 'id',
+        header: 'ID',
+      },
+      {
+        accessorKey: 'grandTotal',
+        header: 'Total',
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+      },
+      {
+        id: 'action',
+        cell: ({ row }) => (
+          <>
+            <Button
+              onClick={() => {
+                router.push(
+                  `/${params.storeId}/suppliers/${data.id}/transactions/${row.original.id}`,
+                );
+              }}
+            >
+              Detail
+            </Button>
+          </>
+        ),
+      },
+    ];
+
+  const [state, setState] = useState<string>('PRODUCT');
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -112,7 +167,23 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>
               <Box className="mr-2 h-4 w-4" />
-              <DialogTrigger>Products</DialogTrigger>
+              <DialogTrigger
+                onClick={() => {
+                  setState('PRODUCT');
+                }}
+              >
+                Products
+              </DialogTrigger>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <NotebookTabs className="mr-2 h-4 w-4" />
+              <DialogTrigger
+                onClick={() => {
+                  setState('TRANSACTIONS');
+                }}
+              >
+                Transactions
+              </DialogTrigger>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
@@ -134,17 +205,45 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <Trash className="mr-2 h-4 w-4" />
               Delete
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                console.log(
+                  `/${params.storeId}/suppliers/${data.id}/transactions`,
+                );
+                router.push(
+                  `/${params.storeId}/suppliers/${data.id}/transactions`,
+                );
+              }}
+            >
+              <DollarSign className="mr-2 h-4 w-4" />
+              Create Transaction
+            </DropdownMenuItem>
           </DropdownMenuContent>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Products From {data.name}</DialogTitle>
+              <DialogTitle>
+                {state == 'PRODUCT' ? (
+                  <>Products From {data.name}</>
+                ) : (
+                  <>Transaction Lists from {data.name}</>
+                )}
+              </DialogTitle>
               <DialogDescription className="text-black">
                 <ScrollArea className="h-[500px] w-full p-2">
-                  <DataTable
-                    columns={productOnSupplierColumn}
-                    data={formattedProductOnSupplier}
-                    searchKey="name"
-                  />
+                  {state == 'PRODUCT' ? (
+                    <DataTable
+                      columns={productOnSupplierColumn}
+                      data={formattedProductOnSupplier}
+                      searchKey="name"
+                    />
+                  ) : (
+                    <DataTable
+                      columns={transactionOnSupplierColumn}
+                      // @ts-ignore
+                      data={formattedTransactionOnSupplier}
+                      searchKey="id"
+                    />
+                  )}
                 </ScrollArea>
               </DialogDescription>
             </DialogHeader>

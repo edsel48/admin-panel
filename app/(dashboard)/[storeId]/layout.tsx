@@ -41,8 +41,6 @@ export default async function DashboardLayout({
       },
     });
 
-    console.log(member);
-
     if (member.length == 0) {
       // create new member here
       const newMember = await prismadb.member.create({

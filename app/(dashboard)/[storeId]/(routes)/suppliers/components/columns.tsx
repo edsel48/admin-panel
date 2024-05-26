@@ -4,13 +4,14 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { CellAction } from './cell-action';
 
-import { Product } from '@prisma/client';
+import { Product, SupplierTransaction } from '@prisma/client';
 
 export type SupplierColumn = {
   id: string;
   name: string;
   products: Product[];
   createdAt: string;
+  transactions: SupplierTransaction[];
 };
 
 export const columns: ColumnDef<SupplierColumn>[] = [

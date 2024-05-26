@@ -18,6 +18,7 @@ const SupplierPage = async ({ params }: { params: { storeId: string } }) => {
           },
         },
       },
+      transactions: true,
     },
     orderBy: {
       createdAt: 'desc',
@@ -30,6 +31,7 @@ const SupplierPage = async ({ params }: { params: { storeId: string } }) => {
       name: item.name,
       createdAt: format(item.createdAt, 'dd MMMM yyyy'),
       products: item.product.map((p) => p.product),
+      transactions: item.transactions,
     };
   });
 

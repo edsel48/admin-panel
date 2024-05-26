@@ -51,7 +51,6 @@ export default async function SetupLayout({
       }
 
       if (person.type == 'CASHIER') {
-        console.log(person);
         const admin = await prismadb.storeHelper.findFirst({
           where: {
             userId: person.userId,
