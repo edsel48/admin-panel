@@ -239,7 +239,11 @@ model SupplierTransactionItem {
 
   quantity Decimal
 
+  delivered Decimal @default(0)
+
   subtotal Decimal
+
+  status String @default("ORDERED")
 
 
   @@index([supplierTransactionId])
