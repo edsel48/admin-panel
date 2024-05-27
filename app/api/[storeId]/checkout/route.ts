@@ -43,30 +43,43 @@ export async function POST(
     return new NextResponse('Product ids are required', { status: 400 });
   }
 
+  const member = await prismadb.member.findFirst({
+    where: {
+      id: memberId,
+    },
+  });
+
+  if (member == null)
+    return new NextResponse('Member not found', { status: 404 });
+
   const FIVE_MILLION = 5000000;
   const TEN_MILLION = 10000000;
 
   if (total >= FIVE_MILLION) {
-    //update user to GOLD MEMBER
-    await prismadb.member.update({
-      where: {
-        id: memberId,
-      },
-      data: {
-        tier: 'GOLD',
-      },
-    });
+    if (member.tier == 'SILVER') {
+      //update user to GOLD MEMBER
+      await prismadb.member.update({
+        where: {
+          id: memberId,
+        },
+        data: {
+          tier: 'GOLD',
+        },
+      });
+    }
   }
 
   if (total >= TEN_MILLION) {
-    await prismadb.member.update({
-      where: {
-        id: memberId,
-      },
-      data: {
-        tier: 'PLATINUM',
-      },
-    });
+    if (member.tier == 'GOLD' || member.tier == 'SILVER') {
+      await prismadb.member.update({
+        where: {
+          id: memberId,
+        },
+        data: {
+          tier: 'PLATINUM',
+        },
+      });
+    }
   }
 
   const products = await prismadb.product.findMany({
