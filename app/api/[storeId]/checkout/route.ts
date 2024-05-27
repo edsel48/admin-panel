@@ -37,10 +37,36 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } },
 ) {
-  const { productIds, carts, total } = await req.json();
+  const { productIds, carts, total, memberId } = await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse('Product ids are required', { status: 400 });
+  }
+
+  const FIVE_MILLION = 5000000;
+  const TEN_MILLION = 10000000;
+
+  if (total >= FIVE_MILLION) {
+    //update user to GOLD MEMBER
+    await prismadb.member.update({
+      where: {
+        id: memberId,
+      },
+      data: {
+        tier: 'GOLD',
+      },
+    });
+  }
+
+  if (total >= TEN_MILLION) {
+    await prismadb.member.update({
+      where: {
+        id: memberId,
+      },
+      data: {
+        tier: 'PLATINUM',
+      },
+    });
   }
 
   const products = await prismadb.product.findMany({
