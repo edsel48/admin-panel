@@ -226,6 +226,12 @@ model SupplierTransaction {
   @@index([supplierId])
 }
 
+model Traffic {
+  id String @id @default(uuid())
+  ip String
+  date DateTime @default(now())
+}
+
 model SupplierTransactionItem {
   id String @id @default(uuid())
   supplierTransactionId String

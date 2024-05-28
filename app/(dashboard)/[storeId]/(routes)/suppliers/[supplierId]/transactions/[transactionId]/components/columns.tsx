@@ -12,8 +12,8 @@ interface TransactionItemColumns {
   name: string;
   size: string;
   quantity: number;
-  price: string;
-  subtotal: string;
+  // price: string;
+  // subtotal: string;
   status: string;
 }
 
@@ -34,14 +34,14 @@ export const columns: ColumnDef<TransactionItemColumns>[] = [
     accessorKey: 'delivered',
     header: 'Delivered',
   },
-  {
-    accessorKey: 'price',
-    header: 'Price',
-  },
-  {
-    accessorKey: 'subtotal',
-    header: 'Subtotal',
-  },
+  // {
+  //   accessorKey: 'price',
+  //   header: 'Price',
+  // },
+  // {
+  //   accessorKey: 'subtotal',
+  //   header: 'Subtotal',
+  // },
   {
     accessorKey: 'status',
     header: 'Status',

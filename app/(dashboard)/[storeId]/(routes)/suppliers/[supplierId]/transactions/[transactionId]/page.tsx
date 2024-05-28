@@ -108,12 +108,12 @@ const SupplierTransactionPage = ({
               </div>
               <div className="flex-col gap-5">
                 <div className="text-lg font-bold">
-                  Total :{' '}
+                  {/* Total :{' '}
                   {transaction != null ? (
                     formatter.format(Number(transaction.grandTotal))
                   ) : (
                     <></>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
