@@ -27,8 +27,12 @@ export default function ReviewChart() {
       <h1 className="text-lg font-bold">Review Rata - Rata Toko</h1>
       {average != null ? (
         <div className="flex w-full gap-3">
-          {...Array(average).map((e) => <Star />)}
-          {...Array(5 - average).map((e) => <StarOff />)}
+          {[...Array(average)].map((e) => (
+            <Star />
+          ))}
+          {[...Array(5 - average)].map((e) => (
+            <StarOff />
+          ))}
         </div>
       ) : (
         <></>
