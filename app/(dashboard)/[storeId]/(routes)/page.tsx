@@ -14,6 +14,7 @@ import PenjualanCashierChart from './components/penjualan-cashier-chart';
 import ArimaChart from './components/arima-chart';
 
 import { useEffect, useState } from 'react';
+import ReviewChart from './components/review-chart';
 
 interface DashboardPageProps {
   params: { storeId: string };
@@ -61,6 +62,15 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
           >
             {' '}
             Traffic Website Toko{' '}
+          </div>
+          <div
+            onClick={() => {
+              setStatus('REVIEW');
+            }}
+            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'REVIEW' ? 'bg-black text-white' : 'bg-white text-black'}`}
+          >
+            {' '}
+            Laporan Review Pengguna{' '}
           </div>
           <div
             onClick={() => {
@@ -115,6 +125,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
           {status == 'TRAFFIC' ? <TrafficChart /> : <></>}
           {status == 'PENJUALAN-WEBSITE' ? <PenjualanWebsiteChart /> : <></>}
           {status == 'PENJUALAN-CASHIER' ? <PenjualanCashierChart /> : <></>}
+          {status == 'REVIEW' ? <ReviewChart /> : <></>}
         </div>
       </div>
     </div>
