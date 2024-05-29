@@ -37,7 +37,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } },
 ) {
-  const { productIds, carts, total, memberId } = await req.json();
+  const { productIds, carts, total, memberId, address } = await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse('Product ids are required', { status: 400 });
@@ -96,6 +96,8 @@ export async function POST(
       storeId: params.storeId,
       isPaid: false,
       total,
+      type: 'STORE',
+      address,
       orderItems: {
         create: carts.map((item: CartItems) => ({
           product: {

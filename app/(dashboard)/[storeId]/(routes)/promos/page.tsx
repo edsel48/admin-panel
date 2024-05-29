@@ -17,20 +17,7 @@ const PromoPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
-  let filteredPromo: Promo[] = [];
-
-  promos.forEach((e) => {
-    if (
-      isWithinInterval(new Date(), {
-        start: e.startDate,
-        end: e.endDate,
-      })
-    ) {
-      filteredPromo.push(e);
-    }
-  });
-
-  const formattedPromo: PromoColumn[] = filteredPromo.map((item) => ({
+  const formattedPromo: PromoColumn[] = promos.map((item) => ({
     id: item.id,
     name: item.name,
     discount: `${item.discount}%`,
