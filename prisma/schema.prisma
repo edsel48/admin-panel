@@ -255,3 +255,12 @@ model SupplierTransactionItem {
   @@index([supplierTransactionId])
   @@index([productId])
 }
+
+model Review {
+  id String @id @default(uuid())
+
+  orderId String
+
+  starRating Int @default(5)
+  review String
+}
