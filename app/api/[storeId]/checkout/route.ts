@@ -52,6 +52,8 @@ export async function POST(
   if (member == null)
     return new NextResponse('Member not found', { status: 404 });
 
+  let tier = member.tier;
+
   const FIVE_MILLION = 5000000;
   const TEN_MILLION = 10000000;
 
@@ -98,18 +100,27 @@ export async function POST(
       total,
       type: 'STORE',
       address,
+      memberId,
       orderItems: {
-        create: carts.map((item: CartItems) => ({
-          product: {
-            connect: {
-              id: item.product.id,
+        create: carts.map((item: CartItems) => {
+          let price = {
+            SILVER: item.productSize.priceSilver,
+            GOLD: item.productSize.priceGold,
+            PLATINUM: item.productSize.pricePlatinum,
+          };
+          return {
+            product: {
+              connect: {
+                id: item.product.id,
+              },
             },
-          },
-          // @ts-ignore
-          size: item.productSize.size.name,
-          quantity: item.quantity,
-          subtotal: item.quantity * Number(item.productSize.price),
-        })),
+            // @ts-ignore
+            size: item.productSize.size.name,
+            quantity: item.quantity,
+            // @ts-ignore
+            subtotal: item.quantity * Number(price[tier]),
+          };
+        }),
       },
     },
   });
