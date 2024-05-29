@@ -12,9 +12,17 @@ import { columns } from './components/columns';
 import { TransactionClient } from './components/client';
 import { formatter } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { DollarSign, Trash } from 'lucide-react';
+import { DollarSign, Star, StarOff, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+
+const RepeatStar = (x: number) => {
+  let arr = [];
+  for (let i = 0; i < x; i++) {
+    arr.push(i);
+  }
+  return arr.map((e) => <Star />);
+};
 
 const OrderTransactionPage = ({
   params,
@@ -27,6 +35,8 @@ const OrderTransactionPage = ({
   let [items, setItems] = useState<SupplierTransactionItem[]>([]);
   let [shipping, setShipping] = useState(0);
 
+  let [rating, setRating] = useState({});
+
   let [supplier, setSupplier] = useState<Supplier>();
 
   useEffect(() => {
@@ -36,7 +46,17 @@ const OrderTransactionPage = ({
         `/api/${params.storeId}/orders/${params.orderId}`,
       );
 
+      let ratingResponse = await axios.get(
+        `/api/${params.storeId}/rating/${params.orderId}`,
+      );
+
+      let rating = ratingResponse.data;
+
       let transaction = response.data;
+
+      console.log(rating);
+
+      setRating(rating);
 
       setTransaction(transaction);
       setShipping(transaction.shippingCost);
@@ -104,6 +124,40 @@ const OrderTransactionPage = ({
             {/* @ts-ignore */}
             <TransactionClient data={items} />
           </div>
+        </div>
+        <div>
+          {rating != null ? (
+            <div className="flex-col gap-3">
+              <div className="flex w-full items-center gap-3">
+                <h1 className="text-lg font-bold">Star Rating :</h1>
+                <div className="flex gap-2">
+                  {/* @ts-ignore */}
+                  {[...Array(rating.starRating)].map((e) => (
+                    <Star />
+                  ))}
+
+                  {/* @ts-ignore */}
+                  {rating.starRating != null ? (
+                    // @ts-ignore
+                    [...Array(5 - Number(rating.starRating))].map((e) => (
+                      <StarOff />
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </div>
+              <div>
+                <div className="w-full flex-col gap-3">
+                  <h1 className="text-lg font-bold">Review</h1>
+                  {/* @ts-ignore */}
+                  <div>{rating.review}</div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>
