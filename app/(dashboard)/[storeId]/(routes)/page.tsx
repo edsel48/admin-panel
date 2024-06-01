@@ -24,9 +24,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
   const [status, setStatus] = useState('PREDIKSI');
 
   return (
-    <div className="w-full p-3">
-      <div className="flex gap-3">
-        <div className="leftmenu mr-3 h-full flex-col gap-5 border-r border-solid border-black pr-5">
+    <div className="h-screen w-full p-5">
+      <div className="flex-col gap-3">
+        <div className="leftmenu mr-3 flex gap-5 pr-5">
           <div
             onClick={() => {
               setStatus('PREDIKSI');
@@ -118,7 +118,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
             Laporan Pembelian{' '}
           </div>
         </div>
-        <div className="w-full flex-1">
+        <hr className="my-5" />
+        <div className="h-screen w-full flex-1 items-center justify-center">
           {status == 'PREDIKSI' ? <ArimaChart /> : <></>}
           {status == 'TERLARIS' ? <TerlarisChart /> : <></>}
           {status == 'KEUNTUNGAN' ? <KeuntunganChart /> : <></>}
