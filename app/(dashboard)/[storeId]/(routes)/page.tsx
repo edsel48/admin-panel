@@ -16,117 +16,79 @@ import ArimaChart from './components/arima-chart';
 import { useEffect, useState } from 'react';
 import ReviewChart from './components/review-chart';
 
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+
+import { Button } from '@/components/ui/button';
+
 interface DashboardPageProps {
   params: { storeId: string };
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
-  const [status, setStatus] = useState('PREDIKSI');
+  let statuses = [
+    'Laporan Prediksi Stock Barang',
+    'Laporan Product Terlaris',
+    'Laporan Total Keuntungan',
+    'Laporan Traffic Website Toko',
+    'Laporan Review Pengguna',
+    'Laporan Total Penjualan Website',
+    'Laporan Total Penjualan Cashier',
+    'Laporan Ketersediaan Barang',
+    'Laporan PO',
+    'Laporan Pembelian',
+  ];
+
+  const [status, setStatus] = useState(statuses[0]);
 
   return (
     <div className="h-screen w-full p-5">
       <div className="flex-col gap-3">
-        <div className="leftmenu mr-3 flex gap-5 pr-5">
-          <div
-            onClick={() => {
-              setStatus('PREDIKSI');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'PREDIKSI' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Prediksi Stock Barang{' '}
+        <ScrollArea>
+          <div className="leftmenu mr-3 flex gap-5 pb-5 pr-5">
+            {statuses.map((e) => {
+              if (status == e) {
+                return (
+                  <Button
+                    onClick={() => {
+                      setStatus(e);
+                    }}
+                  >
+                    {e}
+                  </Button>
+                );
+              } else {
+                return (
+                  <Button
+                    onClick={() => {
+                      setStatus(e);
+                    }}
+                    variant={'outline'}
+                  >
+                    {e}
+                  </Button>
+                );
+              }
+            })}
           </div>
-          <div
-            onClick={() => {
-              setStatus('TERLARIS');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'TERLARIS' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Product Terlaris{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('KEUNTUNGAN');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'KEUNTUNGAN' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Total Keuntungan{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('TRAFFIC');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'TRAFFIC' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Traffic Website Toko{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('REVIEW');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'REVIEW' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Laporan Review Pengguna{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('PENJUALAN-WEBSITE');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'PENJUALAN-WEBSITE' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Total Penjualan Website Mingguan{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('PENJUALAN-CASHIER');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'PENJUALAN-CASHIER' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Total Penjualan Cashier Mingguan{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('PERSEDIAAN');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'PERSEDIAAN' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Persediaan Barang{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('PO');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'PO' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Laporan PO{' '}
-          </div>
-          <div
-            onClick={() => {
-              setStatus('PEMBELIAN');
-            }}
-            className={`mb-2 mt-2 px-1 py-3 hover:cursor-pointer hover:bg-black hover:text-white ${status == 'PEMBELIAN' ? 'bg-black text-white' : 'bg-white text-black'}`}
-          >
-            {' '}
-            Laporan Pembelian{' '}
-          </div>
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
         <hr className="my-5" />
         <div className="h-screen w-full flex-1 items-center justify-center">
-          {status == 'PREDIKSI' ? <ArimaChart /> : <></>}
-          {status == 'TERLARIS' ? <TerlarisChart /> : <></>}
-          {status == 'KEUNTUNGAN' ? <KeuntunganChart /> : <></>}
-          {status == 'TRAFFIC' ? <TrafficChart /> : <></>}
-          {status == 'PENJUALAN-WEBSITE' ? <PenjualanWebsiteChart /> : <></>}
-          {status == 'PENJUALAN-CASHIER' ? <PenjualanCashierChart /> : <></>}
-          {status == 'REVIEW' ? <ReviewChart /> : <></>}
+          {status == 'Laporan Prediksi Stock Barang' ? <ArimaChart /> : <></>}
+          {status == 'Laporan Product Terlaris' ? <TerlarisChart /> : <></>}
+          {status == 'Laporan Total Keuntungan' ? <KeuntunganChart /> : <></>}
+          {status == 'Laporan Traffic Website Toko' ? <TrafficChart /> : <></>}
+          {status == 'Laporan Total Penjualan Website' ? (
+            <PenjualanWebsiteChart />
+          ) : (
+            <></>
+          )}
+          {status == 'Laporan Total Penjualan Cashier' ? (
+            <PenjualanCashierChart />
+          ) : (
+            <></>
+          )}
+          {status == 'Laporan Review Pengguna' ? <ReviewChart /> : <></>}
         </div>
       </div>
     </div>

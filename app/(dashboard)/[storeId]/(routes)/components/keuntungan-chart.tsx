@@ -15,6 +15,16 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
 import { formatter } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { format, subDays, subMonths, subYears } from 'date-fns';
@@ -157,19 +167,39 @@ export default function KeuntunganChart() {
   const [keuntunganBulanan, setKeuntunganBulanan] = useState(0);
   const [keuntunganTahunan, setKeuntunganTahunan] = useState(0);
 
-  const [displayKeuntungan, setDisplayKeuntungan] = useState(0);
+  const [chartHarian, setChartHarian] = useState([
+    ['Hour', 'Total Keuntungan'],
+    ['00:00', 0],
+    ['02:00', 12000],
+  ]);
 
-  const [dataKeuntungan, setDataKeuntungan] = useState({
-    DAILY: 0,
-    WEEKLY: 0,
-    MONTHLY: 0,
-    ANNUALLY: 0,
-  });
+  const [chartMingguan, setChartMingguan] = useState([
+    ['Dates', 'Total Keuntungan'],
+    ['04-06-2024', 0],
+    ['05-06-2024', 12000],
+  ]);
+
+  const [chartBulanan, setChartBulanan] = useState([
+    ['Weeks', 'Total Keuntungan'],
+    ['Week 1', 0],
+    ['Week 2', 12000],
+  ]);
+
+  const [chartTahunan, setChartTahunan] = useState([
+    ['Months', 'Total Keuntungan'],
+    ['Januari', 0],
+    ['February', 12000],
+  ]);
+
+  const [displayKeuntungan, setDisplayKeuntungan] = useState(0);
 
   const [chartData, setChartData] = useState([
     ['Time', 'Data'],
     ['01-06-2024', 12000000],
   ]);
+
+  const [profitableProduct, setProfitableProduct] = useState([]);
+  const [lessProfitableProduct, setLessProfitableProduct] = useState([]);
 
   const [status, setStatus] = useState('DAILY');
 
@@ -187,48 +217,69 @@ export default function KeuntunganChart() {
       setKeuntunganWebsite(keuntunganWebsite);
       setKeuntungan(data);
 
+      let productResponse = await axios.get('/api/reports/keuntungan/products');
+      let products = productResponse.data;
+
+      let length = products.length;
+
+      if (products.length >= 10) {
+        // @ts-ignore
+        setProfitableProduct([
+          // @ts-ignore
+          products[0],
+          // @ts-ignore
+          products[1],
+          // @ts-ignore
+          products[2],
+          // @ts-ignore
+          products[3],
+          // @ts-ignore
+          products[4],
+        ]);
+
+        // @ts-ignore
+        setLessProfitableProduct([
+          // @ts-ignore
+          products[products.length - 5],
+          // @ts-ignore
+          products[products.length - 4],
+          // @ts-ignore
+          products[products.length - 3],
+          // @ts-ignore
+          products[products.length - 2],
+          // @ts-ignore
+          products[products.length - 1],
+        ]);
+      }
+
       // setting keuntungan based on status
       for (const e of ['DAILY', 'WEEKLY', 'MONTHLY', 'ANNUALLY']) {
         response = await axios.get(`/api/reports/keuntungan/status/${e}`);
+        let responseChart = await axios.post('/api/reports/keuntungan/all', {
+          type: e,
+        });
+
+        let keuntunganChart = responseChart.data;
 
         let keuntungan = response.data;
 
         if (e == 'DAILY') {
           setKeuntunganHarian(keuntungan);
           setDisplayKeuntungan(keuntungan);
-          setDataKeuntungan({
-            DAILY: Number(keuntungan),
-            WEEKLY: dataKeuntungan['WEEKLY'],
-            MONTHLY: dataKeuntungan['MONTHLY'],
-            ANNUALLY: dataKeuntungan['ANNUALLY'],
-          });
+          setChartHarian(keuntunganChart);
+          setChartData(keuntunganChart);
         }
         if (e == 'WEEKLY') {
           setKeuntunganMingguan(keuntungan);
-          setDataKeuntungan({
-            WEEKLY: Number(keuntungan),
-            DAILY: dataKeuntungan['DAILY'],
-            MONTHLY: dataKeuntungan['MONTHLY'],
-            ANNUALLY: dataKeuntungan['ANNUALLY'],
-          });
+          setChartMingguan(keuntunganChart);
         }
         if (e == 'MONTHLY') {
           setKeuntunganBulanan(keuntungan);
-          setDataKeuntungan({
-            MONTHLY: Number(keuntungan),
-            DAILY: dataKeuntungan['DAILY'],
-            WEEKLY: dataKeuntungan['WEEKLY'],
-            ANNUALLY: dataKeuntungan['ANNUALLY'],
-          });
+          setChartBulanan(keuntunganChart);
         }
         if (e == 'ANNUALLY') {
           setKeuntunganTahunan(keuntungan);
-          setDataKeuntungan({
-            ANNUALLY: Number(keuntungan),
-            DAILY: dataKeuntungan['DAILY'],
-            WEEKLY: dataKeuntungan['WEEKLY'],
-            MONTHLY: dataKeuntungan['MONTHLY'],
-          });
+          setChartTahunan(keuntunganChart);
         }
       }
     };
@@ -248,6 +299,100 @@ export default function KeuntunganChart() {
           keuntungan={keuntungan - keuntunganWebsite}
         />
       </div>
+      <div className="mt-3 flex gap-5">
+        <div className="flex-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <div className="flex gap-3">
+                  Laporan Barang Paling Menguntungkan
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* will be filled with top 5 barang yang menguntungkann */}
+              <Table>
+                <TableCaption>Top 5 Profitable Products</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Product Name</TableHead>
+                    <TableHead>Created At</TableHead>
+                    <TableHead className="text-right">Profits</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {profitableProduct &&
+                    // @ts-ignore
+                    profitableProduct.map((e) => {
+                      console.log(e);
+                      return (
+                        <TableRow>
+                          <TableCell className="font-medium">
+                            {/* @ts-ignore */}
+                            {e.product.name}
+                          </TableCell>
+                          <TableCell>
+                            {/* @ts-ignore */}
+                            {format(e.product.createdAt, 'dd-MM-yyyy')}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {/* @ts-ignore */}
+                            {formatter.format(e.value)}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="flex-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <div className="flex gap-3">
+                  Laporan Barang Paling Tidak Menguntungkan
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableCaption>Top 5 Less Profitable Products</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Product Name</TableHead>
+                    <TableHead>Created At</TableHead>
+                    <TableHead className="text-right">Profits</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {lessProfitableProduct &&
+                    // @ts-ignore
+                    lessProfitableProduct.map((e) => {
+                      return (
+                        <TableRow>
+                          <TableCell className="font-medium">
+                            {/* @ts-ignore */}
+                            {e.product.name}
+                          </TableCell>
+                          <TableCell>
+                            {/* @ts-ignore */}
+                            {format(e.product.createdAt, 'dd-MM-yyyy')}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {/* @ts-ignore */}
+                            {formatter.format(e.value)}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
       <div className="mt-3 flex w-full flex-1 gap-3">
         <div className="flex-1">
           <Card>
@@ -258,28 +403,22 @@ export default function KeuntunganChart() {
                     <StatusButton
                       onClick={() => {
                         setStatus(e);
-                        // change chart data from here
-                        setChartData([
-                          ['Time', 'Data'],
-                          ['01-06-2024 10:00', 25000000],
-                          ['01-06-2024 11:00', 22000000],
-                          ['01-06-2024 12:00', 212000000],
-                          ['01-06-2024 13:00', 252300000],
-                          ['01-06-2024 14:00', 24455000000],
-                          ['01-06-2024 15:00', 252330000],
-                        ]);
 
                         if (e == 'DAILY') {
                           setDisplayKeuntungan(keuntunganHarian);
+                          setChartData(chartHarian);
                         }
                         if (e == 'WEEKLY') {
                           setDisplayKeuntungan(keuntunganMingguan);
+                          setChartData(chartMingguan);
                         }
                         if (e == 'MONTHLY') {
                           setDisplayKeuntungan(keuntunganBulanan);
+                          setChartData(chartBulanan);
                         }
                         if (e == 'ANNUALLY') {
                           setDisplayKeuntungan(keuntunganTahunan);
+                          setChartData(chartTahunan);
                         }
                       }}
                       text={e}
@@ -304,6 +443,7 @@ export default function KeuntunganChart() {
           </Card>
         </div>
       </div>
+
       <div className="mt-3 flex-col">
         <Card>
           <CardHeader>
