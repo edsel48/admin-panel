@@ -143,6 +143,7 @@ model SizesOnProduct {
   pricePlatinum Decimal             @default(0)
   priceSilver   Decimal             @default(0)
   stock         Decimal             @default(0)
+  weight        Decimal             @default(0)
 
   supplierTransactionItems SupplierTransactionItem[]
 }
