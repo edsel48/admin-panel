@@ -20,6 +20,33 @@ const Header = ({ status, color }: { status: string; color: string }) => {
   );
 };
 
+const ProductCard = ({
+  productName,
+  sizeName,
+  sizeStock,
+}: {
+  productName: string;
+  sizeName: string;
+  sizeStock: number;
+}) => {
+  return (
+    <Card>
+      <CardHeader>
+        {/* @ts-ignore */}
+        <CardTitle>{productName}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex-col gap-3">
+          {/* @ts-ignore */}
+          <div>Size : {sizeName}</div>
+          {/* @ts-ignore */}
+          <div>Stock : {sizeStock}</div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 const PoChart = () => {
   const addItems = useCart((state) => state.addItem);
 
@@ -70,7 +97,16 @@ const PoChart = () => {
                 <>Item Not Found</>
               ) : (
                 criticalProducts.map((e) => {
-                  return <>Something </>;
+                  return (
+                    <ProductCard
+                      // @ts-ignore
+                      productName={e.product.name}
+                      // @ts-ignore
+                      sizeName={e.size.size.name}
+                      // @ts-ignore
+                      sizeStock={e.size.stock}
+                    />
+                  );
                 })
               )}
             </div>
@@ -94,10 +130,14 @@ const PoChart = () => {
               ) : (
                 mediumProducts.map((e) => {
                   return (
-                    <div>
-                      {/* @ts-ignore */}
-                      {e.product.name}
-                    </div>
+                    <ProductCard
+                      // @ts-ignore
+                      productName={e.product.name}
+                      // @ts-ignore
+                      sizeName={e.size.size.name}
+                      // @ts-ignore
+                      sizeStock={e.size.stock}
+                    />
                   );
                 })
               )}

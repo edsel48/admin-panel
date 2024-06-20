@@ -35,7 +35,8 @@ export async function GET(req: Request) {
         if (Number(size.stock) <= MEDIUM_LIMIT) {
           status = 'MEDIUM';
           _size = size;
-        } else if (Number(size.stock) <= CRITICAL_LIMIT) {
+        }
+        if (Number(size.stock) <= CRITICAL_LIMIT) {
           status = 'CRITICAL';
           _size = size;
         }

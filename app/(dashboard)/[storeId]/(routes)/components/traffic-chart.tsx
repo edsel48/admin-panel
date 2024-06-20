@@ -45,26 +45,21 @@ export default function TrafficChart() {
 
   return (
     <>
-      <div className="flex-col gap-5">
-        <div className="mt-3 flex gap-5">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <div className="flex gap-3">Traffic Website Store</div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Chart
-                chartType="Bar"
-                width="100%"
-                height="400px"
-                data={data}
-                options={options}
-              />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </>
+    <Card>
+          <CardHeader>
+            <CardTitle>
+              <div className="flex gap-3">Traffic Website Store</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Chart
+              chartType="Bar"
+              width="100%"
+              height="400px"
+              data={data}
+              options={options}
+            />
+          </CardContent>
+        </Card></>
   );
 }

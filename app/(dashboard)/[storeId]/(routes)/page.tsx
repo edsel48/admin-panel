@@ -27,15 +27,15 @@ interface DashboardPageProps {
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
   let statuses = [
-    'Laporan Prediksi Stock Barang',
     'Laporan Product Terlaris',
     'Laporan Total Keuntungan',
+    'Laporan PO',
+    'Laporan Prediksi Stock Barang',
     'Laporan Traffic Website Toko',
     'Laporan Review Pengguna',
     'Laporan Total Penjualan Website',
     'Laporan Total Penjualan Cashier',
     'Laporan Ketersediaan Barang',
-    'Laporan PO',
     'Laporan Pembelian',
   ];
 
