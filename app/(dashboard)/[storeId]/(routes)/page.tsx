@@ -20,6 +20,8 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 import { Button } from '@/components/ui/button';
 import PoChart from './components/po-chart';
+import KetersediaanChart from './components/ketersediaan-chart';
+import PembelianChart from './components/pembelian-chart';
 
 interface DashboardPageProps {
   params: { storeId: string };
@@ -91,6 +93,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
             <></>
           )}
           {status == 'Laporan Review Pengguna' ? <ReviewChart /> : <></>}
+          {status == 'Laporan Pembelian' ? <PembelianChart /> : <></>}
+          {status == 'Laporan Ketersediaan Barang' ? (
+            <KetersediaanChart />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

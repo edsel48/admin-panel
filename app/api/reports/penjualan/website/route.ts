@@ -23,13 +23,7 @@ export async function GET(req: Request) {
     let orderWithinLastWeek = [];
 
     orders.forEach((order) => {
-      if (
-        isWithinInterval(order.createdAt, {
-          start: lastWeek,
-          end: now,
-        }) &&
-        (order.type == 'STORE' || order.type == '')
-      ) {
+      if (order.type == 'STORE' || order.type == '') {
         orderWithinLastWeek.push(order);
       }
     });
