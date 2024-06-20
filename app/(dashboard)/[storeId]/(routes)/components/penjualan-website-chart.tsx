@@ -9,6 +9,15 @@ import { formatter } from '@/lib/utils';
 import { parse } from 'date-fns/parse';
 import { isBefore } from 'date-fns';
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
 export default function PenjualanWebsiteChart() {
   let [orders, setOrders] = useState([
     ['Date', 'Total'],
@@ -52,14 +61,22 @@ export default function PenjualanWebsiteChart() {
 
   return (
     <>
-      <h1 className="text-lg font-bold">Total Penjualan Website Minggu Ini</h1>
-      <Chart
-        chartType="Bar"
-        width="100%"
-        height="400px"
-        data={orders}
-        options={options}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <div className="flex gap-3">Penjualan Website Chart</div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Chart
+            chartType="Bar"
+            width="100%"
+            height="400px"
+            data={orders}
+            options={options}
+          />
+        </CardContent>
+      </Card>
     </>
   );
 }

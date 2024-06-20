@@ -8,6 +8,14 @@ import axios from 'axios';
 import { formatter } from '@/lib/utils';
 import { parse } from 'date-fns/parse';
 import { isBefore } from 'date-fns';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function PenjualanCashierChart() {
   let [orders, setOrders] = useState([
@@ -52,14 +60,22 @@ export default function PenjualanCashierChart() {
 
   return (
     <>
-      <h1 className="text-lg font-bold">Total Penjualan Cashier Minggu Ini</h1>
-      <Chart
-        chartType="Bar"
-        width="100%"
-        height="400px"
-        data={orders}
-        options={options}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <div className="flex gap-3">Penjualan Cashier Chart</div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Chart
+            chartType="Bar"
+            width="100%"
+            height="400px"
+            data={orders}
+            options={options}
+          />
+        </CardContent>
+      </Card>
     </>
   );
 }

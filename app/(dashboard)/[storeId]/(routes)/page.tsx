@@ -19,6 +19,7 @@ import ReviewChart from './components/review-chart';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 import { Button } from '@/components/ui/button';
+import PoChart from './components/po-chart';
 
 interface DashboardPageProps {
   params: { storeId: string };
@@ -75,6 +76,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
         <hr className="my-5" />
         <div className="h-screen w-full flex-1 items-center justify-center">
           {status == 'Laporan Prediksi Stock Barang' ? <ArimaChart /> : <></>}
+          {status == 'Laporan PO' ? <PoChart /> : <></>}
           {status == 'Laporan Product Terlaris' ? <TerlarisChart /> : <></>}
           {status == 'Laporan Total Keuntungan' ? <KeuntunganChart /> : <></>}
           {status == 'Laporan Traffic Website Toko' ? <TrafficChart /> : <></>}
