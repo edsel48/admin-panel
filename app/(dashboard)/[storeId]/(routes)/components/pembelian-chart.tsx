@@ -39,10 +39,19 @@ import {
 import { subWeeks } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { TransactionClient } from './../suppliers/[supplierId]/transactions/[transactionId]/components/client';
+
 import { useRouter, useParams } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table';
 import { Calendar } from '@/components/ui/calendar';
+
+import { cn } from '@/lib/utils';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
 
 interface TransactionOnSupplierColumn {
   id: string;
@@ -127,17 +136,63 @@ export default function PembelianChart() {
             <Card>
               <CardHeader>Start Date</CardHeader>
               <CardContent>
-                <Calendar
-                  mode="single"
-                  onSelect={setStartAt}
-                  selected={startAt}
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-[240px] justify-start text-left font-normal',
+                        !startAt && 'text-muted-foreground',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {startAt ? (
+                        format(startAt, 'PPP')
+                      ) : (
+                        <span>Pick start date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startAt}
+                      onSelect={setStartAt}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </CardContent>
             </Card>
             <Card>
               <CardHeader>End Date</CardHeader>
               <CardContent>
-                <Calendar mode="single" onSelect={setEndAt} selected={endAt} />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-[240px] justify-start text-left font-normal',
+                        !endAt && 'text-muted-foreground',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {endAt ? (
+                        format(endAt, 'PPP')
+                      ) : (
+                        <span>Pick end date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={endAt}
+                      onSelect={setEndAt}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </CardContent>
             </Card>
             <Button
