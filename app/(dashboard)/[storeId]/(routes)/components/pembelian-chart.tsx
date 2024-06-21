@@ -132,7 +132,7 @@ export default function PembelianChart() {
           <CardTitle>Set Period</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-5">
+          <div className="flex items-center gap-5">
             <Card>
               <CardHeader>Start Date</CardHeader>
               <CardContent>
