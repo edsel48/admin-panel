@@ -445,16 +445,18 @@ export default function KeuntunganChart() {
           <CardHeader>
             <CardTitle>Laporan Keuntungan per Periode</CardTitle>
             <CardContent>
-              {/* @ts-ignore */}
-              <CardTotalKeuntungan keuntungan={periodDisplay['total']} />
-              <CartTotalKeuntunganWebsite
-                // @ts-ignore
-                keuntungan={periodDisplay['website']}
-              />
-              <CartTotalKeuntunganCashier
-                // @ts-ignore
-                keuntungan={periodDisplay['cashier']}
-              />
+              <div className="flex gap-3">
+                {/* @ts-ignore */}
+                <CardTotalKeuntungan keuntungan={periodDisplay['total'] || 0} />
+                <CartTotalKeuntunganWebsite
+                  // @ts-ignore
+                  keuntungan={periodDisplay['website'] || 0}
+                />
+                <CartTotalKeuntunganCashier
+                  // @ts-ignore
+                  keuntungan={periodDisplay['cashier'] || 0}
+                />
+              </div>
             </CardContent>
           </CardHeader>
         </Card>
