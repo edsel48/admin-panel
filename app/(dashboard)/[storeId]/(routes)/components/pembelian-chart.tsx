@@ -27,14 +27,22 @@ import {
 
 import { formatter } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { format, subDays, subMonths, subYears } from 'date-fns';
-import { parse } from 'date-fns';
+import {
+  format,
+  isWithinInterval,
+  subDays,
+  subMonths,
+  subYears,
+  parse,
+} from 'date-fns';
+
 import { subWeeks } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { TransactionClient } from './../suppliers/[supplierId]/transactions/[transactionId]/components/client';
 import { useRouter, useParams } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table';
+import { Calendar } from '@/components/ui/calendar';
 
 interface TransactionOnSupplierColumn {
   id: string;
@@ -42,10 +50,15 @@ interface TransactionOnSupplierColumn {
   supplierId: string;
   grandTotal: string;
   status: string;
+  createdAt: string;
 }
 
 export default function PembelianChart() {
   const [transaction, setTransaction] = useState([]);
+  const [displayedTransaction, setDisplayedTransaction] = useState([]);
+
+  const [startAt, setStartAt] = useState<Date | undefined>(new Date());
+  const [endAt, setEndAt] = useState<Date | undefined>(new Date());
 
   const router = useRouter();
   const params = useParams();
@@ -56,6 +69,7 @@ export default function PembelianChart() {
       let { data } = response;
 
       setTransaction(data);
+      setDisplayedTransaction(data);
     };
 
     fetch();
@@ -80,6 +94,11 @@ export default function PembelianChart() {
         header: 'Status',
       },
       {
+        accessorKey: 'createdAt',
+        header: 'Created At',
+      },
+
+      {
         id: 'action',
         cell: ({ row }) => (
           <>
@@ -101,13 +120,62 @@ export default function PembelianChart() {
     <>
       <Card>
         <CardHeader>
+          <CardTitle>Set Period</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-5">
+            <Card>
+              <CardHeader>Start Date</CardHeader>
+              <CardContent>
+                <Calendar
+                  mode="single"
+                  onSelect={setStartAt}
+                  selected={startAt}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>End Date</CardHeader>
+              <CardContent>
+                <Calendar mode="single" onSelect={setEndAt} selected={endAt} />
+              </CardContent>
+            </Card>
+            <Button
+              onClick={() => {
+                // @ts-ignore
+                let data = [];
+                transaction.forEach((e) => {
+                  if (
+                    isWithinInterval(
+                      // @ts-ignore
+                      parse(e.createdAt, 'dd-MM-yyyy', new Date()),
+                      {
+                        start: startAt!,
+                        end: endAt!,
+                      },
+                    )
+                  ) {
+                    data.push(e);
+                  }
+                });
+                // @ts-ignore
+                setDisplayedTransaction(data);
+              }}
+            >
+              Set Period
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
           <CardTitle>Data Pembelian dengan Supplier</CardTitle>
         </CardHeader>
         <CardContent>
           <DataTable
             columns={transactionOnSupplierColumn}
             // @ts-ignore
-            data={transaction}
+            data={displayedTransaction}
             searchKey="name"
           />
         </CardContent>

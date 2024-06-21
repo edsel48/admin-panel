@@ -31,6 +31,7 @@ export async function GET(req: Request) {
       name: t.supplier.name,
       grandTotal: formatter.format(Number(t.grandTotal)),
       status: t.status,
+      createdAt: format(t.createdAt, 'dd-MM-yyyy'),
     };
   });
 
