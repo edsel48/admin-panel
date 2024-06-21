@@ -29,7 +29,17 @@ import { formatter } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { format, subDays, subMonths, subYears } from 'date-fns';
 import { parse } from 'date-fns';
-import { subWeeks } from 'date-fns';
+import { subWeeks, isWithinInterval } from 'date-fns';
+
+import { Calendar } from '@/components/ui/calendar';
+
+import { cn } from '@/lib/utils';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
 
 const CardTotalKeuntungan = ({ keuntungan }: { keuntungan: number }) => {
   return (
@@ -162,6 +172,9 @@ export default function KeuntunganChart() {
   const [keuntungan, setKeuntungan] = useState(0);
   const [keuntunganWebsite, setKeuntunganWebsite] = useState(0);
 
+  const [orders, setOrders] = useState([]);
+  const [periodDisplay, setPeriodDisplay] = useState({});
+
   const [keuntunganHarian, setKeuntunganHarian] = useState(0);
   const [keuntunganMingguan, setKeuntunganMingguan] = useState(0);
   const [keuntunganBulanan, setKeuntunganBulanan] = useState(0);
@@ -205,6 +218,9 @@ export default function KeuntunganChart() {
 
   const [loading, setLoading] = useState(true);
 
+  const [startAt, setStartAt] = useState<Date | undefined>(new Date());
+  const [endAt, setEndAt] = useState<Date | undefined>(new Date());
+
   useEffect(() => {
     setLoading(true);
 
@@ -212,10 +228,19 @@ export default function KeuntunganChart() {
       let response = await axios.get('/api/reports/keuntungan');
       let { data } = response;
 
+      let orders = await axios.get('/api/reports/keuntungan/total');
+
+      setOrders(orders.data);
+
       response = await axios.get('/api/reports/keuntungan/store');
       let keuntunganWebsite = response.data;
       setKeuntunganWebsite(keuntunganWebsite);
       setKeuntungan(data);
+      setPeriodDisplay({
+        website: keuntunganWebsite,
+        total: data,
+        cashier: data - keuntunganWebsite,
+      });
 
       let productResponse = await axios.get('/api/reports/keuntungan/products');
       let products = productResponse.data;
@@ -298,6 +323,141 @@ export default function KeuntunganChart() {
         <CartTotalKeuntunganCashier
           keuntungan={keuntungan - keuntunganWebsite}
         />
+      </div>
+      <div className="flex items-center gap-5">
+        <Card>
+          <CardHeader>
+            <CardTitle>Laporan Keuntungan Per Periode</CardTitle>
+            <CardContent>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Set Period</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-5">
+                    <Card>
+                      <CardHeader>Start Date</CardHeader>
+                      <CardContent>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={'outline'}
+                              className={cn(
+                                'w-[240px] justify-start text-left font-normal',
+                                !startAt && 'text-muted-foreground',
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {startAt ? (
+                                format(startAt, 'PPP')
+                              ) : (
+                                <span>Pick start date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={startAt}
+                              onSelect={setStartAt}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader>End Date</CardHeader>
+                      <CardContent>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={'outline'}
+                              className={cn(
+                                'w-[240px] justify-start text-left font-normal',
+                                !endAt && 'text-muted-foreground',
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {endAt ? (
+                                format(endAt, 'PPP')
+                              ) : (
+                                <span>Pick end date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={endAt}
+                              onSelect={setEndAt}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </CardContent>
+                    </Card>
+                    <Button
+                      onClick={() => {
+                        // @ts-ignore
+                        let data = [];
+
+                        // @ts-ignore
+                        orders.forEach((e) => {
+                          if (
+                            // @ts-ignore
+                            isWithinInterval(e.createdAt, {
+                              start: startAt,
+                              end: endAt,
+                            })
+                          ) {
+                            data.push(e);
+                          }
+                        });
+
+                        let website = 0;
+                        let total = 0;
+
+                        // @ts-ignore
+                        data.forEach((e) => {
+                          total += e.total;
+                          if (e.type == 'STORE') {
+                            website += e.total;
+                          }
+                        });
+
+                        setPeriodDisplay({
+                          website,
+                          total,
+                          cashier: total - website,
+                        });
+                      }}
+                    >
+                      Set Period
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </CardContent>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Laporan Keuntungan per Periode</CardTitle>
+            <CardContent>
+              {/* @ts-ignore */}
+              <CardTotalKeuntungan keuntungan={periodDisplay['total']} />
+              <CartTotalKeuntunganWebsite
+                // @ts-ignore
+                keuntungan={periodDisplay['website']}
+              />
+              <CartTotalKeuntunganCashier
+                // @ts-ignore
+                keuntungan={periodDisplay['cashier']}
+              />
+            </CardContent>
+          </CardHeader>
+        </Card>
       </div>
       <div className="mt-3 flex gap-5">
         <div className="flex-1">

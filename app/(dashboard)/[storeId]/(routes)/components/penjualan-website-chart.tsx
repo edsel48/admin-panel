@@ -178,6 +178,9 @@ export default function PenjualanWebsiteChart() {
                 // @ts-ignore
                 let data = [];
 
+                // @ts-ignore
+                data.push(['Date', 'Total']);
+
                 orders.forEach((e) => {
                   if (
                     isWithinInterval(parse(e[0], 'dd-MM-yyyy', new Date()), {
