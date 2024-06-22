@@ -324,7 +324,7 @@ export default function KeuntunganChart() {
           keuntungan={keuntungan - keuntunganWebsite}
         />
       </div>
-      <div className="flex items-center gap-5">
+      <div className="flex-col items-center gap-5">
         <Card>
           <CardHeader>
             <CardTitle>Laporan Keuntungan Per Periode</CardTitle>
@@ -399,10 +399,9 @@ export default function KeuntunganChart() {
                     </Card>
                     <Button
                       onClick={() => {
-                        // @ts-ignore
-                        let data = [];
+                        let website = 0;
+                        let all = 0;
 
-                        // @ts-ignore
                         orders.forEach((e) => {
                           if (
                             // @ts-ignore
@@ -411,25 +410,21 @@ export default function KeuntunganChart() {
                               end: endAt,
                             })
                           ) {
-                            data.push(e);
-                          }
-                        });
+                            // @ts-ignore
+                            if (e.type === 'STORE') {
+                              // @ts-ignore
+                              website += e.grandTotal;
+                            }
 
-                        let website = 0;
-                        let total = 0;
-
-                        // @ts-ignore
-                        data.forEach((e) => {
-                          total += e.total;
-                          if (e.type == 'STORE') {
-                            website += e.total;
+                            // @ts-ignore
+                            all += e.grandTotal;
                           }
                         });
 
                         setPeriodDisplay({
-                          website,
-                          total,
-                          cashier: total - website,
+                          total: all * (1 - (1 - 0.175)),
+                          website: website * (1 - (1 - 0.175)),
+                          cashier: (all - website) * (1 - (1 - 0.175)),
                         });
                       }}
                     >

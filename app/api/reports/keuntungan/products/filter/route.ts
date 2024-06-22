@@ -6,6 +6,10 @@ import { format } from 'path';
 
 export async function GET(req: Request) {
   try {
+    let body = await req.json();
+
+    let { startAt, endAt } = body;
+
     let products = {};
 
     let orderItems = await prismadb.orderItem.findMany({
@@ -16,21 +20,22 @@ export async function GET(req: Request) {
     });
 
     orderItems.forEach((item) => {
-      // @ts-ignore
-      if (products[item.product.id] == null) {
+      if (
+        isWithinInterval(item.order.createdAt, {
+          start: startAt,
+          end: endAt,
+        })
+      ) {
         // @ts-ignore
-        products[item.product.id] = [
-          {
-            subtotal: Number(item.subtotal),
-            date: item.order.createdAt,
-          },
-        ];
-      } else {
-        //   @ts-ignore
-        products[item.product.id].push({
-          subtotal: Number(item.subtotal),
-          date: item.order.createdAt,
-        });
+        if (products[item.product.id] == null) {
+          // @ts-ignore
+          products[item.product.id] = {
+            subtotal: item.subtotal,
+          };
+        } else {
+          //   @ts-ignore
+          products[item.product.id].subtotal += item.subtotal;
+        }
       }
     });
 
@@ -40,16 +45,9 @@ export async function GET(req: Request) {
 
     for (const key of keys) {
       // @ts-ignore
-      let value = 0;
+      let value = Number(products[key].subtotal);
       // @ts-ignore
-      let data = products[key];
-
-      // @ts-ignore
-      data.forEach(({ subtotal, date }) => {
-        value += Number(subtotal);
-      });
-
-      // @ts-ignore
+      let order = products[key].order;
       let product = await prismadb.product.findFirst({
         where: {
           id: key,
@@ -62,7 +60,6 @@ export async function GET(req: Request) {
       formatted.push({
         value,
         product,
-        data,
       });
     }
 
@@ -74,6 +71,6 @@ export async function GET(req: Request) {
   } catch (e) {
     console.error(e);
 
-    return new NextResponse('Error', { status: 404 });
+    return new NextResponse('Bad Request', { status: 401 });
   }
 }

@@ -6,6 +6,7 @@ export async function GET(req: Request) {
   let sizeMap = {
     Piece: 1,
     'Box (10)': 10,
+    'Box (5)': 5,
     Lusin: 12,
     Gross: 144,
   };
@@ -21,6 +22,7 @@ export async function GET(req: Request) {
   });
 
   let count = {};
+  let transactionCount = {};
 
   orders.forEach((order) => {
     order.orderItems.forEach((item) => {
@@ -37,6 +39,17 @@ export async function GET(req: Request) {
         // @ts-ignore
         count[item.product.name] += orderCount;
       }
+
+      // @ts-ignore
+      if (transactionCount[item.product.name] == null) {
+        // @ts-ignore
+        transactionCount[item.product.name] = 0;
+        // @ts-ignore
+        transactionCount[item.product.name] += 1;
+      } else {
+        // @ts-ignore
+        transactionCount[item.product.name] += 1;
+      }
     });
   });
 
@@ -45,5 +58,5 @@ export async function GET(req: Request) {
     return b[1] - a[1];
   });
 
-  return NextResponse.json(sorted);
+  return NextResponse.json({ sorted, transactionCount });
 }
