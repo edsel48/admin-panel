@@ -54,8 +54,6 @@ const OrderTransactionPage = ({
 
       let transaction = response.data;
 
-      console.log(rating);
-
       setRating(rating);
 
       setTransaction(transaction);
@@ -93,10 +91,9 @@ const OrderTransactionPage = ({
                   <></>
                 )}
                 {/* <div>{supplier != null ? supplier.name : <></>}</div> */}
-                {/* <div className="text-lg font-bold">
-                  Order status :{' '}
-                  {transaction != null ? transaction.status : <></>}
-                </div> */}
+                <div className="text-lg font-bold">
+                  {transaction != null ? <>{transaction.status}</> : <></>}
+                </div>
               </div>
               <div className="flex-col gap-5">
                 <div className="text-lg font-bold">
@@ -124,40 +121,6 @@ const OrderTransactionPage = ({
             {/* @ts-ignore */}
             <TransactionClient data={items} />
           </div>
-        </div>
-        <div>
-          {rating != null ? (
-            <div className="flex-col gap-3">
-              <div className="flex w-full items-center gap-3">
-                <h1 className="text-lg font-bold">Star Rating :</h1>
-                <div className="flex gap-2">
-                  {/* @ts-ignore */}
-                  {[...Array(rating.starRating)].map((e) => (
-                    <Star />
-                  ))}
-
-                  {/* @ts-ignore */}
-                  {rating.starRating != null ? (
-                    // @ts-ignore
-                    [...Array(5 - Number(rating.starRating))].map((e) => (
-                      <StarOff />
-                    ))
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </div>
-              <div>
-                <div className="w-full flex-col gap-3">
-                  <h1 className="text-lg font-bold">Review</h1>
-                  {/* @ts-ignore */}
-                  <div>{rating.review}</div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <></>
-          )}
         </div>
       </div>
     </div>
