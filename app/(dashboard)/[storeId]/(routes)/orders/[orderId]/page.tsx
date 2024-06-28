@@ -196,8 +196,6 @@ const OrderTransactionPage = ({
 
       let transaction = response.data;
 
-      console.log(transaction);
-
       setRating(rating);
 
       setTransaction(transaction);
