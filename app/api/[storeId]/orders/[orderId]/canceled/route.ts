@@ -40,5 +40,5 @@ export async function POST(
     },
   });
 
-  return NextResponse.json(order);
+  return NextResponse.json("Canceled");
 }

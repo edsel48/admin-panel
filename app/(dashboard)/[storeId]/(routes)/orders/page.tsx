@@ -33,6 +33,7 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     total: formatter.format(item.total),
     isPaid: item.isPaid,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
+    status: item.status,
   }));
 
   return (
