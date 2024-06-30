@@ -183,7 +183,7 @@ export default function PenjualanWebsiteChart() {
 
                 orders.forEach((e) => {
                   if (
-                    isWithinInterval(parse(e[0], 'dd-MM-yyyy', new Date()), {
+                    isWithinInterval(parse(e[0], 'dd MM yyyy', new Date()), {
                       start: startAt!,
                       end: endAt!,
                     })
@@ -191,6 +191,8 @@ export default function PenjualanWebsiteChart() {
                     data.push(e);
                   }
                 });
+
+                console.log(data);
 
                 // @ts-ignore
                 setOrdersDisplay(data);
