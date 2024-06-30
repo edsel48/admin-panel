@@ -15,13 +15,155 @@ import { Button } from '@/components/ui/button';
 import { DollarSign, Star, StarOff, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import Router from 'next/router';
 
-const RepeatStar = (x: number) => {
-  let arr = [];
-  for (let i = 0; i < x; i++) {
-    arr.push(i);
-  }
-  return arr.map((e) => <Star />);
+const CancelButton = ({
+  params,
+}: {
+  params: {
+    storeId: string;
+    supplierId: string;
+    orderId: string;
+  };
+}) => {
+  return (
+    <Button
+      variant={'destructive'}
+      onClick={async () => {
+        await axios.post(
+          `/api/${params.storeId}/orders/${params.orderId}/canceled`,
+        );
+
+        toast.success('Order Canceled');
+
+        window.location.reload();
+      }}
+    >
+      {' '}
+      Cancel{' '}
+    </Button>
+  );
+};
+
+const FinishedButton = ({
+  params,
+}: {
+  params: {
+    storeId: string;
+    supplierId: string;
+    orderId: string;
+  };
+}) => {
+  return (
+    <Button
+      onClick={async () => {
+        await axios.post(
+          `/api/${params.storeId}/orders/${params.orderId}/finished`,
+        );
+
+        toast.success('Order is now finished');
+
+        window.location.reload();
+      }}
+    >
+      {' '}
+      Finish{' '}
+    </Button>
+  );
+};
+
+const ProcessedButton = ({
+  params,
+}: {
+  params: {
+    storeId: string;
+    supplierId: string;
+    orderId: string;
+  };
+}) => {
+  return (
+    <Button
+      onClick={async () => {
+        await axios.post(
+          `/api/${params.storeId}/orders/${params.orderId}/processed`,
+        );
+
+        toast.success('Order is now Processed');
+
+        window.location.reload();
+      }}
+    >
+      {' '}
+      Process{' '}
+    </Button>
+  );
+};
+
+const ShippedButton = ({
+  params,
+}: {
+  params: {
+    storeId: string;
+    supplierId: string;
+    orderId: string;
+  };
+}) => {
+  return (
+    <Button
+      onClick={async () => {
+        await axios.post(
+          `/api/${params.storeId}/orders/${params.orderId}/shipped`,
+        );
+
+        toast.success('Order is now Shipped');
+
+        window.location.reload();
+      }}
+    >
+      {' '}
+      Ship{' '}
+    </Button>
+  );
+};
+
+const StatusButton = ({
+  params,
+  status,
+}: {
+  params: {
+    storeId: string;
+    supplierId: string;
+    orderId: string;
+  };
+  status: string | undefined;
+}) => {
+  if (status == undefined) return <>status not found</>;
+
+  let statuses = {
+    PROCESSED: (
+      <div className="flex gap-3">
+        {' '}
+        <ShippedButton params={params} /> <CancelButton params={params} />{' '}
+      </div>
+    ),
+    PAID: (
+      <div className="flex gap-3">
+        {' '}
+        <ProcessedButton params={params} /> <CancelButton params={params} />{' '}
+      </div>
+    ),
+    SHIPPING: (
+      <div className="flex gap-3">
+        {' '}
+        <FinishedButton params={params} /> <CancelButton params={params} />{' '}
+      </div>
+    ),
+    CANCELLED: <></>,
+    FINISHED: <></>,
+  };
+
+  // @ts-ignore
+  return statuses[status];
 };
 
 const OrderTransactionPage = ({
@@ -92,7 +234,11 @@ const OrderTransactionPage = ({
                 )}
                 {/* <div>{supplier != null ? supplier.name : <></>}</div> */}
                 <div className="text-lg font-bold">
+                  Transaction Status :{' '}
                   {transaction != null ? <>{transaction.status}</> : <></>}
+                </div>
+                <div>
+                  <StatusButton params={params} status={transaction?.status} />
                 </div>
               </div>
               <div className="flex-col gap-5">
