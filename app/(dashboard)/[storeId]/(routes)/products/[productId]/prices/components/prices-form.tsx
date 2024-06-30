@@ -37,6 +37,7 @@ const formSchema = z.object({
   pricePlatinum: z.coerce.number().min(1),
   stock: z.coerce.number().min(1),
   weight: z.coerce.number().min(1),
+  minimumStock: z.coerce.number().min(1),
 });
 
 export interface SizesPrices {
@@ -48,6 +49,7 @@ export interface SizesPrices {
   pricePlatinum: number;
   stock: number;
   weight: number;
+  minimumStock: number;
 }
 
 type PriceFormValues = z.infer<typeof formSchema>;
@@ -73,6 +75,7 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
       pricePlatinum: 0,
       stock: 0,
       weight: 0,
+      minimumStock: 0,
     },
   });
 
@@ -105,7 +108,7 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
           {/* @ts-ignore */}
           <Heading title={initialData.name} description={''} />
           <Separator />
-          <div className=" grid grid-cols-6 items-center gap-5">
+          <div className=" grid grid-cols-8 items-center gap-5">
             <FormField
               control={form.control}
               name="price"
@@ -212,6 +215,25 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
                       disabled={loading}
                       type="number"
                       placeholder="500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="minimumStock"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Minimum Stock </FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      type="number"
+                      placeholder="10"
                       {...field}
                     />
                   </FormControl>

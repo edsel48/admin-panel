@@ -2,10 +2,21 @@
 
 import { DataTable } from '@/components/ui/data-table';
 import {
+  Order,
   Supplier,
   SupplierTransaction,
   SupplierTransactionItem,
 } from '@prisma/client';
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { columns } from './components/columns';
@@ -16,6 +27,8 @@ import { DollarSign, Star, StarOff, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Router from 'next/router';
+import { Separator } from '@/components/ui/separator';
+import { format, isBefore } from 'date-fns';
 
 const CancelButton = ({
   params,
@@ -173,7 +186,7 @@ const OrderTransactionPage = ({
 }) => {
   const router = useRouter();
 
-  let [transaction, setTransaction] = useState<SupplierTransaction>();
+  let [transaction, setTransaction] = useState();
   let [items, setItems] = useState<SupplierTransactionItem[]>([]);
   let [shipping, setShipping] = useState(0);
 
@@ -234,10 +247,11 @@ const OrderTransactionPage = ({
                 )}
                 {/* <div>{supplier != null ? supplier.name : <></>}</div> */}
                 <div className="text-lg font-bold">
-                  Transaction Status :{' '}
+                  Transaction Status : {/* @ts-ignore */}
                   {transaction != null ? <>{transaction.status}</> : <></>}
                 </div>
                 <div>
+                  {/* @ts-ignore */}
                   <StatusButton params={params} status={transaction?.status} />
                 </div>
               </div>
@@ -266,6 +280,35 @@ const OrderTransactionPage = ({
             </div>
             {/* @ts-ignore */}
             <TransactionClient data={items} />
+          </div>
+          <Separator />
+          <div className="mt-3 text-lg font-bold">Order Logs</div>
+          <div className="mt-3 flex-col gap-3">
+            {transaction != null ? (
+              // @ts-ignore
+              transaction.logs != null &&
+              // @ts-ignore
+              transaction.logs
+                // @ts-ignore
+                .map((e) => {
+                  return (
+                    <div className="mt-3">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>{e.log}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <CardDescription>
+                            Date : {format(e.createdAt, 'dd-MM-yyyy HH:mm')}
+                          </CardDescription>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

@@ -24,10 +24,12 @@ const ProductCard = ({
   productName,
   sizeName,
   sizeStock,
+  minStock,
 }: {
   productName: string;
   sizeName: string;
   sizeStock: number;
+  minStock: number;
 }) => {
   return (
     <Card>
@@ -41,6 +43,8 @@ const ProductCard = ({
           <div>Size : {sizeName}</div>
           {/* @ts-ignore */}
           <div>Stock : {sizeStock}</div>
+          {/* @ts-ignore */}
+          <div>Minimum Stock : {minStock} </div>
         </div>
       </CardContent>
     </Card>
@@ -48,8 +52,6 @@ const ProductCard = ({
 };
 
 const PoChart = () => {
-  const addItems = useCart((state) => state.addItem);
-
   let [criticalProducts, setCriticalProducts] = useState([]);
   let [mediumProducts, setMediumProducts] = useState([]);
 
@@ -60,23 +62,16 @@ const PoChart = () => {
       let { data } = response;
       //   @ts-ignore
       let critical = [];
-      // @ts-ignore
-      let medium = [];
 
       //   @ts-ignore
       data.forEach((e) => {
         if (e.status == 'CRITICAL') {
           critical.push(e);
         }
-        if (e.status == 'MEDIUM') {
-          medium.push(e);
-        }
       });
 
       //   @ts-ignore
       setCriticalProducts(critical);
-      //   @ts-ignore
-      setMediumProducts(medium);
     };
 
     fetch();
@@ -105,38 +100,8 @@ const PoChart = () => {
                       sizeName={e.size.size.name}
                       // @ts-ignore
                       sizeStock={e.size.stock}
-                    />
-                  );
-                })
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="mt-5">
-        <Separator />
-      </div>
-      <div className="mt-5">
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              <Header status="Medium" color="yellow" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              {mediumProducts.length == 0 ? (
-                <>Item Not Found</>
-              ) : (
-                mediumProducts.map((e) => {
-                  return (
-                    <ProductCard
                       // @ts-ignore
-                      productName={e.product.name}
-                      // @ts-ignore
-                      sizeName={e.size.size.name}
-                      // @ts-ignore
-                      sizeStock={e.size.stock}
+                      minStock={e.size.minimumStock}
                     />
                   );
                 })

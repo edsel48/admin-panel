@@ -17,6 +17,7 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
           product: true,
         },
       },
+      member: true,
     },
     orderBy: {
       createdAt: 'desc',
@@ -34,6 +35,9 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     isPaid: item.isPaid,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
     status: item.status,
+    type: item.type,
+    // @ts-ignore
+    member: item.member == null ? 'Cashier Customer' : item.member.name,
   }));
 
   return (

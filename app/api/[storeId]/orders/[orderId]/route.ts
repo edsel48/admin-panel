@@ -78,6 +78,11 @@ export async function GET(
         },
       },
       member: true,
+      logs: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
     },
   });
 
@@ -106,12 +111,14 @@ export async function GET(
 
   let formatted = {
     total: Number(order.total),
+    type: order.type,
     member: order.member == null ? 'Anon' : order.member.name,
     // @ts-ignore
     orderItems: formattedItems,
     shippingCost: Number(shippingCost),
     address: order.address,
     status: order.status,
+    logs: order.logs,
   };
 
   return NextResponse.json(formatted);

@@ -31,10 +31,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
   let statuses = [
     'Laporan Product Terlaris',
     'Laporan Total Keuntungan',
-    'Laporan PO',
+    'Laporan Barang Yang Hampir Habis',
     'Laporan Prediksi Stock Barang',
     'Laporan Traffic Website Toko',
-    'Laporan Review Pengguna',
+    // 'Laporan Review Pengguna',
     'Laporan Total Penjualan Website',
     'Laporan Total Penjualan Cashier',
     'Laporan Ketersediaan Barang',
@@ -78,7 +78,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
         <hr className="my-5" />
         <div className="h-screen w-full flex-1 items-center justify-center">
           {status == 'Laporan Prediksi Stock Barang' ? <ArimaChart /> : <></>}
-          {status == 'Laporan PO' ? <PoChart /> : <></>}
+          {status == 'Laporan Barang Yang Hampir Habis' ? <PoChart /> : <></>}
           {status == 'Laporan Product Terlaris' ? <TerlarisChart /> : <></>}
           {status == 'Laporan Total Keuntungan' ? <KeuntunganChart /> : <></>}
           {status == 'Laporan Traffic Website Toko' ? <TrafficChart /> : <></>}
@@ -92,7 +92,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
           ) : (
             <></>
           )}
-          {status == 'Laporan Review Pengguna' ? <ReviewChart /> : <></>}
+          {/* {status == 'Laporan Review Pengguna' ? <ReviewChart /> : <></>} */}
           {status == 'Laporan Pembelian' ? <PembelianChart /> : <></>}
           {status == 'Laporan Ketersediaan Barang' ? (
             <KetersediaanChart />

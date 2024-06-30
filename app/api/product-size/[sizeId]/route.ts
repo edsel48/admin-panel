@@ -9,7 +9,15 @@ export async function PATCH(
   try {
     const body = await req.json();
 
-    const { price, priceSilver, priceGold, pricePlatinum, stock } = body;
+    const {
+      price,
+      priceSilver,
+      priceGold,
+      pricePlatinum,
+      stock,
+      minimumStock,
+      weight,
+    } = body;
 
     const data = await prismadb.sizesOnProduct.update({
       where: {
@@ -21,6 +29,8 @@ export async function PATCH(
         priceGold,
         stock,
         pricePlatinum,
+        minimumStock,
+        weight,
       },
     });
 
