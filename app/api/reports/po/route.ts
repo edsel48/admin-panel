@@ -28,27 +28,15 @@ export async function GET(req: Request) {
     }[] = [];
 
     products.forEach((product) => {
-      let status = 'OKAY';
-      let _size = product.sizes[0];
-
       product.sizes.forEach((size) => {
-        if (Number(size.stock) <= MEDIUM_LIMIT) {
-          status = 'MEDIUM';
-          _size = size;
-        }
-        if (Number(size.stock) <= CRITICAL_LIMIT) {
-          status = 'CRITICAL';
-          _size = size;
+        if (Number(size.stock) <= Number(size.minimumStock)) {
+          filtered.push({
+            product,
+            status: 'CRITICAL',
+            size: size,
+          });
         }
       });
-
-      if (status != 'OKAY') {
-        filtered.push({
-          product,
-          status,
-          size: _size,
-        });
-      }
     });
 
     return NextResponse.json(filtered);
