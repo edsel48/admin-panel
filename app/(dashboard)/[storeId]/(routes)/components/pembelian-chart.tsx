@@ -34,7 +34,6 @@ import {
   subMonths,
   subYears,
   parse,
-  isBefore,
 } from 'date-fns';
 
 import { subWeeks } from 'date-fns';
@@ -54,54 +53,77 @@ import {
 } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 
-export default function PenjualanWebsiteChart() {
-  let [orders, setOrders] = useState([
-    ['Date', 'Total'],
-    ['29 05 2024', 'Rp. 12.000.000'],
-  ]);
+interface TransactionOnSupplierColumn {
+  id: string;
+  name: string;
+  supplierId: string;
+  grandTotal: string;
+  status: string;
+  createdAt: string;
+}
 
-  let [ordersDisplay, setOrdersDisplay] = useState([]);
+export default function PembelianChart() {
+  const [transaction, setTransaction] = useState([]);
+  const [displayedTransaction, setDisplayedTransaction] = useState([]);
 
-  let [startAt, setStartAt] = useState<Date | undefined>(new Date());
-  let [endAt, setEndAt] = useState<Date | undefined>(new Date());
+  const [startAt, setStartAt] = useState<Date | undefined>(new Date());
+  const [endAt, setEndAt] = useState<Date | undefined>(new Date());
+
+  const router = useRouter();
+  const params = useParams();
 
   useEffect(() => {
-    let fetch = async () => {
-      let response = await axios.get('/api/reports/penjualan/website');
-
+    const fetch = async () => {
+      let response = await axios.get('/api/reports/pembelian');
       let { data } = response;
 
-      console.log(data);
-
-      let orderData = [];
-
-      orderData.push(['Date', 'Total']);
-
-      let keys = Object.keys(data);
-
-      keys.sort((a, b) => {
-        return isBefore(
-          parse(b, 'dd MM yyyy', new Date()),
-          parse(a, 'dd MM yyyy', new Date()),
-        )
-          ? 1
-          : -1;
-
-        return 0;
-      });
-
-      for (const key of keys) {
-        orderData.push([key, data[key]]);
-      }
-
-      setOrders(orderData);
-
-      // @ts-ignore
-      setOrdersDisplay(orderData);
+      setTransaction(data);
+      setDisplayedTransaction(data);
     };
 
     fetch();
   }, []);
+
+  const transactionOnSupplierColumn: ColumnDef<TransactionOnSupplierColumn>[] =
+    [
+      {
+        accessorKey: 'id',
+        header: 'ID',
+      },
+      {
+        accessorKey: 'name',
+        header: 'Supplier Name',
+      },
+      {
+        accessorKey: 'grandTotal',
+        header: 'Total',
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+      },
+      {
+        accessorKey: 'createdAt',
+        header: 'Created At',
+      },
+
+      {
+        id: 'action',
+        cell: ({ row }) => (
+          <>
+            <Button
+              onClick={() => {
+                router.push(
+                  `/${params.storeId}/suppliers/${row.original.supplierId}/transactions/${row.original.id}`,
+                );
+              }}
+            >
+              Detail
+            </Button>
+          </>
+        ),
+      },
+    ];
 
   return (
     <>
@@ -177,23 +199,22 @@ export default function PenjualanWebsiteChart() {
               onClick={() => {
                 // @ts-ignore
                 let data = [];
-
-                // @ts-ignore
-                data.push(['Date', 'Total']);
-
-                orders.forEach((e) => {
+                transaction.forEach((e) => {
                   if (
-                    isWithinInterval(parse(e[0], 'dd-MM-yyyy', new Date()), {
-                      start: startAt!,
-                      end: endAt!,
-                    })
+                    isWithinInterval(
+                      // @ts-ignore
+                      parse(e.createdAt, 'dd-MM-yyyy', new Date()),
+                      {
+                        start: startAt!,
+                        end: endAt!,
+                      },
+                    )
                   ) {
                     data.push(e);
                   }
                 });
-
                 // @ts-ignore
-                setOrdersDisplay(data);
+                setDisplayedTransaction(data);
               }}
             >
               Set Period
@@ -203,17 +224,14 @@ export default function PenjualanWebsiteChart() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>
-            <div className="flex gap-3">Penjualan Website Chart</div>
-          </CardTitle>
+          <CardTitle>Data Pembelian dengan Supplier</CardTitle>
         </CardHeader>
         <CardContent>
-          <Chart
-            chartType="Bar"
-            width="100%"
-            height="400px"
-            data={ordersDisplay}
-            options={options}
+          <DataTable
+            columns={transactionOnSupplierColumn}
+            // @ts-ignore
+            data={displayedTransaction}
+            searchKey="name"
           />
         </CardContent>
       </Card>

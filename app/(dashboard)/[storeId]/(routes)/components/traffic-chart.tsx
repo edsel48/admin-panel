@@ -5,6 +5,16 @@ import { Chart } from 'react-google-charts';
 import { options } from './chart';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
 import { parse } from 'path';
 
 export default function TrafficChart() {
@@ -35,16 +45,21 @@ export default function TrafficChart() {
 
   return (
     <>
-<h1 className="text-lg font-bold">
-        Traffic Website Store
-    </h1>
-      <Chart
-        chartType="Bar"
-        width="100%"
-        height="400px"
-        data={data}
-        options={options}
-      />
-    </>
+    <Card>
+          <CardHeader>
+            <CardTitle>
+              <div className="flex gap-3">Traffic Website Store</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Chart
+              chartType="Bar"
+              width="100%"
+              height="400px"
+              data={data}
+              options={options}
+            />
+          </CardContent>
+        </Card></>
   );
 }

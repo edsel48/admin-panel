@@ -143,6 +143,8 @@ model SizesOnProduct {
   pricePlatinum Decimal             @default(0)
   priceSilver   Decimal             @default(0)
   stock         Decimal             @default(0)
+  weight        Decimal             @default(0)
+  minimumStock  Decimal             @default(0)
 
   supplierTransactionItems SupplierTransactionItem[]
 }
@@ -192,6 +194,8 @@ model Order {
   memberId   String?
   member     Member?     @relation(fields: [memberId], references: [id])
   store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
+  status      String    @default("COMPLETED")
+  logs       OrderLog[]
   orderItems OrderItem[]
 
   @@index([storeId])
@@ -263,4 +267,17 @@ model Review {
 
   starRating Int @default(5)
   review String
+}
+
+model OrderLog {
+  id String @id @default(uuid())
+
+  orderId String
+  order Order @relation(fields: [orderId], references: [id])
+
+  log String
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
 }

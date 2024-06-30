@@ -1,9 +1,8 @@
 import prismadb from '@/lib/prismadb';
 import { auth } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
-import subDays from 'date-fns/subDays';
 
-import { addDays, format, isWithinInterval } from 'date-fns';
+import { addDays, format, isWithinInterval, subDays } from 'date-fns';
 
 export async function GET(req: Request) {
   try {
@@ -17,20 +16,14 @@ export async function GET(req: Request) {
       },
     });
 
-    let lastWeek = subDays.subDays(new Date(), 7);
+    let lastWeek = subDays(new Date(), 7);
     let now = addDays(new Date(), 1);
 
     //   @ts-ignore
     let orderWithinLastWeek = [];
 
     orders.forEach((order) => {
-      if (
-        isWithinInterval(order.createdAt, {
-          start: lastWeek,
-          end: now,
-        }) &&
-        (order.type == 'STORE' || order.type == '')
-      ) {
+      if (order.type == 'STORE' || order.type == '') {
         orderWithinLastWeek.push(order);
       }
     });

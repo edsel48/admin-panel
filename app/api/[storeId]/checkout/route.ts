@@ -96,10 +96,11 @@ export async function POST(
   const order = await prismadb.order.create({
     data: {
       storeId: params.storeId,
-      isPaid: false,
+      isPaid: true,
       total,
       type: 'STORE',
       address,
+      status: 'PAID',
       memberId,
       orderItems: {
         create: carts.map((item: CartItems) => {

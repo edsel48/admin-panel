@@ -27,6 +27,7 @@ const PricePage = async ({
 
   if (product == null) return <div> product not found </div>;
 
+  // @ts-ignore
   let mappedProduct: SizesPrices[] = product.sizes
     .sort((a, b) => Number(a.size.value) - Number(b.size.value))
     .map((s) => {

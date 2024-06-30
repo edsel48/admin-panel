@@ -111,6 +111,7 @@ export async function GET(
     orderItems: formattedItems,
     shippingCost: Number(shippingCost),
     address: order.address,
+    status: order.status,
   };
 
   return NextResponse.json(formatted);
