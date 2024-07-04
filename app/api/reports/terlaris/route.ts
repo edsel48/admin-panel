@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   orders.forEach((order) => {
     order.orderItems.forEach((item) => {
       // @ts-ignore
-      let orderCount = sizeMap[item.size] || 0;
+      let orderCount = sizeMap[item.size] * item.quantity || 0;
 
       // @ts-ignore
       if (count[item.product.name] == null) {
