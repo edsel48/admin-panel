@@ -326,13 +326,13 @@ export default function TerlarisChart() {
                               {/* @ts-ignore */}
                               {e.product.name}
                             </TableCell>
-                            <TableCell className="font-medium">
-                              {/* @ts-ignore */}
-                              {terlaris.count[e.product.name] || 0}
-                            </TableCell>
                             <TableCell>
                               {/* @ts-ignore */}
                               {terlaris.transactionCount[e.product.name]}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {/* @ts-ignore */}
+                              {terlaris.count[e.product.name] || 0}
                             </TableCell>
                             <TableCell className="text-right">
                               {/* @ts-ignore */}
@@ -378,13 +378,13 @@ export default function TerlarisChart() {
                               {/* @ts-ignore */}
                               {e.product.name}
                             </TableCell>
-                            <TableCell className="font-medium">
-                              {/* @ts-ignore */}
-                              {terlaris.count[e.product.name] || 0}
-                            </TableCell>
                             <TableCell>
                               {/* @ts-ignore */}
                               {terlaris.transactionCount[e.product.name] || 0}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {/* @ts-ignore */}
+                              {terlaris.count[e.product.name] || 0}
                             </TableCell>
                             <TableCell className="text-right">
                               {/* @ts-ignore */}
