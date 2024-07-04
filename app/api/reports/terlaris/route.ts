@@ -58,5 +58,5 @@ export async function GET(req: Request) {
     return b[1] - a[1];
   });
 
-  return NextResponse.json({ sorted, transactionCount });
+  return NextResponse.json({ sorted, transactionCount, count });
 }

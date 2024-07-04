@@ -317,13 +317,6 @@ export default function KeuntunganChart() {
     <>Fetching data please wait</>
   ) : (
     <div className="h-full flex-col gap-5">
-      <div className="flex flex-1 items-center justify-between gap-3">
-        <CardTotalKeuntungan keuntungan={keuntungan} />
-        <CartTotalKeuntunganWebsite keuntungan={keuntunganWebsite} />
-        <CartTotalKeuntunganCashier
-          keuntungan={keuntungan - keuntunganWebsite}
-        />
-      </div>
       <div className="flex-col items-center gap-5">
         <Card>
           <CardHeader>

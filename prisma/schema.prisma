@@ -117,6 +117,7 @@ model Product {
   promo         Promo?
   sizes         SizesOnProduct[]
   suppliers     SupplierOnProduct[]
+  minimumStock  Decimal             @default(0)
 
   @@index([storeId])
   @@index([categoryId])
@@ -276,6 +277,8 @@ model OrderLog {
   order Order @relation(fields: [orderId], references: [id])
 
   log String
+
+  orderTrackingId String @default("")
 
   createdAt DateTime @default(now())
 

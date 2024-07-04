@@ -78,13 +78,24 @@ export default function ArimaChart() {
 
           console.log(e.orderItems);
 
+          let sizeMap = {
+            PIECE: 1,
+            'BOX (5)': 5,
+            'BOX (10)': 10,
+            LUSIN: 12,
+            DOZEN: 144,
+          };
+
           if (e.orderItems.length > 10) {
             let endpoint = 'http://localhost:8080/';
             let response = await axios.post(endpoint + 'predict/arima', {
               start: 1,
               end: e.orderItems.length,
               // @ts-ignore
-              sold_data: e.orderItems.map((item) => item.quantity),
+              sold_data: e.orderItems.map(
+                // @ts-ignore
+                (item) => item.quantity * sizeMap[item.size],
+              ),
             });
 
             let arima_data = response.data.predicted;
@@ -95,7 +106,10 @@ export default function ArimaChart() {
                 start: 1,
                 end: e.orderItems.length,
                 // @ts-ignore
-                sold_data: e.orderItems.map((item) => item.quantity),
+                sold_data: e.orderItems.map(
+                  // @ts-ignore
+                  (item) => item.quantity * sizeMap[item.size],
+                ),
               },
             );
 
@@ -105,7 +119,10 @@ export default function ArimaChart() {
               start: 1,
               end: e.orderItems.length,
               // @ts-ignore
-              sold_data: e.orderItems.map((item) => item.quantity),
+              sold_data: e.orderItems.map(
+                // @ts-ignore
+                (item) => item.quantity * sizeMap[item.size],
+              ),
             });
 
             let svr_data = response.data.predicted;
