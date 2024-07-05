@@ -19,7 +19,11 @@ export async function GET(
               size: true,
             },
           },
-          supplierTransactionItemMutations: true,
+          supplierTransactionItemMutations: {
+            include: {
+              supplierTransactionItem: true,
+            },
+          },
         },
       },
     },

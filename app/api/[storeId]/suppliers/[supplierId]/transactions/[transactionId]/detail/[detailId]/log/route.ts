@@ -59,7 +59,7 @@ export async function POST(
     let status = 'Completely Fullfilled';
 
     if (quantity != 0) {
-      if (quantity < detail.quantity) {
+      if (quantity < quantity + detail.quantity) {
         status = 'Partly Fullfilled';
       }
     }
@@ -69,7 +69,9 @@ export async function POST(
         id: params.detailId,
       },
       data: {
-        delivered: quantity,
+        delivered: {
+          increment: quantity,
+        },
         status,
       },
     });
