@@ -21,7 +21,11 @@ export async function GET(
           },
           supplierTransactionItemMutations: {
             include: {
-              supplierTransactionItem: true,
+              supplierTransactionItem: {
+                include: {
+                  product: true,
+                },
+              },
             },
           },
         },

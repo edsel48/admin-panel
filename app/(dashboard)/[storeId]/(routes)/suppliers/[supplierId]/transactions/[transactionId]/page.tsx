@@ -15,6 +15,14 @@ import { Button } from '@/components/ui/button';
 import { DollarSign, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 const SupplierTransactionPage = ({
   params,
@@ -162,14 +170,30 @@ const SupplierTransactionPage = ({
             )}
             {/* @ts-ignore */}
             <TransactionClient data={items} />
-            {items.map((data) => {
-              return (
-                <div>
-                  {/* @ts-ignore */}
-                  {JSON.stringify(data.supplierTransactionItemMutations)}
-                </div>
-              );
-            })}
+            <div className="flex-col gap-3">
+              {/* @ts-ignore */}
+              {items.map((data) => {
+                // @ts-ignore
+                data.logs.map((e) => {
+                  return (
+                    <div className="mt-3">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>{e.product.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <CardDescription>
+                            {/* @ts-ignore */}
+                            {e.quantity} {data.size.name} Added to{' '}
+                            {e.product.name}
+                          </CardDescription>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                });
+              })}
+            </div>
           </div>
         </div>
       </div>
