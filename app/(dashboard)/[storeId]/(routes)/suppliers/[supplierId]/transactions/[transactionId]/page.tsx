@@ -51,7 +51,9 @@ const SupplierTransactionPage = ({
             status: e.status,
             delivered: e.delivered,
             // @ts-ignore
-            logs: e.supplierTransactionItemMutations,
+            supplierTransactionItemMutations:
+              // @ts-ignore
+              e.supplierTransactionItemMutations,
           };
         },
       );
@@ -160,6 +162,14 @@ const SupplierTransactionPage = ({
             )}
             {/* @ts-ignore */}
             <TransactionClient data={items} />
+            {items.map((data) => {
+              return (
+                <div>
+                  {/* @ts-ignore */}
+                  {JSON.stringify(data.supplierTransactionItemMutations)}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
