@@ -30,6 +30,10 @@ interface DataTableProps<TData, TValue> {
   list?: string[];
 }
 
+const toProperCase = (text: string) => {
+  return text.charAt(0).toUpperCase + text.substring(1).toLowerCase();
+};
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -67,7 +71,14 @@ export function DataTable<TData, TValue>({
         ) : (
           <div className="flex-col gap-3">
             <div className="flex gap-3">
-              {list.map((e) => {
+              {list.map((e: string) => {
+                let split = e.split(' ');
+                let text = toProperCase(e);
+
+                if (split.length > 1) {
+                  text = toProperCase(split[0]) + ' ' + toProperCase(split[1]);
+                }
+
                 return (
                   <Button
                     onClick={() => {
@@ -79,7 +90,7 @@ export function DataTable<TData, TValue>({
                       }
                     }}
                   >
-                    {e}
+                    {text}
                   </Button>
                 );
               })}

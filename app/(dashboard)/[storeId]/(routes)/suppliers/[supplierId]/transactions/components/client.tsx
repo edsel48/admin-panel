@@ -82,7 +82,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
 
         removeAll();
 
-        toast.success("Order Created");
+        toast.success('Order Created');
 
         router.push(
           `/${params.storeId}/suppliers/${params.supplierId}/transactions/${data.id}`,
@@ -100,7 +100,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
         <div className="w-1/2">
           <h1> Product List </h1>
           {/* @ts-ignore */}
-          <DataTable columns={columns} data={data} searchKey="name" />
+          <DataTable columns={columns} data={data} searchKey="name" list={[]} />
           {/* {
             <div className="flex flex-col gap-5">
               {data.map((e) => (

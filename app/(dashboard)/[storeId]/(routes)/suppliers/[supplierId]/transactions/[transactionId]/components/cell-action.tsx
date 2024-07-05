@@ -65,8 +65,8 @@ const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onSubmit = async () => {
     try {
       console.log(data.id);
-      await axios.patch(
-        `/api/${params.storeId}/suppliers/${params.supplierId}/transactions/${params.transactionId}/detail/${data.id}`,
+      await axios.post(
+        `/api/${params.storeId}/suppliers/${params.supplierId}/transactions/${params.transactionId}/detail/${data.id}/log`,
         {
           quantity,
         },

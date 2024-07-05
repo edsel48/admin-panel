@@ -231,7 +231,15 @@ export default function PembelianChart() {
             columns={transactionOnSupplierColumn}
             // @ts-ignore
             data={displayedTransaction}
-            searchKey="name"
+            searchKey="status"
+            list={[
+              'ALL',
+              'ORDERED',
+              'PAID',
+              'Partly Fullfilled',
+              'CLOSED',
+              'Completely Fullfilled',
+            ]}
           />
         </CardContent>
       </Card>

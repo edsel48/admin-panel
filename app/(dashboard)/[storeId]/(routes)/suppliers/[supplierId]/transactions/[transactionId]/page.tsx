@@ -50,6 +50,8 @@ const SupplierTransactionPage = ({
             quantity: e.quantity,
             status: e.status,
             delivered: e.delivered,
+            // @ts-ignore
+            logs: e.supplierTransactionItemMutations,
           };
         },
       );

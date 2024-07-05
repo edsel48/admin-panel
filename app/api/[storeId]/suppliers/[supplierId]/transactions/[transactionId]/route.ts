@@ -19,6 +19,7 @@ export async function GET(
               size: true,
             },
           },
+          supplierTransactionItemMutations: true,
         },
       },
     },

@@ -22,12 +22,10 @@ const Header = ({ status, color }: { status: string; color: string }) => {
 
 const ProductCard = ({
   productName,
-  sizeName,
   sizeStock,
   minStock,
 }: {
   productName: string;
-  sizeName: string;
   sizeStock: number;
   minStock: number;
 }) => {
@@ -39,8 +37,6 @@ const ProductCard = ({
       </CardHeader>
       <CardContent>
         <div className="flex-col gap-3">
-          {/* @ts-ignore */}
-          <div>Size : {sizeName}</div>
           {/* @ts-ignore */}
           <div>Stock : {sizeStock}</div>
           {/* @ts-ignore */}
@@ -61,14 +57,7 @@ const PoChart = () => {
 
       let { data } = response;
       //   @ts-ignore
-      let critical = [];
-
-      //   @ts-ignore
-      data.forEach((e) => {
-        if (e.status == 'CRITICAL') {
-          critical.push(e);
-        }
-      });
+      let critical = data;
 
       //   @ts-ignore
       setCriticalProducts(critical);
@@ -97,11 +86,9 @@ const PoChart = () => {
                       // @ts-ignore
                       productName={e.product.name}
                       // @ts-ignore
-                      sizeName={e.size.size.name}
+                      sizeStock={e.total}
                       // @ts-ignore
-                      sizeStock={e.size.stock}
-                      // @ts-ignore
-                      minStock={e.size.minimumStock}
+                      minStock={e.product.minimumStock}
                     />
                   );
                 })
