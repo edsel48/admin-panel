@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const toProperCase = (text: string) => {
-    return text.charAt(0).toUpperCase + text.substring(1).toLowerCase();
+    return text.charAt(0).toUpperCase() + text.substring(1).toLowerCase();
   };
 
   const table = useReactTable({
