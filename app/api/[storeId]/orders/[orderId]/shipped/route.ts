@@ -26,6 +26,10 @@ export async function POST(
     },
   });
 
+  let body = await req.json();
+
+  let { orderTrackingId } = body;
+
   if (prev!!.status == 'CANCELED')
     return new NextResponse('ORDER CANNOT BE ALTERED', { status: 402 });
 
@@ -40,12 +44,13 @@ export async function POST(
 
   const log = await prismadb.orderLog.create({
     data: {
-      log: 'Your order is shipped',
+      log: `Your order is shipped [ CODE : ${orderTrackingId} ]`,
       order: {
         connect: {
           id: params.orderId,
         },
       },
+      orderTrackingId,
     },
   });
 

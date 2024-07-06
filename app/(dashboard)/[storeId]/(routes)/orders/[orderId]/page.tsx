@@ -29,6 +29,7 @@ import toast from 'react-hot-toast';
 import Router from 'next/router';
 import { Separator } from '@/components/ui/separator';
 import { format, isBefore } from 'date-fns';
+import { Input } from '@/components/ui/input';
 
 const CancelButton = ({
   params,
@@ -114,18 +115,23 @@ const ProcessedButton = ({
 
 const ShippedButton = ({
   params,
+  orderTrackingId,
 }: {
   params: {
     storeId: string;
     supplierId: string;
     orderId: string;
   };
+  orderTrackingId: string;
 }) => {
   return (
     <Button
       onClick={async () => {
         await axios.post(
           `/api/${params.storeId}/orders/${params.orderId}/shipped`,
+          {
+            orderTrackingId,
+          },
         );
 
         toast.success('Order is now Shipped');
@@ -142,6 +148,8 @@ const ShippedButton = ({
 const StatusButton = ({
   params,
   status,
+  setInput,
+  orderTrackingId,
 }: {
   params: {
     storeId: string;
@@ -149,14 +157,28 @@ const StatusButton = ({
     orderId: string;
   };
   status: string | undefined;
+  setInput: void;
+  orderTrackingId: string;
 }) => {
   if (status == undefined) return <>status not found</>;
 
   let statuses = {
     PROCESSED: (
-      <div className="flex gap-3">
-        {' '}
-        <ShippedButton params={params} /> <CancelButton params={params} />{' '}
+      <div className="flex-col gap-3">
+        <Input
+          onBlur={(e) => {
+            // @ts-ignore
+            setInput(e.currentTarget.value);
+          }}
+        />
+        <div className="mt-3 flex gap-3">
+          {' '}
+          <ShippedButton
+            params={params}
+            orderTrackingId={orderTrackingId}
+          />{' '}
+          <CancelButton params={params} />{' '}
+        </div>
       </div>
     ),
     PAID: (
@@ -188,6 +210,8 @@ const OrderTransactionPage = ({
 
   let [transaction, setTransaction] = useState();
   let [items, setItems] = useState<SupplierTransactionItem[]>([]);
+  let [trackingId, setTrackingId] = useState<string>('');
+
   let [shipping, setShipping] = useState(0);
 
   let [rating, setRating] = useState({});
@@ -252,7 +276,14 @@ const OrderTransactionPage = ({
                 </div>
                 <div>
                   {/* @ts-ignore */}
-                  <StatusButton params={params} status={transaction?.status} />
+                  <StatusButton
+                    params={params}
+                    // @ts-ignore
+                    status={transaction?.status}
+                    // @ts-ignore
+                    setInput={setTrackingId}
+                    orderTrackingId={trackingId}
+                  />
                 </div>
               </div>
               <div className="flex-col gap-5">
