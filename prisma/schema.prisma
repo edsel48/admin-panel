@@ -190,6 +190,8 @@ model SupplierTransactionItemMutation {
 
   quantity Int @default(0)
 
+  createdAt DateTime @default(now())
+
   @@index([supplierTransactionItemId])
 }
 

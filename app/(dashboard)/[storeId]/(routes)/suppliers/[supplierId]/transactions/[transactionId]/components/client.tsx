@@ -28,13 +28,7 @@ export const TransactionClient: React.FC<TransactionClientProps> = ({
         // @ts-ignore
         data={data}
         searchKey="status"
-        list={[
-          'ALL',
-          'PAID',
-          'Partly Fullfilled',
-          'CLOSED',
-          'Completely Fullfilled',
-        ]}
+        list={['ALL', 'ORDERED', 'Partly Fullfilled', 'Completely Fullfilled']}
       />
 
       {/* @ts-ignore */}

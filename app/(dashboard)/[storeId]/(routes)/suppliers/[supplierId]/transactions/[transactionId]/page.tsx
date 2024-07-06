@@ -23,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { format } from 'date-fns';
 
 const SupplierTransactionPage = ({
   params,
@@ -174,24 +175,32 @@ const SupplierTransactionPage = ({
               {/* @ts-ignore */}
               {items.map((data) => {
                 // @ts-ignore
-                data.supplierTransactionItemMutations.map((e) => {
-                  return (
-                    <div className="mt-3">
-                      <Card>
-                        <CardHeader>
-                          {/* @ts-ignore */}
-                          <CardTitle>{data.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <CardDescription>
-                            {/* @ts-ignore */}
-                            {e.quantity} {data.size} Added to {data.name}
-                          </CardDescription>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  );
-                });
+                return (
+                  // @ts-ignore
+                  data.supplierTransactionItemMutations
+                    // @ts-ignore
+                    .sort((a, b) => b.createdAt - a.createdAt)
+                    // @ts-ignore
+                    .map((e) => {
+                      return (
+                        <div className="mt-3">
+                          <Card>
+                            <CardHeader>
+                              {/* @ts-ignore */}
+                              <CardTitle>{data.name}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <CardDescription>
+                                {/* @ts-ignore */}
+                                {e.quantity} {data.size} Added to {data.name} at{' '}
+                                {format(e.createdAt, 'dd-MM-yyyy')}
+                              </CardDescription>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      );
+                    })
+                );
               })}
             </div>
           </div>

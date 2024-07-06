@@ -37,7 +37,7 @@ export async function PATCH(
   let status = 'Completely Fullfilled';
 
   if (quantity != 0) {
-    if (quantity < detail.quantity + quantity) {
+    if (detail.quantity > detail.delivered + quantity) {
       status = 'Partly Fullfilled';
     }
   }
