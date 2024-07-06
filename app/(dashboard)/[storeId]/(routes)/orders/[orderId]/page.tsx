@@ -30,6 +30,7 @@ import Router from 'next/router';
 import { Separator } from '@/components/ui/separator';
 import { format, isBefore } from 'date-fns';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const CancelButton = ({
   params,
@@ -165,6 +166,7 @@ const StatusButton = ({
   let statuses = {
     PROCESSED: (
       <div className="flex-col gap-3">
+        <Label> Shipping Code </Label>
         <Input
           onBlur={(e) => {
             // @ts-ignore
