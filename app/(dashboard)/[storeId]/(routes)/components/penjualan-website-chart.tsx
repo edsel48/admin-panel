@@ -62,6 +62,9 @@ export default function PenjualanWebsiteChart() {
 
   let [ordersDisplay, setOrdersDisplay] = useState([]);
 
+  let [store, setStore] = useState([]);
+  let [storeDisplay, setStoreDisplay] = useState([]);
+
   let [startAt, setStartAt] = useState<Date | undefined>(new Date());
   let [endAt, setEndAt] = useState<Date | undefined>(new Date());
 
@@ -69,7 +72,14 @@ export default function PenjualanWebsiteChart() {
     let fetch = async () => {
       let response = await axios.get('/api/reports/penjualan/website');
 
+      let storeResponse = await axios.get('/api/reports/penjualan/website/all');
+
       let { data } = response;
+
+      let store = storeResponse.data;
+
+      setStore(store);
+      setStoreDisplay(store);
 
       console.log(data);
 
@@ -175,25 +185,51 @@ export default function PenjualanWebsiteChart() {
             </Card>
             <Button
               onClick={() => {
-                // @ts-ignore
-                let data = [];
+                const prepareWebsite = () => {
+                  // @ts-ignore
+                  let data = [];
 
-                // @ts-ignore
-                data.push(['Date', 'Total']);
+                  // @ts-ignore
+                  data.push(['Date', 'Total']);
 
-                orders.forEach((e) => {
-                  if (
-                    isWithinInterval(parse(e[0], 'dd MM yyyy', new Date()), {
-                      start: startAt!,
-                      end: endAt!,
-                    })
-                  ) {
-                    data.push(e);
-                  }
-                });
+                  orders.forEach((e) => {
+                    if (
+                      isWithinInterval(parse(e[0], 'dd MM yyyy', new Date()), {
+                        start: startAt!,
+                        end: endAt!,
+                      })
+                    ) {
+                      data.push(e);
+                    }
+                  });
 
-                // @ts-ignore
-                setOrdersDisplay(data);
+                  // @ts-ignore
+                  setOrdersDisplay(data);
+                };
+
+                const prepareTable = () => {
+                  // @ts-ignore
+                  let data = [];
+
+                  store.forEach((e) => {
+                    // @ts-ignore
+                    if (
+                      // @ts-ignore
+                      isWithinInterval(e.createdAt, {
+                        start: startAt!,
+                        end: endAt!,
+                      })
+                    ) {
+                      data.push(e);
+                    }
+                  });
+
+                  // @ts-ignore
+                  setStoreDisplay(data);
+                };
+
+                prepareWebsite();
+                prepareTable();
               }}
             >
               Set Period
@@ -215,6 +251,33 @@ export default function PenjualanWebsiteChart() {
             data={ordersDisplay}
             options={options}
           />
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {storeDisplay.map((e) => {
+                return (
+                  <TableRow>
+                    {/* @ts-ignore */}
+                    <TableCell>{e.id}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{format(e.createdAt, 'dd-MM-yyyy')}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{e.total}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{e.status}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </>
