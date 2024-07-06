@@ -179,12 +179,13 @@ const SupplierTransactionPage = ({
                     <div className="mt-3">
                       <Card>
                         <CardHeader>
-                          <CardTitle>{e.product.name}</CardTitle>
+                          {/* @ts-ignore */}
+                          <CardTitle>{data.name}</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <CardDescription>
                             {/* @ts-ignore */}
-                            {e.quantity} {data.size} Added to {e.product.name}
+                            {e.quantity} {data.size} Added to {data.name}
                           </CardDescription>
                         </CardContent>
                       </Card>
