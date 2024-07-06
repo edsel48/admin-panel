@@ -174,7 +174,7 @@ const SupplierTransactionPage = ({
               {/* @ts-ignore */}
               {items.map((data) => {
                 // @ts-ignore
-                data.logs.map((e) => {
+                data.supplierTransactionItemMutations.map((e) => {
                   return (
                     <div className="mt-3">
                       <Card>
