@@ -184,8 +184,7 @@ const SupplierTransactionPage = ({
                         <CardContent>
                           <CardDescription>
                             {/* @ts-ignore */}
-                            {e.quantity} {data.size.name} Added to{' '}
-                            {e.product.name}
+                            {e.quantity} {data.size} Added to {e.product.name}
                           </CardDescription>
                         </CardContent>
                       </Card>
