@@ -26,6 +26,9 @@ export async function GET(
         },
       },
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 
   let formatted = orders.map((order) => {
