@@ -54,5 +54,48 @@ export async function POST(
     },
   });
 
+  let orderData = await prismadb.orderItem.findMany({
+    where: {
+      orderId: params.orderId,
+    },
+    include: {
+      product: {
+        include: {
+          sizes: {
+            include: {
+              size: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  for (const item of orderData) {
+    try {
+      let size = await prismadb.sizesOnProduct.findFirstOrThrow({
+        where: {
+          productId: item.productId,
+          size: {
+            name: item.size,
+          },
+        },
+      });
+
+      await prismadb.sizesOnProduct.update({
+        where: {
+          id: size.id,
+        },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
+      });
+    } catch (e) {
+      return new NextResponse('Update failed', { status: 500 });
+    }
+  }
+
   return NextResponse.json('Shipped');
 }

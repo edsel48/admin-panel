@@ -11,6 +11,8 @@ import TerlarisChart from './components/terlaris-chart';
 import KeuntunganChart from './components/keuntungan-chart';
 import PenjualanWebsiteChart from './components/penjualan-website-chart';
 import PenjualanCashierChart from './components/penjualan-cashier-chart';
+import PenjualanWebsiteTable from './components/penjualan-website-table';
+
 import ArimaChart from './components/arima-chart';
 
 import { useEffect, useState } from 'react';
@@ -38,6 +40,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
     'Laporan Total Penjualan Website',
     'Laporan Total Penjualan Cashier',
     'Laporan Ketersediaan Barang',
+    'Laporan Tabel Penjualan Website',
     'Laporan Pembelian',
   ];
 
@@ -82,6 +85,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
           {status == 'Laporan Product Terlaris' ? <TerlarisChart /> : <></>}
           {status == 'Laporan Total Keuntungan' ? <KeuntunganChart /> : <></>}
           {status == 'Laporan Traffic Website Toko' ? <TrafficChart /> : <></>}
+          {status == 'Laporan Tabel Penjualan Website' ? (
+            <PenjualanWebsiteTable />
+          ) : (
+            <></>
+          )}
           {status == 'Laporan Total Penjualan Website' ? (
             <PenjualanWebsiteChart />
           ) : (

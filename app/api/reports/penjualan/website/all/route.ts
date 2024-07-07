@@ -29,6 +29,7 @@ export async function GET(req: Request) {
           total: Number(e.total),
           createdAt: e.createdAt,
           status: e.status,
+          discount: Number(e.totalDiscount),
         };
       }),
     );

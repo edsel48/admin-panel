@@ -54,7 +54,7 @@ import {
 } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 
-export default function PenjualanWebsiteChart() {
+export default function PenjualanWebsiteTable() {
   let [orders, setOrders] = useState([
     ['Date', 'Total'],
     ['29 05 2024', 'Rp. 12.000.000'],
@@ -240,17 +240,46 @@ export default function PenjualanWebsiteChart() {
       <Card>
         <CardHeader>
           <CardTitle>
-            <div className="flex gap-3">Penjualan Website Chart</div>
+            <div className="flex gap-3">Penjualan Website Table</div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Chart
-            chartType="Bar"
-            width="100%"
-            height="400px"
-            data={ordersDisplay}
-            options={options}
-          />
+          <Table>
+            <TableHeader className="bg-primary-foreground">
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Sub Total</TableHead>
+                <TableHead>Discount</TableHead>
+                <TableHead>Grand Total</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {storeDisplay.map((e) => {
+                return (
+                  <TableRow>
+                    {/* @ts-ignore */}
+                    <TableCell>{e.id}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{format(e.createdAt, 'dd-MM-yyyy')}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{formatter.format(e.total)}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{formatter.format(e.discount)}</TableCell>
+                    <TableCell>
+                      {/* @ts-ignore */}
+                      {formatter.format(e.total - e.discount)}
+                    </TableCell>
+                    <TableCell>
+                      {/* @ts-ignore */}
+                      <Badge>{e.status}</Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </>

@@ -487,7 +487,7 @@ export default function KeuntunganChart() {
                           </TableCell>
                           <TableCell className="text-right">
                             {/* @ts-ignore */}
-                            {formatter.format(e.value)}
+                            {formatter.format(e.value * (1 - (1 - 0.175)))}
                           </TableCell>
                         </TableRow>
                       );
@@ -532,7 +532,7 @@ export default function KeuntunganChart() {
                           </TableCell>
                           <TableCell className="text-right">
                             {/* @ts-ignore */}
-                            {formatter.format(e.value)}
+                            {formatter.format(e.value * (1 - (1 - 0.175)))}
                           </TableCell>
                         </TableRow>
                       );
