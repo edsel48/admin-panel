@@ -38,7 +38,7 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } },
 ) {
-  const { productIds, carts, total, memberId, address, totalDiscount } =
+  const { productIds, carts, total, memberId, address, totalDiscount, ongkir } =
     await req.json();
 
   if (!productIds || productIds.length === 0) {
@@ -114,6 +114,7 @@ export async function POST(
       total,
       type: 'STORE',
       address,
+      ongkir,
       status: 'PAID',
       memberId,
       totalDiscount,
