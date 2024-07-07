@@ -27,6 +27,7 @@ export async function GET(
     return {
       ...order,
       total: Number(order.total),
+      totalDiscount: Number(order.totalDiscount),
     };
   });
 
