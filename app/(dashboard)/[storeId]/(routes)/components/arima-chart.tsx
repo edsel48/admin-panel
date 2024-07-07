@@ -79,11 +79,11 @@ export default function ArimaChart() {
           console.log(e.orderItems);
 
           let sizeMap = {
-            PIECE: 1,
-            'BOX (5)': 5,
-            'BOX (10)': 10,
-            LUSIN: 12,
-            DOZEN: 144,
+            Piece: 1,
+            'Box (5)': 5,
+            'Box (10)': 10,
+            Lusin: 12,
+            Gross: 144,
           };
 
           if (e.orderItems.length > 10) {
@@ -94,7 +94,7 @@ export default function ArimaChart() {
               // @ts-ignore
               sold_data: e.orderItems.map(
                 // @ts-ignore
-                (item) => item.quantity * sizeMap[item.size],
+                (item) => item.quantity * (sizeMap[item.size] || 1),
               ),
             });
 
@@ -108,7 +108,7 @@ export default function ArimaChart() {
                 // @ts-ignore
                 sold_data: e.orderItems.map(
                   // @ts-ignore
-                  (item) => item.quantity * sizeMap[item.size],
+                  (item) => item.quantity * (sizeMap[item.size] || 1),
                 ),
               },
             );
@@ -121,7 +121,7 @@ export default function ArimaChart() {
               // @ts-ignore
               sold_data: e.orderItems.map(
                 // @ts-ignore
-                (item) => item.quantity * sizeMap[item.size],
+                (item) => item.quantity * (sizeMap[item.size] || 1),
               ),
             });
 
