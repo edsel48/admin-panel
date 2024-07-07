@@ -25,9 +25,12 @@ export async function GET(
 
   let formatted = orders.map((order) => {
     return {
-      ...order,
-      total: Number(order.total),
-      totalDiscount: Number(order.totalDiscount),
+      orderItems: order.orderItems,
+      logs: order.logs,
+      total: Number(order.total).toString(),
+      totalDiscount: Number(order.totalDiscount).toString(),
+      status: order.status,
+      ongkir: Number(order.ongkir).toString(),
     };
   });
 
