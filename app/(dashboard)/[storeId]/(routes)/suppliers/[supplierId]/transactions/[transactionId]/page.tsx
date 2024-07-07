@@ -15,6 +15,15 @@ import { Button } from '@/components/ui/button';
 import { DollarSign, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { format } from 'date-fns';
 
 const SupplierTransactionPage = ({
   params,
@@ -50,6 +59,10 @@ const SupplierTransactionPage = ({
             quantity: e.quantity,
             status: e.status,
             delivered: e.delivered,
+            // @ts-ignore
+            supplierTransactionItemMutations:
+              // @ts-ignore
+              e.supplierTransactionItemMutations,
           };
         },
       );
@@ -158,6 +171,38 @@ const SupplierTransactionPage = ({
             )}
             {/* @ts-ignore */}
             <TransactionClient data={items} />
+            <div className="flex-col gap-3">
+              {/* @ts-ignore */}
+              {items.map((data) => {
+                // @ts-ignore
+                return (
+                  // @ts-ignore
+                  data.supplierTransactionItemMutations
+                    // @ts-ignore
+                    .sort((a, b) => b.createdAt - a.createdAt)
+                    // @ts-ignore
+                    .map((e) => {
+                      return (
+                        <div className="mt-3">
+                          <Card>
+                            <CardHeader>
+                              {/* @ts-ignore */}
+                              <CardTitle>{data.name}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <CardDescription>
+                                {/* @ts-ignore */}
+                                {e.quantity} {data.size} Added to {data.name} at{' '}
+                                {format(e.createdAt, 'dd-MM-yyyy')}
+                              </CardDescription>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      );
+                    })
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

@@ -311,6 +311,7 @@ export default function TerlarisChart() {
                     <TableRow>
                       <TableHead>Product Name</TableHead>
                       <TableHead>Total Transaction</TableHead>
+                      <TableHead>Total Product Count</TableHead>
                       <TableHead className="text-right">Profits</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -328,6 +329,10 @@ export default function TerlarisChart() {
                             <TableCell>
                               {/* @ts-ignore */}
                               {terlaris.transactionCount[e.product.name]}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {/* @ts-ignore */}
+                              {terlaris.count[e.product.name] || 0}
                             </TableCell>
                             <TableCell className="text-right">
                               {/* @ts-ignore */}
@@ -359,6 +364,7 @@ export default function TerlarisChart() {
                     <TableRow>
                       <TableHead>Product Name</TableHead>
                       <TableHead>Total Transaction</TableHead>
+                      <TableHead>Total Product Count</TableHead>
                       <TableHead className="text-right">Profits</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -375,6 +381,10 @@ export default function TerlarisChart() {
                             <TableCell>
                               {/* @ts-ignore */}
                               {terlaris.transactionCount[e.product.name] || 0}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {/* @ts-ignore */}
+                              {terlaris.count[e.product.name] || 0}
                             </TableCell>
                             <TableCell className="text-right">
                               {/* @ts-ignore */}

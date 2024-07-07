@@ -21,6 +21,7 @@ interface CartItems {
   product: Product;
   productSize: SizesOnProduct;
   quantity: number;
+  discount: number;
 }
 
 const corsHeaders = {
@@ -37,7 +38,8 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } },
 ) {
-  const { productIds, carts, total, memberId, address } = await req.json();
+  const { productIds, carts, total, memberId, address, totalDiscount } =
+    await req.json();
 
   if (!productIds || productIds.length === 0) {
     return new NextResponse('Product ids are required', { status: 400 });
@@ -52,12 +54,24 @@ export async function POST(
   if (member == null)
     return new NextResponse('Member not found', { status: 404 });
 
+  const allOrders = await prismadb.order.findMany({
+    where: {
+      memberId,
+    },
+  });
+
+  let memberTotal = 0;
+
+  allOrders.forEach((e) => {
+    memberTotal += Number(e.total - e.totalDiscount);
+  });
+
   let tier = member.tier;
 
   const FIVE_MILLION = 5000000;
   const TEN_MILLION = 10000000;
 
-  if (total >= FIVE_MILLION) {
+  if (total + memberTotal >= FIVE_MILLION) {
     if (member.tier == 'SILVER') {
       //update user to GOLD MEMBER
       await prismadb.member.update({
@@ -71,7 +85,7 @@ export async function POST(
     }
   }
 
-  if (total >= TEN_MILLION) {
+  if (total + memberTotal >= TEN_MILLION) {
     if (member.tier == 'GOLD' || member.tier == 'SILVER') {
       await prismadb.member.update({
         where: {
@@ -102,6 +116,7 @@ export async function POST(
       address,
       status: 'PAID',
       memberId,
+      totalDiscount,
       orderItems: {
         create: carts.map((item: CartItems) => {
           let price = {
@@ -120,25 +135,13 @@ export async function POST(
             quantity: item.quantity,
             // @ts-ignore
             subtotal: item.quantity * Number(price[tier]),
+            // @ts-ignore
+            discount: item.discount,
           };
         }),
       },
     },
   });
-
-  // remove data quantity from stocks
-  for (const item of carts as CartItems[]) {
-    await prismadb.sizesOnProduct.update({
-      where: {
-        id: item.productSize.id,
-      },
-      data: {
-        stock: {
-          decrement: item.quantity,
-        },
-      },
-    });
-  }
 
   const user = await currentUser();
 
@@ -155,7 +158,7 @@ export async function POST(
       data: {
         transaction_details: {
           order_id: order.id,
-          gross_amount: total,
+          gross_amount: total - totalDiscount,
         },
         credit_card: {
           secure: true,

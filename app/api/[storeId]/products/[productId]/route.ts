@@ -93,6 +93,7 @@ export async function PATCH(
       sizes,
       isFeatured,
       suppliers,
+      minimumStock,
       isArchived,
       description,
     } = body;
@@ -186,6 +187,7 @@ export async function PATCH(
       data: {
         name,
         categoryId,
+        minimumStock,
         suppliers: {
           deleteMany: {},
         },

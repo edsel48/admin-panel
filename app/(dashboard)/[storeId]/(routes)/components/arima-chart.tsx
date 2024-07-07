@@ -19,6 +19,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
 import { format, subDays, addDays } from 'date-fns';
 
 // @ts-ignore
@@ -50,6 +70,10 @@ export default function ArimaChart() {
   let [transaction, setTransaction] = useState({});
   let [predictionData, setPredictionData] = useState(null);
 
+  let [arimaTotal, setArimaTotal] = useState(0);
+  let [lrTotal, setLrTotal] = useState(0);
+  let [svrTotal, setSvrTotal] = useState(0);
+
   useEffect(() => {
     // fetching all product data
     const fetchProduct = async () => {
@@ -78,67 +102,92 @@ export default function ArimaChart() {
 
           console.log(e.orderItems);
 
-          if (e.orderItems.length > 10) {
-            let endpoint = 'http://localhost:8080/';
-            let response = await axios.post(endpoint + 'predict/arima', {
-              start: 1,
-              end: e.orderItems.length,
+          let sizeMap = {
+            Piece: 1,
+            'Box (5)': 5,
+            'Box (10)': 10,
+            Lusin: 12,
+            Gross: 144,
+          };
+
+          let endpoint = 'https://221e-36-74-147-194.ngrok-free.app/';
+          let response = await axios.post(endpoint + 'predict/arima', {
+            start: 1,
+            end: e.orderItems.length,
+            // @ts-ignore
+            sold_data: e.orderItems.map(
               // @ts-ignore
-              sold_data: e.orderItems.map((item) => item.quantity),
-            });
+              (item) => item.quantity * (sizeMap[item.size] || 1),
+            ),
+          });
 
-            let arima_data = response.data.predicted;
+          let arima_data = response.data.predicted;
 
-            response = await axios.post(
-              endpoint + 'predict/linear-regression',
-              {
-                start: 1,
-                end: e.orderItems.length,
-                // @ts-ignore
-                sold_data: e.orderItems.map((item) => item.quantity),
-              },
+          response = await axios.post(endpoint + 'predict/linear-regression', {
+            start: 1,
+            end: e.orderItems.length,
+            // @ts-ignore
+            sold_data: e.orderItems.map(
+              // @ts-ignore
+              (item) => item.quantity * (sizeMap[item.size] || 1),
+            ),
+          });
+
+          let linreg_data = response.data.predicted;
+
+          response = await axios.post(endpoint + 'predict/svr', {
+            start: 1,
+            end: e.orderItems.length,
+            // @ts-ignore
+            sold_data: e.orderItems.map(
+              // @ts-ignore
+              (item) => item.quantity * (sizeMap[item.size] || 1),
+            ),
+          });
+
+          let svr_data = response.data.predicted;
+
+          let output = [];
+
+          let currentArima = 0;
+          let currentLr = 0;
+          let currentSvr = 0;
+
+          for (let i = e.orderItems.length - 2; i > 0; i--) {
+            let date = format(
+              addDays(new Date(), e.orderItems.length - 2 - i),
+              'dd-MM-yyyy',
             );
 
-            let linreg_data = response.data.predicted;
+            let arima =
+              arima_data[e.orderItems.length - 2 - i] > 0
+                ? arima_data[e.orderItems.length - 2 - i]
+                : 0;
+            let svr =
+              svr_data[e.orderItems.length - 2 - i] > 0
+                ? svr_data[e.orderItems.length - 2 - i]
+                : 0;
+            let lr =
+              linreg_data[e.orderItems.length - 2 - i] > 0
+                ? linreg_data[e.orderItems.length - 2 - i]
+                : 0;
 
-            response = await axios.post(endpoint + 'predict/svr', {
-              start: 1,
-              end: e.orderItems.length,
-              // @ts-ignore
-              sold_data: e.orderItems.map((item) => item.quantity),
+            currentArima += Number(arima);
+            currentSvr += Number(svr);
+            currentLr += Number(lr);
+
+            output.push({
+              date,
+              arima,
+              svr,
+              lr,
             });
-
-            let svr_data = response.data.predicted;
-
-            let output = [];
-
-            for (let i = e.orderItems.length - 2; i > 0; i--) {
-              let date = format(
-                addDays(new Date(), e.orderItems.length - 2 - i),
-                'dd MM yyyy',
-              );
-              let arima = arima_data[e.orderItems.length - 2 - i];
-              let svr = svr_data[e.orderItems.length - 2 - i];
-              let lr = linreg_data[e.orderItems.length - 2 - i];
-
-              console.log({
-                date,
-                arima,
-                svr,
-                lr,
-              });
-
-              output.push({
-                date,
-                arima,
-                svr,
-                lr,
-              });
-
-              // @ts-ignore
-              setPredictionData(output);
-            }
           }
+          // @ts-ignore
+          setPredictionData(output);
+          setArimaTotal(currentArima);
+          setSvrTotal(currentSvr);
+          setLrTotal(currentLr);
         }}
         product={product}
       />
@@ -148,48 +197,54 @@ export default function ArimaChart() {
         // @ts-ignore
         product.orderItems != null ? (
           // @ts-ignore
-          product.orderItems.length <= 10 ? (
+          product.orderItems.length <= 0 ? (
             <div className="font-bold">
               Transaction data doesn't meet the requirements
             </div>
           ) : (
-            <>
-              <h1 className="text-lg font-bold">
-                {/* @ts-ignore */}
-                {product.name} Prediction
-              </h1>
-              <table className="border-1 w-full border-solid text-center">
-                {predictionData == null ? (
-                  <>Predicting</>
-                ) : (
-                  <tr>
-                    <th>Date</th>
-                    <th>ARIMA</th>
-                    <th>Linear Regression</th>
-                    <th>SVR</th>
-                  </tr>
-                )}
-                {predictionData != null ? (
-                  // @ts-ignore
-                  predictionData.map((e) => {
-                    return (
-                      <tr>
-                        {/* @ts-ignore */}
-                        <td>{e.date}</td>
-                        {/* @ts-ignore */}
-                        <td>{e.arima} pcs</td>
-                        {/* @ts-ignore */}
-                        <td>{e.lr} pcs</td>
-                        {/* @ts-ignore */}
-                        <td>{e.svr} pcs</td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <></>
-                )}
-              </table>
-            </>
+            <div className="mt-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    {/* @ts-ignore */}
+                    {product.name} Prediction
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader className="bg-primary-foreground">
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>ARIMA - [ {arimaTotal} pcs ]</TableHead>
+                        <TableHead>
+                          Linear Regression - [ {lrTotal} pcs ]
+                        </TableHead>
+                        <TableHead>SVR - [ {svrTotal} pcs ] </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    {predictionData != null ? (
+                      // @ts-ignore
+                      predictionData.map((e) => {
+                        return (
+                          <TableRow>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.date}</TableCell>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.arima} pcs</TableCell>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.lr} pcs</TableCell>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.svr} pcs</TableCell>
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <></>
+                    )}
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
           )
         ) : (
           <div className="font-bold">Transaction data not found</div>

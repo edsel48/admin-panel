@@ -57,7 +57,6 @@ export default function KetersediaanChart() {
               <TableRow>
                 <TableHead>Product Name</TableHead>
                 <TableHead>Stock</TableHead>
-                <TableHead>Size Name</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
@@ -65,38 +64,44 @@ export default function KetersediaanChart() {
             <TableBody>
               {/* @ts-ignore */}
               {products.map((product) => {
+                let stock = 0;
+
+                let sizeMap = {
+                  Piece: 1,
+                  'Box (5)': 5,
+                  'Box (10)': 10,
+                  Lusin: 12,
+                  Gross: 144,
+                };
+
+                // @ts-ignore
+                product.sizes.forEach((e) => {
+                  stock += e.size.value * e.stock;
+                });
+
                 // @ts-ignore
                 return (
-                  // @ts-ignore
-                  product.sizes
-                    // @ts-ignore
-                    .sort((a, b) => a.stock - b.stock)
-                    // @ts-ignore
-                    .map((size) => {
-                      return (
-                        <TableRow>
-                          {/* @ts-ignore */}
-                          <TableCell>{product.name}</TableCell>
-                          <TableCell>{size.stock}</TableCell>
-                          {/* @ts-ignore */}
-                          <TableCell>{size.size.name}</TableCell>
-                          {/* @ts-ignore */}
-                          <TableCell>
-                            {/* @ts-ignore */}
-                            {format(product.createdAt, 'dd-MM-yyyy')}
-                          </TableCell>
-                          <TableCell>
-                            {size.stock < 5 ? (
-                              <Badge variant="destructive">Low</Badge>
-                            ) : size.stock < 10 ? (
-                              <Badge variant="secondary">Medium</Badge>
-                            ) : (
-                              <Badge>High</Badge>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
+                  <TableRow>
+                    {/* @ts-ignore */}
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{stock}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>
+                      {/* @ts-ignore */}
+                      {format(product.createdAt, 'dd-MM-yyyy')}
+                    </TableCell>
+                    <TableCell>
+                      {/* @ts-ignore */}
+                      {stock < product.minimumStock ? (
+                        <Badge variant="destructive">Low</Badge>
+                      ) : // @ts-ignore
+                      stock + 5 < product.minimumStock ? (
+                        <Badge variant="secondary">Medium</Badge>
+                      ) : (
+                        <Badge>High</Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
                 );
               })}
             </TableBody>

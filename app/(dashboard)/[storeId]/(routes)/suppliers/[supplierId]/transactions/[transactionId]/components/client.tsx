@@ -23,7 +23,16 @@ export const TransactionClient: React.FC<TransactionClientProps> = ({
   return (
     <>
       {/* @ts-ignore */}
-      <DataTable columns={columns} data={data} searchKey="name" />
+      <DataTable
+        columns={columns}
+        // @ts-ignore
+        data={data}
+        searchKey="status"
+        list={['ALL', 'ORDERED', 'Partly Fullfilled', 'Completely Fullfilled']}
+      />
+
+      {/* @ts-ignore */}
+      <>{JSON.stringify(data.logs)}</>
     </>
   );
 };

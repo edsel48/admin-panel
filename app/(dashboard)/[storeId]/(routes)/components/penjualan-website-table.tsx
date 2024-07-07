@@ -34,6 +34,7 @@ import {
   subMonths,
   subYears,
   parse,
+  isBefore,
 } from 'date-fns';
 
 import { subWeeks } from 'date-fns';
@@ -53,77 +54,64 @@ import {
 } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 
-interface TransactionOnSupplierColumn {
-  id: string;
-  name: string;
-  supplierId: string;
-  grandTotal: string;
-  status: string;
-  createdAt: string;
-}
+export default function PenjualanWebsiteTable() {
+  let [orders, setOrders] = useState([
+    ['Date', 'Total'],
+    ['29 05 2024', 'Rp. 12.000.000'],
+  ]);
 
-export default function PembelianChart() {
-  const [transaction, setTransaction] = useState([]);
-  const [displayedTransaction, setDisplayedTransaction] = useState([]);
+  let [ordersDisplay, setOrdersDisplay] = useState([]);
 
-  const [startAt, setStartAt] = useState<Date | undefined>(new Date());
-  const [endAt, setEndAt] = useState<Date | undefined>(new Date());
+  let [store, setStore] = useState([]);
+  let [storeDisplay, setStoreDisplay] = useState([]);
 
-  const router = useRouter();
-  const params = useParams();
+  let [startAt, setStartAt] = useState<Date | undefined>(new Date());
+  let [endAt, setEndAt] = useState<Date | undefined>(new Date());
 
   useEffect(() => {
-    const fetch = async () => {
-      let response = await axios.get('/api/reports/pembelian');
+    let fetch = async () => {
+      let response = await axios.get('/api/reports/penjualan/website');
+
+      let storeResponse = await axios.get('/api/reports/penjualan/website/all');
+
       let { data } = response;
 
-      setTransaction(data);
-      setDisplayedTransaction(data);
+      let store = storeResponse.data;
+
+      setStore(store);
+      setStoreDisplay(store);
+
+      console.log(data);
+
+      let orderData = [];
+
+      orderData.push(['Date', 'Total']);
+
+      let keys = Object.keys(data);
+
+      keys.sort((a, b) => {
+        return isBefore(
+          parse(b, 'dd MM yyyy', new Date()),
+          parse(a, 'dd MM yyyy', new Date()),
+        )
+          ? 1
+          : -1;
+
+        return 0;
+      });
+
+      for (const key of keys) {
+        orderData.push([key, data[key]]);
+      }
+
+      setOrders(orderData);
+
+      // @ts-ignore
+      setOrdersDisplay(orderData);
     };
 
     fetch();
   }, []);
-
-  const transactionOnSupplierColumn: ColumnDef<TransactionOnSupplierColumn>[] =
-    [
-      {
-        accessorKey: 'id',
-        header: 'ID',
-      },
-      {
-        accessorKey: 'name',
-        header: 'Supplier Name',
-      },
-      {
-        accessorKey: 'grandTotal',
-        header: 'Total',
-      },
-      {
-        accessorKey: 'status',
-        header: 'Status',
-      },
-      {
-        accessorKey: 'createdAt',
-        header: 'Created At',
-      },
-
-      {
-        id: 'action',
-        cell: ({ row }) => (
-          <>
-            <Button
-              onClick={() => {
-                router.push(
-                  `/${params.storeId}/suppliers/${row.original.supplierId}/transactions/${row.original.id}`,
-                );
-              }}
-            >
-              Detail
-            </Button>
-          </>
-        ),
-      },
-    ];
 
   return (
     <>
@@ -197,24 +185,51 @@ export default function PembelianChart() {
             </Card>
             <Button
               onClick={() => {
-                // @ts-ignore
-                let data = [];
-                transaction.forEach((e) => {
-                  if (
-                    isWithinInterval(
-                      // @ts-ignore
-                      parse(e.createdAt, 'dd-MM-yyyy', new Date()),
-                      {
+                const prepareWebsite = () => {
+                  // @ts-ignore
+                  let data = [];
+
+                  // @ts-ignore
+                  data.push(['Date', 'Total']);
+
+                  orders.forEach((e) => {
+                    if (
+                      isWithinInterval(parse(e[0], 'dd MM yyyy', new Date()), {
                         start: startAt!,
                         end: endAt!,
-                      },
-                    )
-                  ) {
-                    data.push(e);
-                  }
-                });
-                // @ts-ignore
-                setDisplayedTransaction(data);
+                      })
+                    ) {
+                      data.push(e);
+                    }
+                  });
+
+                  // @ts-ignore
+                  setOrdersDisplay(data);
+                };
+
+                const prepareTable = () => {
+                  // @ts-ignore
+                  let data = [];
+
+                  store.forEach((e) => {
+                    // @ts-ignore
+                    if (
+                      // @ts-ignore
+                      isWithinInterval(e.createdAt, {
+                        start: startAt!,
+                        end: endAt!,
+                      })
+                    ) {
+                      data.push(e);
+                    }
+                  });
+
+                  // @ts-ignore
+                  setStoreDisplay(data);
+                };
+
+                prepareWebsite();
+                prepareTable();
               }}
             >
               Set Period
@@ -224,23 +239,47 @@ export default function PembelianChart() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Data Pembelian dengan Supplier</CardTitle>
+          <CardTitle>
+            <div className="flex gap-3">Penjualan Website Table</div>
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataTable
-            columns={transactionOnSupplierColumn}
-            // @ts-ignore
-            data={displayedTransaction}
-            searchKey="status"
-            list={[
-              'ALL',
-              'ORDERED',
-              'PAID',
-              'Partly Fullfilled',
-              'CLOSED',
-              'Completely Fullfilled',
-            ]}
-          />
+          <Table>
+            <TableHeader className="bg-primary-foreground">
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Sub Total</TableHead>
+                <TableHead>Discount</TableHead>
+                <TableHead>Grand Total</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {storeDisplay.map((e) => {
+                return (
+                  <TableRow>
+                    {/* @ts-ignore */}
+                    <TableCell>{e.id}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{format(e.createdAt, 'dd-MM-yyyy')}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{formatter.format(e.total)}</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell>{formatter.format(e.discount)}</TableCell>
+                    <TableCell>
+                      {/* @ts-ignore */}
+                      {formatter.format(e.total - e.discount)}
+                    </TableCell>
+                    <TableCell>
+                      {/* @ts-ignore */}
+                      <Badge>{e.status}</Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </>

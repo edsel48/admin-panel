@@ -117,6 +117,7 @@ model Product {
   promo         Promo?
   sizes         SizesOnProduct[]
   suppliers     SupplierOnProduct[]
+  minimumStock  Decimal             @default(0)
 
   @@index([storeId])
   @@index([categoryId])
@@ -181,6 +182,19 @@ model Image {
   @@index([productId])
 }
 
+model SupplierTransactionItemMutation {
+  id String @id @default(uuid())
+
+  supplierTransactionItemId String
+  supplierTransactionItem SupplierTransactionItem @relation(fields: [supplierTransactionItemId], references: [id])
+
+  quantity Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([supplierTransactionItemId])
+}
+
 model Order {
   id         String      @id @default(uuid())
   storeId    String
@@ -197,6 +211,7 @@ model Order {
   status      String    @default("COMPLETED")
   logs       OrderLog[]
   orderItems OrderItem[]
+  totalDiscount BigInt @default(0)
 
   @@index([storeId])
 }
@@ -210,6 +225,7 @@ model OrderItem {
   size      String  @default("-")
   order     Order   @relation(fields: [orderId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
+  discount  BigInt @default(0)
 
   @@index([orderId])
   @@index([productId])
@@ -238,6 +254,7 @@ model Traffic {
 
 model SupplierTransactionItem {
   id String @id @default(uuid())
+
   supplierTransactionId String
   supplierTransaction SupplierTransaction @relation(fields: [supplierTransactionId], references: [id])
 
@@ -255,6 +272,8 @@ model SupplierTransactionItem {
 
   status String @default("ORDERED")
 
+
+  supplierTransactionItemMutations SupplierTransactionItemMutation[]
 
   @@index([supplierTransactionId])
   @@index([productId])
@@ -276,6 +295,8 @@ model OrderLog {
   order Order @relation(fields: [orderId], references: [id])
 
   log String
+
+  orderTrackingId String @default("")
 
   createdAt DateTime @default(now())
 

@@ -21,22 +21,21 @@ export async function GET(req: Request) {
     const CRITICAL_LIMIT = 5;
     const MEDIUM_LIMIT = 10;
 
-    let filtered: {
-      product: Product;
-      status: string;
-      size: SizesOnProduct;
-    }[] = [];
+    let filtered: any[] = [];
 
     products.forEach((product) => {
+      let total = 0;
+
       product.sizes.forEach((size) => {
-        if (Number(size.stock) <= Number(size.minimumStock)) {
-          filtered.push({
-            product,
-            status: 'CRITICAL',
-            size: size,
-          });
-        }
+        total += Number(size.size.value) * Number(size.stock);
       });
+
+      if (total <= Number(product.minimumStock)) {
+        filtered.push({
+          product,
+          total,
+        });
+      }
     });
 
     return NextResponse.json(filtered);
