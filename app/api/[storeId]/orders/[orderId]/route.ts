@@ -115,7 +115,7 @@ export async function GET(
     member: order.member == null ? 'Anon' : order.member.name,
     // @ts-ignore
     orderItems: formattedItems,
-    shippingCost: Number(shippingCost),
+    shippingCost: Number(order.ongkir),
     address: order.address,
     status: order.status,
     logs: order.logs,
