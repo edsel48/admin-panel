@@ -45,7 +45,7 @@ export async function GET(
       id: order.id,
       orderItems: formattedItems,
       logs: order.logs,
-      total: formatter.format(Number(order.total)),
+      total: formatter.format(Number(order.total) - Number(order.ongkir)),
       totalDiscount: formatter.format(Number(order.totalDiscount)),
       grandTotal: formatter.format(
         Number(order.total) - Number(order.totalDiscount),
