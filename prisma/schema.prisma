@@ -212,6 +212,7 @@ model Order {
   logs       OrderLog[]
   orderItems OrderItem[]
   totalDiscount BigInt @default(0)
+  ongkir      Int @default(0)
 
   @@index([storeId])
 }
