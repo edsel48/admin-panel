@@ -19,6 +19,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
 import { format, subDays, addDays } from 'date-fns';
 
 // @ts-ignore
@@ -170,43 +190,45 @@ export default function ArimaChart() {
               Transaction data doesn't meet the requirements
             </div>
           ) : (
-            <>
-              <h1 className="text-lg font-bold">
-                {/* @ts-ignore */}
-                {product.name} Prediction
-              </h1>
-              <table className="border-1 w-full border-solid text-center">
-                {predictionData == null ? (
-                  <>Predicting</>
-                ) : (
-                  <tr>
-                    <th>Date</th>
-                    <th>ARIMA</th>
-                    <th>Linear Regression</th>
-                    <th>SVR</th>
-                  </tr>
-                )}
-                {predictionData != null ? (
-                  // @ts-ignore
-                  predictionData.map((e) => {
-                    return (
-                      <tr>
-                        {/* @ts-ignore */}
-                        <td>{e.date}</td>
-                        {/* @ts-ignore */}
-                        <td>{e.arima} pcs</td>
-                        {/* @ts-ignore */}
-                        <td>{e.lr} pcs</td>
-                        {/* @ts-ignore */}
-                        <td>{e.svr} pcs</td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <></>
-                )}
-              </table>
-            </>
+            <div className="mt-3">
+              <Card>
+                <CardTitle>
+                  {/* @ts-ignore */}
+                  {product.name} Prediction
+                </CardTitle>
+                <CardContent>
+                  <Table>
+                    <TableHeader className="bg-primary-foreground">
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>ARIMA</TableHead>
+                        <TableHead>Linear Regression</TableHead>
+                        <TableHead>SVR</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    {predictionData != null ? (
+                      // @ts-ignore
+                      predictionData.map((e) => {
+                        return (
+                          <TableRow>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.date}</TableCell>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.arima} pcs</TableCell>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.lr} pcs</TableCell>
+                            {/* @ts-ignore */}
+                            <TableCell>{e.svr} pcs</TableCell>
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <></>
+                    )}
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
           )
         ) : (
           <div className="font-bold">Transaction data not found</div>
