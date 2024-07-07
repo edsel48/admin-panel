@@ -192,10 +192,12 @@ export default function ArimaChart() {
           ) : (
             <div className="mt-3">
               <Card>
-                <CardTitle>
-                  {/* @ts-ignore */}
-                  {product.name} Prediction
-                </CardTitle>
+                <CardHeader>
+                  <CardTitle>
+                    {/* @ts-ignore */}
+                    {product.name} Prediction
+                  </CardTitle>
+                </CardHeader>
                 <CardContent>
                   <Table>
                     <TableHeader className="bg-primary-foreground">
