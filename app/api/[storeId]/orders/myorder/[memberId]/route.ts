@@ -20,7 +20,11 @@ export async function GET(
           product: true,
         },
       },
-      logs: true,
+      logs: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
     },
   });
 
