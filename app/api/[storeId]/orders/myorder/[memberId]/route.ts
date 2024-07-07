@@ -4,6 +4,7 @@ import { auth } from '@clerk/nextjs';
 import prismadb from '@/lib/prismadb';
 
 import { formatter } from '@/lib/utils';
+import { format } from 'date-fns';
 
 export async function GET(
   req: Request,
@@ -35,13 +36,19 @@ export async function GET(
         ),
       };
     });
+
     return {
+      id: order.id,
       orderItems: formattedItems,
       logs: order.logs,
-      total: Number(order.total).toString(),
-      totalDiscount: Number(order.totalDiscount).toString(),
+      total: formatter.format(Number(order.total)),
+      totalDiscount: formatter.format(Number(order.totalDiscount)),
+      grandTotal: formatter.format(
+        Number(order.total) - Number(order.totalDiscount),
+      ),
       status: order.status,
-      ongkir: Number(order.ongkir).toString(),
+      ongkir: formatter.format(Number(order.ongkir)),
+      createdAt: format(order.createdAt, 'dd-MM-yyyy'),
     };
   });
 
