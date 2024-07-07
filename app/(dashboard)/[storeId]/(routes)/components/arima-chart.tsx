@@ -87,7 +87,7 @@ export default function ArimaChart() {
           };
 
           if (e.orderItems.length > 10) {
-            let endpoint = 'http://localhost:8080/';
+            let endpoint = 'https://221e-36-74-147-194.ngrok-free.app/';
             let response = await axios.post(endpoint + 'predict/arima', {
               start: 1,
               end: e.orderItems.length,
