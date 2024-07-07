@@ -156,11 +156,21 @@ export default function ArimaChart() {
           for (let i = e.orderItems.length - 2; i > 0; i--) {
             let date = format(
               addDays(new Date(), e.orderItems.length - 2 - i),
-              'dd MM yyyy',
+              'dd-MM-yyyy',
             );
-            let arima = arima_data[e.orderItems.length - 2 - i];
-            let svr = svr_data[e.orderItems.length - 2 - i];
-            let lr = linreg_data[e.orderItems.length - 2 - i];
+
+            let arima =
+              arima_data[e.orderItems.length - 2 - i] > 0
+                ? arima_data[e.orderItems.length - 2 - i]
+                : 0;
+            let svr =
+              svr_data[e.orderItems.length - 2 - i] > 0
+                ? svr_data[e.orderItems.length - 2 - i]
+                : 0;
+            let lr =
+              linreg_data[e.orderItems.length - 2 - i] > 0
+                ? linreg_data[e.orderItems.length - 2 - i]
+                : 0;
 
             currentArima += Number(arima);
             currentSvr += Number(svr);
