@@ -28,11 +28,15 @@ export async function GET(
     let formattedItems = order.orderItems.map((item) => {
       return {
         name: item.product.name,
-        subtotal: formatter.format(Number(item.subtotal)),
+        total: formatter.format(Number(item.subtotal)),
         quantity: item.quantity,
         size: item.size,
         price: formatter.format(
           parseInt(`${Number(item.subtotal)}`) / Number(item.quantity),
+        ),
+        discount: formatter.format(Number(item.discount)),
+        subtotal: formatter.format(
+          Number(item.subtotal) - Number(item.discount),
         ),
       };
     });
