@@ -105,7 +105,7 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
           {/* @ts-ignore */}
           <Heading title={initialData.name} description={''} />
           <Separator />
-          <div className=" grid grid-cols-8 items-center gap-5">
+          <div className=" grid grid-cols-7 items-center gap-5">
             <FormField
               control={form.control}
               name="price"
