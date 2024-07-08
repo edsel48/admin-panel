@@ -201,25 +201,6 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="weight"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Weight (gram) </FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      type="number"
-                      placeholder="500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <Button disabled={loading} className="ml-auto" type="submit">
               Update
             </Button>
