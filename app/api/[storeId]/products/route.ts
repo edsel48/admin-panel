@@ -20,6 +20,7 @@ export async function POST(
       sizes,
       suppliers,
       images,
+      minimumStock,
       isFeatured,
       description,
       isArchived,
@@ -62,6 +63,7 @@ export async function POST(
         isArchived,
         description,
         categoryId,
+        minimumStock,
         suppliers: {
           create: suppliers.map((item: Option) => {
             return {

@@ -14,6 +14,9 @@ export async function GET(req: Request) {
         },
       },
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 
   //   interface TransactionOnSupplierColumn {
@@ -30,6 +33,7 @@ export async function GET(req: Request) {
       supplierId: t.supplierId,
       name: t.supplier.name,
       grandTotal: formatter.format(Number(t.grandTotal)),
+      total: Number(t.grandTotal),
       status: t.status,
       createdAt: format(t.createdAt, 'dd-MM-yyyy'),
     };

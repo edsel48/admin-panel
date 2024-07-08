@@ -53,6 +53,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
+import StoreSwitcher from '@/components/store-switcher';
 
 export default function PenjualanWebsiteTable() {
   let [orders, setOrders] = useState([
@@ -61,6 +62,9 @@ export default function PenjualanWebsiteTable() {
   ]);
 
   let [ordersDisplay, setOrdersDisplay] = useState([]);
+
+  let [total, setTotal] = useState(0);
+  let [totalDisplay, setTotalDisplay] = useState(0);
 
   let [store, setStore] = useState([]);
   let [storeDisplay, setStoreDisplay] = useState([]);
@@ -80,6 +84,16 @@ export default function PenjualanWebsiteTable() {
 
       setStore(store);
       setStoreDisplay(store);
+
+      let total = 0;
+
+      // @ts-ignore
+      store.forEach((e) => {
+        total += Number(e.total) - Number(e.discount);
+      });
+
+      setTotal(total);
+      setTotalDisplay(total);
 
       console.log(data);
 
@@ -210,6 +224,7 @@ export default function PenjualanWebsiteTable() {
                 const prepareTable = () => {
                   // @ts-ignore
                   let data = [];
+                  let total = 0;
 
                   store.forEach((e) => {
                     // @ts-ignore
@@ -221,11 +236,15 @@ export default function PenjualanWebsiteTable() {
                       })
                     ) {
                       data.push(e);
+
+                      // @ts-ignore
+                      total += Number(e.total) - Number(e.discount);
                     }
                   });
 
                   // @ts-ignore
                   setStoreDisplay(data);
+                  setTotalDisplay(total);
                 };
 
                 prepareWebsite();
@@ -240,7 +259,9 @@ export default function PenjualanWebsiteTable() {
       <Card>
         <CardHeader>
           <CardTitle>
-            <div className="flex gap-3">Penjualan Website Table</div>
+            <div className="flex gap-3">
+              Penjualan Website Table - {`[${formatter.format(totalDisplay)}]`}
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -74,6 +74,105 @@ export default function ArimaChart() {
   let [lrTotal, setLrTotal] = useState(0);
   let [svrTotal, setSvrTotal] = useState(0);
 
+  // @ts-ignore
+  const doPredict = async (e) => {
+    //   @ts-ignore
+    setTransaction(e.orderItems);
+
+    // @ts-ignore
+    setPredictionData([]);
+    setArimaTotal(0);
+    setSvrTotal(0);
+    setLrTotal(0);
+
+    let sizeMap = {
+      Piece: 1,
+      'Box (5)': 5,
+      'Box (10)': 10,
+      Lusin: 12,
+      Gross: 144,
+    };
+
+    let endpoint = 'https://221e-36-74-147-194.ngrok-free.app/';
+    let response = await axios.post(endpoint + 'predict/arima', {
+      start: 1,
+      end: e.orderItems.length,
+      // @ts-ignore
+      sold_data: e.orderItems.map(
+        // @ts-ignore
+        (item) => item.quantity * (sizeMap[item.size] || 1),
+      ),
+    });
+
+    let arima_data = response.data.predicted;
+
+    response = await axios.post(endpoint + 'predict/linear-regression', {
+      start: 1,
+      end: e.orderItems.length,
+      // @ts-ignore
+      sold_data: e.orderItems.map(
+        // @ts-ignore
+        (item) => item.quantity * (sizeMap[item.size] || 1),
+      ),
+    });
+
+    let linreg_data = response.data.predicted;
+
+    response = await axios.post(endpoint + 'predict/svr', {
+      start: 1,
+      end: e.orderItems.length,
+      // @ts-ignore
+      sold_data: e.orderItems.map(
+        // @ts-ignore
+        (item) => item.quantity * (sizeMap[item.size] || 1),
+      ),
+    });
+
+    let svr_data = response.data.predicted;
+
+    let output = [];
+
+    let currentArima = 0;
+    let currentLr = 0;
+    let currentSvr = 0;
+
+    for (let i = e.orderItems.length - 2; i > 0; i--) {
+      let date = format(
+        addDays(new Date(), e.orderItems.length - 2 - i),
+        'dd-MM-yyyy',
+      );
+
+      let arima =
+        arima_data[e.orderItems.length - 2 - i] > 0
+          ? arima_data[e.orderItems.length - 2 - i]
+          : 0;
+      let svr =
+        svr_data[e.orderItems.length - 2 - i] > 0
+          ? svr_data[e.orderItems.length - 2 - i]
+          : 0;
+      let lr =
+        linreg_data[e.orderItems.length - 2 - i] > 0
+          ? linreg_data[e.orderItems.length - 2 - i]
+          : 0;
+
+      currentArima += Number(arima);
+      currentSvr += Number(svr);
+      currentLr += Number(lr);
+
+      output.push({
+        date,
+        arima,
+        svr,
+        lr,
+      });
+    }
+    // @ts-ignore
+    setPredictionData(output);
+    setArimaTotal(currentArima);
+    setSvrTotal(currentSvr);
+    setLrTotal(currentLr);
+  };
+
   useEffect(() => {
     // fetching all product data
     const fetchProduct = async () => {
@@ -83,6 +182,8 @@ export default function ArimaChart() {
 
       setProductsData(data);
       setProduct(data[0]);
+
+      await doPredict(data[0]);
     };
 
     fetchProduct();
@@ -97,97 +198,7 @@ export default function ArimaChart() {
         setProduct={async (e) => {
           // @ts-ignore
           setProduct(e);
-          //   @ts-ignore
-          setTransaction(e.orderItems);
-
-          console.log(e.orderItems);
-
-          let sizeMap = {
-            Piece: 1,
-            'Box (5)': 5,
-            'Box (10)': 10,
-            Lusin: 12,
-            Gross: 144,
-          };
-
-          let endpoint = 'https://221e-36-74-147-194.ngrok-free.app/';
-          let response = await axios.post(endpoint + 'predict/arima', {
-            start: 1,
-            end: e.orderItems.length,
-            // @ts-ignore
-            sold_data: e.orderItems.map(
-              // @ts-ignore
-              (item) => item.quantity * (sizeMap[item.size] || 1),
-            ),
-          });
-
-          let arima_data = response.data.predicted;
-
-          response = await axios.post(endpoint + 'predict/linear-regression', {
-            start: 1,
-            end: e.orderItems.length,
-            // @ts-ignore
-            sold_data: e.orderItems.map(
-              // @ts-ignore
-              (item) => item.quantity * (sizeMap[item.size] || 1),
-            ),
-          });
-
-          let linreg_data = response.data.predicted;
-
-          response = await axios.post(endpoint + 'predict/svr', {
-            start: 1,
-            end: e.orderItems.length,
-            // @ts-ignore
-            sold_data: e.orderItems.map(
-              // @ts-ignore
-              (item) => item.quantity * (sizeMap[item.size] || 1),
-            ),
-          });
-
-          let svr_data = response.data.predicted;
-
-          let output = [];
-
-          let currentArima = 0;
-          let currentLr = 0;
-          let currentSvr = 0;
-
-          for (let i = e.orderItems.length - 2; i > 0; i--) {
-            let date = format(
-              addDays(new Date(), e.orderItems.length - 2 - i),
-              'dd-MM-yyyy',
-            );
-
-            let arima =
-              arima_data[e.orderItems.length - 2 - i] > 0
-                ? arima_data[e.orderItems.length - 2 - i]
-                : 0;
-            let svr =
-              svr_data[e.orderItems.length - 2 - i] > 0
-                ? svr_data[e.orderItems.length - 2 - i]
-                : 0;
-            let lr =
-              linreg_data[e.orderItems.length - 2 - i] > 0
-                ? linreg_data[e.orderItems.length - 2 - i]
-                : 0;
-
-            currentArima += Number(arima);
-            currentSvr += Number(svr);
-            currentLr += Number(lr);
-
-            output.push({
-              date,
-              arima,
-              svr,
-              lr,
-            });
-          }
-          // @ts-ignore
-          setPredictionData(output);
-          setArimaTotal(currentArima);
-          setSvrTotal(currentSvr);
-          setLrTotal(currentLr);
+          await doPredict(e);
         }}
         product={product}
       />

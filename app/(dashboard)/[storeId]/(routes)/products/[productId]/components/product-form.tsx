@@ -153,12 +153,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           `/api/${params.storeId}/products/${params.productId}`,
           data,
         );
-      } else {
-        await axios.post(`/api/${params.storeId}/products`, data);
-      }
 
-      router.refresh();
-      router.push(`/${params.storeId}/products/${params.productId}/prices`);
+        router.refresh();
+        router.push(`/${params.storeId}/products/${params.productId}/prices`);
+      } else {
+        let response = await axios.post(
+          `/api/${params.storeId}/products`,
+          data,
+        );
+
+        let product = response.data;
+
+        router.refresh();
+        router.push(`/${params.storeId}/products/${product.id}/prices`);
+      }
 
       toast.success(toastMessage);
     } catch (error) {

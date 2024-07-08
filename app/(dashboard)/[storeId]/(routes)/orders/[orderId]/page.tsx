@@ -192,7 +192,7 @@ const StatusButton = ({
     SHIPPING: (
       <div className="flex gap-3">
         {' '}
-        <FinishedButton params={params} /> <CancelButton params={params} />{' '}
+        <CancelButton params={params} />{' '}
       </div>
     ),
     CANCELLED: <></>,

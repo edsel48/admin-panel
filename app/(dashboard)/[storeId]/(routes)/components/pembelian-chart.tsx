@@ -66,6 +66,9 @@ export default function PembelianChart() {
   const [transaction, setTransaction] = useState([]);
   const [displayedTransaction, setDisplayedTransaction] = useState([]);
 
+  const [total, setTotal] = useState(0);
+  const [totalDisplay, setTotalDisplay] = useState(0);
+
   const [startAt, setStartAt] = useState<Date | undefined>(new Date());
   const [endAt, setEndAt] = useState<Date | undefined>(new Date());
 
@@ -76,6 +79,16 @@ export default function PembelianChart() {
     const fetch = async () => {
       let response = await axios.get('/api/reports/pembelian');
       let { data } = response;
+
+      let currentTotal = 0;
+
+      // @ts-ignore
+      data.forEach((e) => {
+        currentTotal += e.total;
+      });
+
+      setTotal(currentTotal);
+      setTotalDisplay(currentTotal);
 
       setTransaction(data);
       setDisplayedTransaction(data);
@@ -199,6 +212,8 @@ export default function PembelianChart() {
               onClick={() => {
                 // @ts-ignore
                 let data = [];
+                let currentTotal = 0;
+
                 transaction.forEach((e) => {
                   if (
                     isWithinInterval(
@@ -211,10 +226,13 @@ export default function PembelianChart() {
                     )
                   ) {
                     data.push(e);
+                    // @ts-ignore
+                    currentTotal += e.total;
                   }
                 });
                 // @ts-ignore
                 setDisplayedTransaction(data);
+                setTotalDisplay(currentTotal);
               }}
             >
               Set Period
@@ -224,7 +242,10 @@ export default function PembelianChart() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Data Pembelian dengan Supplier</CardTitle>
+          <CardTitle>
+            Data Pembelian dengan Supplier - [
+            {`${formatter.format(totalDisplay)}`}]
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <DataTable

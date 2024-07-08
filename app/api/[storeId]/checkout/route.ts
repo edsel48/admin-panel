@@ -115,7 +115,7 @@ export async function POST(
       type: 'STORE',
       address,
       ongkir,
-      status: 'PAID',
+      status: 'PENDING',
       memberId,
       totalDiscount,
       orderItems: {
