@@ -8,6 +8,18 @@ export async function GET(req: Request) {
   try {
     let products = {};
 
+    let productsData = await prismadb.product.findMany({});
+
+    productsData.forEach((e) => {
+      // @ts-ignore
+      products[e.id] = [
+        {
+          subtotal: 0,
+          date: new Date(),
+        },
+      ];
+    });
+
     let orderItems = await prismadb.orderItem.findMany({
       include: {
         product: true,
