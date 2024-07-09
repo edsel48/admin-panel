@@ -6,14 +6,6 @@ import LineChart from './components/chart';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { redirect, useRouter } from 'next/navigation';
-import TrafficChart from './components/traffic-chart';
-import TerlarisChart from './components/terlaris-chart';
-import KeuntunganChart from './components/keuntungan-chart';
-import PenjualanWebsiteChart from './components/penjualan-website-chart';
-import PenjualanCashierChart from './components/penjualan-cashier-chart';
-import PenjualanWebsiteTable from './components/penjualan-website-table';
-
-import ArimaChart from './components/arima-chart';
 
 import { useEffect, useState } from 'react';
 import ReviewChart from './components/review-chart';
@@ -21,9 +13,8 @@ import ReviewChart from './components/review-chart';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 import { Button } from '@/components/ui/button';
-import PoChart from './components/po-chart';
-import KetersediaanChart from './components/ketersediaan-chart';
-import PembelianChart from './components/pembelian-chart';
+
+import dynamic from 'next/dynamic';
 
 interface DashboardPageProps {
   params: { storeId: string };
@@ -31,6 +22,73 @@ interface DashboardPageProps {
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
   let router = useRouter();
+
+  const TrafficChart = dynamic(
+    () => import('./components/traffic-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+
+  const KetersediaanChart = dynamic(
+    () => import('./components/ketersediaan-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+
+  const PoChart = dynamic(
+    () => import('./components/po-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+
+  const TerlarisChart = dynamic(
+    () => import('./components/terlaris-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+  const KeuntunganChart = dynamic(
+    () => import('./components/keuntungan-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+  const PenjualanWebsiteChart = dynamic(
+    () =>
+      import('./components/penjualan-website-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+  const PenjualanCashierChart = dynamic(
+    () =>
+      import('./components/penjualan-cashier-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+  const PenjualanWebsiteTable = dynamic(
+    () =>
+      import('./components/penjualan-website-table').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+  const ArimaChart = dynamic(
+    () => import('./components/arima-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
+  const PembelianChart = dynamic(
+    () => import('./components/pembelian-chart').then((res) => res.default),
+    {
+      ssr: false,
+    },
+  );
 
   useEffect(() => {
     router.refresh();
