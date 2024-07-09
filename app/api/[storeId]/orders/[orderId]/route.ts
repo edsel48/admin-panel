@@ -95,6 +95,8 @@ export async function GET(
 
   let shippingCost = order.total;
 
+  let total = 0;
+
   order.orderItems.forEach((item) => {
     shippingCost -= item.subtotal;
 
@@ -106,11 +108,15 @@ export async function GET(
       price: formatter.format(
         parseInt(`${Number(item.subtotal)}`) / Number(item.quantity),
       ),
+      total: formatter.format(Number(item.subtotal) - Number(item.discount)),
+      discount: formatter.format(Number(item.discount)),
     });
+
+    total += Number(item.subtotal) - Number(item.discount);
   });
 
   let formatted = {
-    total: Number(order.total),
+    total: Number(total + order.ongkir),
     type: order.type,
     member: order.member == null ? 'Anon' : order.member.name,
     // @ts-ignore

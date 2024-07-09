@@ -38,6 +38,14 @@ export const columns: ColumnDef<TransactionItemColumns>[] = [
     accessorKey: 'subtotal',
     header: 'Subtotal',
   },
+  {
+    accessorKey: 'discount',
+    header: 'Discount',
+  },
+  {
+    accessorKey: 'total',
+    header: 'Total',
+  },
 
   // {
   //   accessorKey: 'price',

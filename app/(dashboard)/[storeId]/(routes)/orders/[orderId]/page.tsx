@@ -314,13 +314,15 @@ const OrderTransactionPage = ({
                   />
                 </div>
               </div>
-              <div className="flex-col gap-5">
+              <div className="flex-col gap-5 text-right">
                 <div className="text-lg font-bold">
                   <div>
                     Total :{' '}
                     {transaction != null ? (
-                      // @ts-ignore
-                      formatter.format(Number(transaction.total))
+                      formatter.format(
+                        // @ts-ignore
+                        Number(transaction.total - transaction.shippingCost),
+                      )
                     ) : (
                       <></>
                     )}
@@ -334,6 +336,17 @@ const OrderTransactionPage = ({
                   ) : (
                     <></>
                   )}
+                </div>
+                <div className="text-lg font-bold">
+                  <div>
+                    Grand Total :{' '}
+                    {transaction != null ? (
+                      // @ts-ignore
+                      formatter.format(Number(transaction.total))
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
