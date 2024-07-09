@@ -4,8 +4,12 @@ import { isWithinInterval } from 'date-fns';
 import { NextResponse } from 'next/server';
 import { format } from 'path';
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
+    let body = await req.json();
+
+    let { start, end } = body;
+
     let products = {};
 
     let productsData = await prismadb.product.findMany({});
@@ -28,21 +32,42 @@ export async function GET(req: Request) {
     });
 
     orderItems.forEach((item) => {
-      // @ts-ignore
-      if (products[item.product.id] == null) {
+      if (start == null && end == null) {
         // @ts-ignore
-        products[item.product.id] = [
-          {
+        if (products[item.product.id] == null) {
+          // @ts-ignore
+          products[item.product.id] = [
+            {
+              subtotal: Number(item.subtotal),
+              date: item.order.createdAt,
+            },
+          ];
+        } else {
+          //   @ts-ignore
+          products[item.product.id].push({
             subtotal: Number(item.subtotal),
             date: item.order.createdAt,
-          },
-        ];
+          });
+        }
       } else {
-        //   @ts-ignore
-        products[item.product.id].push({
-          subtotal: Number(item.subtotal),
-          date: item.order.createdAt,
-        });
+        if (isWithinInterval(item.order.createdAt, { start, end })) {
+          // @ts-ignore
+          if (products[item.product.id] == null) {
+            // @ts-ignore
+            products[item.product.id] = [
+              {
+                subtotal: Number(item.subtotal),
+                date: item.order.createdAt,
+              },
+            ];
+          } else {
+            //   @ts-ignore
+            products[item.product.id].push({
+              subtotal: Number(item.subtotal),
+              date: item.order.createdAt,
+            });
+          }
+        }
       }
     });
 

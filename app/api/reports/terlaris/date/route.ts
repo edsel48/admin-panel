@@ -5,8 +5,8 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   let body = await req.json();
-  let { start, end } = body;
 
+  let { start, end } = body;
   let sizeMap = {
     Piece: 1,
     'Box (10)': 10,
@@ -37,7 +37,12 @@ export async function POST(req: Request) {
   });
 
   orders.forEach((order) => {
-    if (start == null && end == null) {
+    if (
+      isWithinInterval(order.createdAt, {
+        start,
+        end,
+      })
+    ) {
       order.orderItems.forEach((item) => {
         // @ts-ignore
         let orderCount = sizeMap[item.size] * item.quantity || 0;
@@ -64,35 +69,6 @@ export async function POST(req: Request) {
           transactionCount[item.product.name] += 1;
         }
       });
-    } else {
-      if (isWithinInterval(order.createdAt, { start, end })) {
-        order.orderItems.forEach((item) => {
-          // @ts-ignore
-          let orderCount = sizeMap[item.size] * item.quantity || 0;
-
-          // @ts-ignore
-          if (count[item.product.name] == null) {
-            // @ts-ignore
-            count[item.product.name] = 0;
-            // @ts-ignore
-            count[item.product.name] += orderCount;
-          } else {
-            // @ts-ignore
-            count[item.product.name] += orderCount;
-          }
-
-          // @ts-ignore
-          if (transactionCount[item.product.name] == null) {
-            // @ts-ignore
-            transactionCount[item.product.name] = 0;
-            // @ts-ignore
-            transactionCount[item.product.name] += 1;
-          } else {
-            // @ts-ignore
-            transactionCount[item.product.name] += 1;
-          }
-        });
-      }
     }
   });
 

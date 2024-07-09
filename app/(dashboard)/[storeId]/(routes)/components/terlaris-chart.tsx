@@ -60,86 +60,36 @@ export default function TerlarisChart() {
 
   const [lessProfitableProduct, setLessProfitableProduct] = useState([]);
 
-  const update = () => {
-    // @ts-ignore
-    let data = {};
-
-    // @ts-ignore
-    let output = [];
-    let transaction = {
-      transactionCount: {},
-    };
-
-    products.forEach((p) => {
-      // @ts-ignore
-      let arr = p.data
-        // @ts-ignore
-        .filter((e) =>
-          isWithinInterval(e.date, {
-            start: startAt,
-            end: endAt,
-          }),
-        );
-      let value = 0;
-      // @ts-ignore
-      arr.forEach((e) => {
-        value += e.subtotal;
-      });
-
-      // @ts-ignore
-      transaction.transactionCount[p.product.name] = arr.length;
-
-      // @ts-ignore
-      data[p.product.name] = {
-        value,
-        // @ts-ignore
-        data: p.data
-          // @ts-ignore
-          .filter((e) =>
-            isWithinInterval(e.date, {
-              start: startAt,
-              end: endAt,
-            }),
-          ),
-        // @ts-ignore
-        product: p.product,
-      };
-
-      output.push({
-        value,
-        // @ts-ignore
-        data: p.data
-          // @ts-ignore
-          .filter((e) =>
-            isWithinInterval(e.date, {
-              start: startAt,
-              end: endAt,
-            }),
-          ),
-        // @ts-ignore
-        product: p.product,
-      });
+  const update = async () => {
+    console.log({
+      startAt,
+      endAt,
     });
-
-    // @ts-ignore
-    let sorted = output.sort((a, b) => {
-      return b.value - a.value;
+    let response = await axios.post('/api/reports/terlaris', {
+      start: startAt,
+      end: endAt,
     });
+    let terlaris = response.data;
 
-    if (sorted.length >= limit * 2) {
+    let productResponse = await axios.post('/api/reports/keuntungan/products', {
+      start: startAt,
+      end: endAt,
+    });
+    let products = productResponse.data;
+
+    setProducts(products);
+
+    let length = products.length;
+
+    if (products.length >= limit * 2) {
       // get profitable based on limit
-
-      // @ts-ignore
       let profit = [];
-      // @ts-ignore
       let nonprof = [];
 
       for (let i = 0; i < limit; i++) {
-        // @ts-ignore
-        profit.push(sorted[i]);
+        profit.push(products[i]);
         if (nonprof.length < limit) {
-          // @ts-ignore
-          nonprof.push(sorted[sorted.length - 1 - i]);
+          nonprof.push(products[products.length - 1 - i]);
         }
       }
 
@@ -150,16 +100,24 @@ export default function TerlarisChart() {
       setLessProfitableProduct(nonprof);
     }
 
-    // @ts-ignore
-    setTerlaris(transaction);
+    setTerlaris(terlaris);
   };
 
   useEffect(() => {
     let fetch = async () => {
-      let response = await axios.get('/api/reports/terlaris');
+      let response = await axios.post('/api/reports/terlaris', {
+        start: null,
+        end: null,
+      });
       let terlaris = response.data;
 
-      let productResponse = await axios.get('/api/reports/keuntungan/products');
+      let productResponse = await axios.post(
+        '/api/reports/keuntungan/products',
+        {
+          start: null,
+          end: null,
+        },
+      );
       let products = productResponse.data;
 
       setProducts(products);
@@ -263,8 +221,8 @@ export default function TerlarisChart() {
                 </CardContent>
               </Card>
               <Button
-                onClick={() => {
-                  update();
+                onClick={async () => {
+                  await update();
                 }}
               >
                 Set Period
@@ -284,8 +242,8 @@ export default function TerlarisChart() {
                 }}
               />
               <Button
-                onClick={() => {
-                  update();
+                onClick={async () => {
+                  await update();
                 }}
               >
                 Check
