@@ -21,6 +21,15 @@ export async function GET(req: Request) {
     },
   });
 
+  let products = await prismadb.product.findMany({});
+
+  products.forEach((e) => {
+    // @ts-ignore
+    count[e.name] = 0;
+    // @ts-ignore
+    transactionCount[e.name] = 0;
+  });
+
   let count = {};
   let transactionCount = {};
 
