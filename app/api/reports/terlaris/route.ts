@@ -22,6 +22,8 @@ export async function GET(req: Request) {
   });
 
   let products = await prismadb.product.findMany({});
+  let count = {};
+  let transactionCount = {};
 
   products.forEach((e) => {
     // @ts-ignore
@@ -29,9 +31,6 @@ export async function GET(req: Request) {
     // @ts-ignore
     transactionCount[e.name] = 0;
   });
-
-  let count = {};
-  let transactionCount = {};
 
   orders.forEach((order) => {
     order.orderItems.forEach((item) => {
