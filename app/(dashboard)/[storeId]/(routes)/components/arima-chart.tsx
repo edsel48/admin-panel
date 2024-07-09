@@ -69,10 +69,15 @@ export default function ArimaChart() {
   let [product, setProduct] = useState({});
   let [transaction, setTransaction] = useState({});
   let [predictionData, setPredictionData] = useState(null);
+  let [predictionDisplay, setPredictionDisplay] = useState(null);
 
   let [arimaTotal, setArimaTotal] = useState(0);
   let [lrTotal, setLrTotal] = useState(0);
   let [svrTotal, setSvrTotal] = useState(0);
+
+  let [arimaTotalDisplay, setArimaTotalDisplay] = useState(0);
+  let [lrTotalDisplay, setLrTotalDisplay] = useState(0);
+  let [svrTotalDisplay, setSvrTotalDisplay] = useState(0);
 
   // @ts-ignore
   const doPredict = async (e) => {
@@ -168,9 +173,16 @@ export default function ArimaChart() {
     }
     // @ts-ignore
     setPredictionData(output);
+    // @ts-ignore
+    setPredictionDisplay(output);
+
     setArimaTotal(currentArima);
     setSvrTotal(currentSvr);
     setLrTotal(currentLr);
+
+    setArimaTotalDisplay(currentArima);
+    setSvrTotalDisplay(currentSvr);
+    setLrTotalDisplay(currentLr);
   };
 
   useEffect(() => {
@@ -189,6 +201,80 @@ export default function ArimaChart() {
     fetchProduct();
   }, []);
 
+  const PredictionButtons = ({ data }: { data: [] }) => {
+    let items = [];
+
+    if (data.length >= 7) {
+      let now = (data || []).slice(0, 7);
+      let currentArima = 0;
+      let currentLr = 0;
+      let currentSvr = 0;
+
+      now.forEach((d) => {
+        // @ts-ignore
+        currentArima += d.arima;
+        // @ts-ignore
+        currentLr += d.lr;
+        // @ts-ignore
+        currentSvr += d.svr;
+      });
+
+      items.push(
+        <Button
+          onClick={() => {
+            // @ts-ignore
+            setPredictionDisplay(now);
+
+            setArimaTotalDisplay(currentArima);
+            setSvrTotalDisplay(currentSvr);
+            setLrTotalDisplay(currentLr);
+          }}
+        >
+          {' '}
+          7 Days
+        </Button>,
+      );
+    }
+    if (data.length >= 30) {
+      let now = (data || []).slice(0, 30);
+      let currentArima = 0;
+      let currentLr = 0;
+      let currentSvr = 0;
+
+      now.forEach((d) => {
+        // @ts-ignore
+        currentArima += d.arima;
+        // @ts-ignore
+        currentLr += d.lr;
+        // @ts-ignore
+        currentSvr += d.svr;
+      });
+
+      items.push(
+        <Button
+          onClick={() => {
+            // @ts-ignore
+            setPredictionDisplay(now);
+
+            setArimaTotalDisplay(currentArima);
+            setSvrTotalDisplay(currentSvr);
+            setLrTotalDisplay(currentLr);
+          }}
+        >
+          30 Days{' '}
+        </Button>,
+      );
+    }
+
+    return (
+      <div className="flex gap-3">
+        {items.map((e) => {
+          return e;
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="flex-col gap-5">
       <div className="text-xl font-bold">Arima Chart</div>
@@ -202,6 +288,10 @@ export default function ArimaChart() {
         }}
         product={product}
       />
+
+      <div className="my-3">
+        <PredictionButtons data={predictionData || []} />
+      </div>
 
       {/* @ts-ignore */}
       {product != null ? (
@@ -226,16 +316,18 @@ export default function ArimaChart() {
                     <TableHeader className="bg-primary-foreground">
                       <TableRow>
                         <TableHead>Date</TableHead>
-                        <TableHead>ARIMA - [ {arimaTotal} pcs ]</TableHead>
                         <TableHead>
-                          Linear Regression - [ {lrTotal} pcs ]
+                          ARIMA - [ {arimaTotalDisplay} pcs ]
                         </TableHead>
-                        <TableHead>SVR - [ {svrTotal} pcs ] </TableHead>
+                        <TableHead>
+                          Linear Regression - [ {lrTotalDisplay} pcs ]
+                        </TableHead>
+                        <TableHead>SVR - [ {svrTotalDisplay} pcs ] </TableHead>
                       </TableRow>
                     </TableHeader>
-                    {predictionData != null ? (
+                    {predictionDisplay != null ? (
                       // @ts-ignore
-                      predictionData.map((e) => {
+                      predictionDisplay.map((e) => {
                         return (
                           <TableRow>
                             {/* @ts-ignore */}
