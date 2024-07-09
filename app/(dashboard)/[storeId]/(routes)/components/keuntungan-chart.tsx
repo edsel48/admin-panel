@@ -242,7 +242,13 @@ export default function KeuntunganChart() {
         cashier: data - keuntunganWebsite,
       });
 
-      let productResponse = await axios.get('/api/reports/keuntungan/products');
+      let productResponse = await axios.post(
+        '/api/reports/keuntungan/products',
+        {
+          start: null,
+          end: null,
+        },
+      );
       let products = productResponse.data;
 
       let length = products.length;
