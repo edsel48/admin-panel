@@ -58,7 +58,8 @@ const CellAction: React.FC<CellActionProps> = ({ data }) => {
       }
 
       setQuantity(value);
-      toast.success(`Updated quantity to ${value}`);
+      // @ts-ignore
+      toast.success(`Successfully added ${value}`);
     }
   };
 

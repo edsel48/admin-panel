@@ -20,21 +20,6 @@ export async function POST(
   let { quantity } = body;
 
   try {
-    let logs = await prismadb.supplierTransactionItemMutation.create({
-      data: {
-        quantity,
-        supplierTransactionItem: {
-          connect: {
-            id: params.detailId,
-          },
-        },
-      },
-    });
-  } catch (e) {
-    return new NextResponse('Error on creating logs', { status: 500 });
-  }
-
-  try {
     let transaction = await prismadb.supplierTransaction.findFirst({
       where: {
         id: params.transactionId,
@@ -58,8 +43,22 @@ export async function POST(
 
     let status = 'Completely Fullfilled';
 
+    console.log(detail.quantity);
+    console.log(quantity);
+    console.log(detail.delivered);
+    console.log(quantity + detail.delivered);
+
+    if (Number(detail.quantity) < Number(quantity) + Number(detail.delivered)) {
+      return new NextResponse('Please Insert The Required amount', {
+        status: 404,
+      });
+    }
+
     if (quantity != 0) {
-      if (quantity < quantity + detail.quantity) {
+      if (
+        Number(detail.quantity) >
+        Number(quantity) + Number(detail.delivered)
+      ) {
         status = 'Partly Fullfilled';
       }
     }
@@ -110,6 +109,21 @@ export async function POST(
         status: transactionStatus,
       },
     });
+
+    try {
+      let logs = await prismadb.supplierTransactionItemMutation.create({
+        data: {
+          quantity,
+          supplierTransactionItem: {
+            connect: {
+              id: params.detailId,
+            },
+          },
+        },
+      });
+    } catch (e) {
+      return new NextResponse('Error on creating logs', { status: 500 });
+    }
 
     return NextResponse.json(detailUpdated);
   } catch (e) {
