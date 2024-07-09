@@ -32,7 +32,10 @@ export async function GET(
   });
 
   let formatted = orders.map((order) => {
+    let total = 0;
     let formattedItems = order.orderItems.map((item) => {
+      total += Number(item.subtotal) - Number(item.discount);
+
       return {
         name: item.product.name,
         total: formatter.format(Number(item.subtotal)),
@@ -52,11 +55,10 @@ export async function GET(
       id: order.id,
       orderItems: formattedItems,
       logs: order.logs,
-      total: formatter.format(Number(order.total) - Number(order.ongkir)),
+      location: order.address,
+      total: formatter.format(Number(total)),
       totalDiscount: formatter.format(Number(order.totalDiscount)),
-      grandTotal: formatter.format(
-        Number(order.total) - Number(order.totalDiscount),
-      ),
+      grandTotal: formatter.format(Number(total) + Number(order.ongkir)),
       status: order.status,
       ongkir: formatter.format(Number(order.ongkir)),
       createdAt: format(order.createdAt, 'dd-MM-yyyy'),
