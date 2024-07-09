@@ -140,10 +140,6 @@ const InvoicePage = ({
           </h2>
           <h2 className="mb-3 font-bold">
             {/* @ts-ignore */}
-            Total Discount : {transaction.totalDiscount}
-          </h2>
-          <h2 className="mb-3 font-bold">
-            {/* @ts-ignore */}
             Grand Total : {transaction.grandTotal}
           </h2>
         </div>
