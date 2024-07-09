@@ -1,0 +1,64 @@
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
+
+import prismadb from '@/lib/prismadb';
+
+import { formatter } from '@/lib/utils';
+import { format } from 'date-fns';
+
+export async function GET(req: Request) {
+  const orders = await prismadb.order.findMany({
+    include: {
+      member: true,
+      orderItems: {
+        include: {
+          product: true,
+        },
+      },
+      logs: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  let formatted = orders.map((order) => {
+    let formattedItems = order.orderItems.map((item) => {
+      return {
+        name: item.product.name,
+        total: formatter.format(Number(item.subtotal)),
+        quantity: item.quantity,
+        size: item.size,
+        price: formatter.format(
+          parseInt(`${Number(item.subtotal)}`) / Number(item.quantity),
+        ),
+        discount: formatter.format(Number(item.discount)),
+        subtotal: formatter.format(
+          Number(item.subtotal) - Number(item.discount),
+        ),
+      };
+    });
+
+    return {
+      id: order.id,
+      orderItems: formattedItems,
+      logs: order.logs,
+      member: order.member,
+      location: order.address,
+      total: formatter.format(Number(order.total) - Number(order.ongkir)),
+      totalDiscount: formatter.format(Number(order.totalDiscount)),
+      grandTotal: formatter.format(
+        Number(order.total) - Number(order.totalDiscount),
+      ),
+      status: order.status,
+      ongkir: formatter.format(Number(order.ongkir)),
+      createdAt: format(order.createdAt, 'dd-MM-yyyy'),
+    };
+  });
+
+  return NextResponse.json(formatted);
+}

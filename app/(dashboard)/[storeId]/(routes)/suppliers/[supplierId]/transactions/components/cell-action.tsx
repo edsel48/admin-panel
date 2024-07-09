@@ -76,6 +76,8 @@ const CellAction: React.FC<CellActionProps> = ({ data }) => {
         // @ts-ignore
         `Added product ${data.name} with a size of ${size.size.name} x ${qty}`,
       );
+
+      window.location.reload();
     }
   };
 

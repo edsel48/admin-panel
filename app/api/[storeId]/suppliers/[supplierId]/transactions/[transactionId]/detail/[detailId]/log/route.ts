@@ -43,11 +43,6 @@ export async function POST(
 
     let status = 'Completely Fullfilled';
 
-    console.log(detail.quantity);
-    console.log(quantity);
-    console.log(detail.delivered);
-    console.log(quantity + detail.delivered);
-
     if (Number(detail.quantity) < Number(quantity) + Number(detail.delivered)) {
       return new NextResponse('Please Insert The Required amount', {
         status: 404,
@@ -109,6 +104,39 @@ export async function POST(
         status: transactionStatus,
       },
     });
+
+    // update stock here
+    let transactionDetail = await prismadb.supplierTransaction.findFirst({
+      where: {
+        id: params.transactionId,
+      },
+      include: {
+        transactionItems: {
+          include: {
+            product: true,
+            sizeOnProduct: true,
+          },
+        },
+      },
+    });
+
+    if (transactionDetail == null) {
+      return new NextResponse('Transaction not found', { status: 404 });
+    }
+
+    for (const item of transactionDetail.transactionItems) {
+      // updating stock per items
+      await prismadb.sizesOnProduct.update({
+        where: {
+          id: item.sizeOnProduct.id,
+        },
+        data: {
+          stock: {
+            increment: quantity,
+          },
+        },
+      });
+    }
 
     try {
       let logs = await prismadb.supplierTransactionItemMutation.create({

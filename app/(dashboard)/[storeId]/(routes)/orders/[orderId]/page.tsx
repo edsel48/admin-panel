@@ -146,6 +146,29 @@ const ShippedButton = ({
   );
 };
 
+const GenerateInvoiceButton = ({
+  params,
+}: {
+  params: {
+    storeId: string;
+    supplierId: string;
+    orderId: string;
+  };
+}) => {
+  return (
+    <Button
+      variant="secondary"
+      onClick={() => {
+        window.open(
+          `https://admin.mitra-solusi.shop/transaction/${params.orderId}/invoice`,
+        );
+      }}
+    >
+      Generate Invoice
+    </Button>
+  );
+};
+
 const StatusButton = ({
   params,
   status,
@@ -180,6 +203,7 @@ const StatusButton = ({
             orderTrackingId={orderTrackingId}
           />{' '}
           <CancelButton params={params} />{' '}
+          <GenerateInvoiceButton params={params} />
         </div>
       </div>
     ),
@@ -187,12 +211,14 @@ const StatusButton = ({
       <div className="flex gap-3">
         {' '}
         <ProcessedButton params={params} /> <CancelButton params={params} />{' '}
+        <GenerateInvoiceButton params={params} />
       </div>
     ),
     SHIPPING: (
       <div className="flex gap-3">
         {' '}
         <CancelButton params={params} />{' '}
+        <GenerateInvoiceButton params={params} />
       </div>
     ),
     CANCELLED: <></>,
@@ -276,7 +302,7 @@ const OrderTransactionPage = ({
                   Transaction Status : {/* @ts-ignore */}
                   {transaction != null ? <>{transaction.status}</> : <></>}
                 </div>
-                <div>
+                <div className="mt-3">
                   {/* @ts-ignore */}
                   <StatusButton
                     params={params}
