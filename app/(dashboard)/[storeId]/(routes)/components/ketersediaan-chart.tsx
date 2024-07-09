@@ -57,7 +57,6 @@ export default function KetersediaanChart() {
               <TableRow>
                 <TableHead>Product Name</TableHead>
                 <TableHead>Stock</TableHead>
-                <TableHead>Created At</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -86,10 +85,6 @@ export default function KetersediaanChart() {
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{stock}</TableCell>
                     {/* @ts-ignore */}
-                    <TableCell>
-                      {/* @ts-ignore */}
-                      {format(product.createdAt, 'dd-MM-yyyy')}
-                    </TableCell>
                     <TableCell>
                       {/* @ts-ignore */}
                       {stock < product.minimumStock ? (
