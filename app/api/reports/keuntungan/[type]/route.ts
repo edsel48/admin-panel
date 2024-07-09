@@ -20,7 +20,9 @@ export async function GET(
 
   orders.forEach((e) => {
     if (e.type === params.type.toUpperCase()) {
-      allTotal += e.total;
+      e.orderItems.forEach((e) => {
+        allTotal += e.subtotal;
+      });
     }
   });
 

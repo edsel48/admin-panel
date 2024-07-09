@@ -13,10 +13,12 @@ export async function GET(req: Request) {
     },
   });
 
-  let allTotal: bigint = BigInt(0);
+  let allTotal = 0;
 
   orders.forEach((e) => {
-    allTotal += e.total;
+    e.orderItems.forEach((e) => {
+      allTotal += Number(e.subtotal);
+    });
   });
 
   let total = Number(allTotal) * (1 - (1 - 0.175));
