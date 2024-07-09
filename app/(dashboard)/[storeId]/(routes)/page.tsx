@@ -5,7 +5,7 @@ import LineChart from './components/chart';
 
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import TrafficChart from './components/traffic-chart';
 import TerlarisChart from './components/terlaris-chart';
 import KeuntunganChart from './components/keuntungan-chart';
@@ -30,6 +30,12 @@ interface DashboardPageProps {
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ params }) => {
+  let router = useRouter();
+
+  useEffect(() => {
+    router.refresh();
+  }, []);
+
   let statuses = [
     'Laporan Product Terlaris',
     'Laporan Total Keuntungan',

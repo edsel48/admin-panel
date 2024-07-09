@@ -40,7 +40,7 @@ export async function POST(
 
   const log = await prismadb.orderLog.create({
     data: {
-      log: 'Order is wait please wait for Admin response',
+      log: 'Order is paid please wait for Admin response',
       order: {
         connect: {
           id: params.orderId,
