@@ -36,7 +36,6 @@ const formSchema = z.object({
   priceGold: z.coerce.number().min(1),
   pricePlatinum: z.coerce.number().min(1),
   stock: z.coerce.number().min(1),
-  weight: z.coerce.number().min(1),
 });
 
 export interface SizesPrices {
@@ -47,7 +46,6 @@ export interface SizesPrices {
   priceGold: number;
   pricePlatinum: number;
   stock: number;
-  weight: number;
 }
 
 type PriceFormValues = z.infer<typeof formSchema>;
@@ -72,7 +70,6 @@ export const PriceForm: React.FC<PriceFormProps> = ({ initialData }) => {
       priceGold: 0,
       pricePlatinum: 0,
       stock: 0,
-      weight: 0,
     },
   });
 
