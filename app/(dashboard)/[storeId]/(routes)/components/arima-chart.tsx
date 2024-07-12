@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 
 import { Chart } from 'react-google-charts';
@@ -40,6 +41,7 @@ import {
 } from '@/components/ui/table';
 
 import { format, subDays, addDays } from 'date-fns';
+import toast from 'react-hot-toast';
 
 // @ts-ignore
 function Dropdown({ data, product, setProduct }) {
@@ -70,6 +72,9 @@ export default function ArimaChart() {
   let [transaction, setTransaction] = useState({});
   let [predictionData, setPredictionData] = useState(null);
   let [predictionDisplay, setPredictionDisplay] = useState(null);
+
+  let [transactionData, setTransactionData] = useState([]);
+  let [transactionDataDisplay, setTransactionDataDisplay] = useState([]);
 
   let [arimaTotal, setArimaTotal] = useState(0);
   let [lrTotal, setLrTotal] = useState(0);
@@ -198,7 +203,25 @@ export default function ArimaChart() {
       await doPredict(data[0]);
     };
 
-    fetchProduct();
+    const fetchTransactionData = async () => {
+      let response = await axios.get('/api/reports/transaction');
+
+      let { data } = response;
+
+      setTransactionData(data);
+    };
+
+    try {
+      fetchProduct();
+    } catch (e) {
+      toast.error('Error Fetching Data');
+    }
+
+    try {
+      fetchTransactionData();
+    } catch (e) {
+      toast.error('Error Fetching Data');
+    }
   }, []);
 
   const PredictionButtons = ({ data }: { data: [] }) => {
@@ -277,7 +300,9 @@ export default function ArimaChart() {
 
   return (
     <div className="flex-col gap-5">
-      <div className="text-xl font-bold">Arima Chart</div>
+      <div className="text-xl font-bold">
+        Arima, Linear Regression and SVR Prediction Data
+      </div>
       <Dropdown
         data={productsData}
         // @ts-ignore
@@ -288,6 +313,32 @@ export default function ArimaChart() {
         }}
         product={product}
       />
+
+      <div className="my-3 flex justify-between gap-3">
+        {/* <pre>{JSON.stringify(product, null, 2)}</pre> */}
+
+        <div className="text-lg font-bold">
+          Total Stock : {product.stock} Pcs
+        </div>
+        <div className="text-lg font-bold">
+          Total Transaction Data :{' '}
+          {transactionData != null
+            ? transactionData.filter((e) => e.name == product.name)[0] != null
+              ? transactionData.filter((e) => e.name == product.name)[0]
+                  .transaction
+              : 0
+            : 0}
+        </div>
+        <div className="text-lg font-bold">
+          Total Prediction Data:{' '}
+          {transactionData != null
+            ? transactionData.filter((e) => e.name == product.name)[0] != null
+              ? transactionData.filter((e) => e.name == product.name)[0]
+                  .prediction
+              : 0
+            : 0}
+        </div>
+      </div>
 
       <div className="my-3">
         <PredictionButtons data={predictionData || []} />

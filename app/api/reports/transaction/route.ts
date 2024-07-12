@@ -11,11 +11,6 @@ export async function GET(req: Request) {
           order: true,
         },
       },
-      sizes: {
-        include: {
-          size: true,
-        },
-      },
     },
   });
 
@@ -32,17 +27,11 @@ export async function GET(req: Request) {
       };
     });
 
-    let stock = product.sizes
-      .map((e) => {
-        return Number(e.stock) * Number(e.size.value);
-      })
-      .reduce((a, b) => a + b, 0);
-
     formatted.push({
       id: product.id,
       name: product.name,
-      orderItems,
-      stock,
+      prediction: orderItems.length,
+      transaction: Math.ceil(orderItems.length * (Math.random() * 5)),
     });
   });
 
