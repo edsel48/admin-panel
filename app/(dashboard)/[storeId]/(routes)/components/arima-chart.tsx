@@ -103,7 +103,7 @@ export default function ArimaChart() {
       Gross: 144,
     };
 
-    let endpoint = 'https://221e-36-74-147-194.ngrok-free.app/';
+    let endpoint = 'https://06bf-114-10-156-244.ngrok-free.app/';
     let response = await axios.post(endpoint + 'predict/arima', {
       start: 1,
       end: e.orderItems.length,
